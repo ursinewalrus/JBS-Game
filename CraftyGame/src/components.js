@@ -97,6 +97,8 @@ this.y -= this._movement.y;
 },
 
 enterRoom: function() {
+player_X = Math.round(this.at().x);
+player_Y = Math.round(this.at().y);
 Crafty.scene('Game');
 },
 
