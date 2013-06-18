@@ -36,7 +36,7 @@ this.requires('Actor, Solid, spr_tree');
 
 Crafty.c('Door',{
 init:function(){
-this.requires('Actor, spr_door');
+this.requires('Actor, Solid, spr_door');
 }
 });
 
@@ -53,15 +53,14 @@ Crafty.c('PlayerCharacter', {
 init: function() {
 this.requires('Actor, Fourway, Collision, spr_player, SpriteAnimation')
 .fourway(4)
-.stopOnSolids()
 .onHit('Village', this.visitVillage)
-.onHit('Door', this.enterRoom);
-/*
+.onHit('Door', this.enterRoom)
+.stopOnSolids() // put after all collision detection
 .animate('Pup',0,0,2)
 .animate('Pr',0,1,2)
 .animate('Pd',0,2,2)
 .animate('Pl',0,3,2);
-*/
+
 var animation_speed = 8;
 this.bind('NewDirection',function(data){
  if (data.x > 0) {
@@ -96,9 +95,38 @@ this.y -= this._movement.y;
 }
 },
 
-enterRoom: function() {
-player_X = Math.round(this.at().x);
-player_Y = Math.round(this.at().y);
+enterRoom: function(data) {
+dooor = data[0].obj;
+var roundedX =  Math.round(this.at().x);
+if ((dooor.at().x == Game.map_grid.width - 1) ||
+	(dooor.at().x == 0)) {
+	player_X = Game.map_grid.width - roundedX - 1;
+} else {
+	player_X = roundedX;
+}
+var roundedY = Math.round(this.at().y);
+if ((dooor.at().y == Game.map_grid.height - 1) ||
+	(dooor.at().y == 0)) {
+	player_Y = Game.map_grid.height - roundedY - 1;
+} else {
+	player_Y = roundedY;
+}
+/*
+var roundedX =  Math.round(this.at().x);
+if ((roundedX == Game.map_grid.width - 2) ||
+	(roundedX == 1)) {
+	player_X = Game.map_grid.width - roundedX - 1;
+} else {
+	player_X = roundedX;
+}
+var roundedY = Math.round(this.at().y);
+if ((roundedY == Game.map_grid.height - 2) ||
+	(roundedY == 1)) {
+	player_Y = Game.map_grid.height - roundedY - 1;
+} else {
+	player_Y = roundedY;
+}
+*/
 Crafty.scene('Game');
 },
 
@@ -107,6 +135,7 @@ Crafty.scene('Game');
 visitVillage: function(data) {
 villlage = data[0].obj;
 villlage.visit();
+return data[0];
 }
 });
 
