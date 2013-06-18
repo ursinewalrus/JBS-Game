@@ -1,3 +1,5 @@
+var player_X = 5;
+var player_Y = 5;
 Game = {
 // This defines our grid's size and the size of each of its tiles
 map_grid: {
@@ -28,6 +30,7 @@ Crafty.init(Game.width(), Game.height());
 Crafty.background('rgb(87, 109, 20)');
  
 // Simply start the "Loading" scene to get things going
+
 Crafty.scene('Loading');
 }
 }
