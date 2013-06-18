@@ -36,7 +36,7 @@ this.requires('Actor, Solid, spr_tree');
 
 Crafty.c('Door',{
 init:function(){
-this.requires('Actor,Solid, spr_door');
+this.requires('Actor, spr_door');
 }
 });
 
@@ -55,13 +55,13 @@ this.requires('Actor, Fourway, Collision, spr_player, SpriteAnimation')
 .fourway(4)
 .stopOnSolids()
 .onHit('Village', this.visitVillage)
-.onHit('Door', this.move)
-
+.onHit('Door', this.enterRoom);
+/*
 .animate('Pup',0,0,2)
 .animate('Pr',0,1,2)
 .animate('Pd',0,2,2)
 .animate('Pl',0,3,2);
-
+*/
 var animation_speed = 8;
 this.bind('NewDirection',function(data){
  if (data.x > 0) {
@@ -94,6 +94,10 @@ if (this._movement) {
 this.x -= this._movement.x;
 this.y -= this._movement.y;
 }
+},
+
+enterRoom: function() {
+Crafty.scene('Game');
 },
 
 
