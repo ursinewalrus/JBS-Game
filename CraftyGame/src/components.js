@@ -25,6 +25,24 @@ Crafty.c('Actor', {
 init: function() {
 this.requires('2D, Canvas, Grid');
 },
+
+// Registers a stop-movement function to be called when
+// this entity hits an entity with the "Solid" component
+stopOnSolids: function() {
+this.onHit('Solid', this.stopMovement);
+ 
+return this;
+},
+ 
+// Stops the movement
+stopMovement: function() {
+this._speed = 0;
+if (this._movement) {
+this.x -= this._movement.x;
+this.y -= this._movement.y;
+}
+}
+
 });
  
 // A Tree is just an Actor with a certain sprite
@@ -77,23 +95,6 @@ this.stop();
 });
 
 },
- 
-// Registers a stop-movement function to be called when
-// this entity hits an entity with the "Solid" component
-stopOnSolids: function() {
-this.onHit('Solid', this.stopMovement);
- 
-return this;
-},
- 
-// Stops the movement
-stopMovement: function() {
-this._speed = 0;
-if (this._movement) {
-this.x -= this._movement.x;
-this.y -= this._movement.y;
-}
-},
 
 enterRoom: function(data) {
 dooor = data[0].obj;
@@ -136,6 +137,31 @@ visitVillage: function(data) {
 villlage = data[0].obj;
 villlage.visit();
 return data[0];
+}
+});
+
+
+Crafty.c('NPC', {
+init: function() {
+this.requires('Actor, Collision')
+.NPCRandomMove()
+.stopOnSolids();
+},
+
+NPCRandomMove: function() {
+	var newDirection = Math.randomNumber(0, 3);
+	if (newDirection == 0) {
+		this.move('n', 2);
+	} 
+	else if (newDirection == 1) {
+		this.move('s', 2);
+	}
+	else if (newDirection == 2) {
+		this.move('e', 2);
+	}
+	else if (newDirection == 3) {
+		this.move('w', 2);
+	}
 }
 });
 
