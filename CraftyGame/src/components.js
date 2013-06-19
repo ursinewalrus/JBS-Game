@@ -1,3 +1,4 @@
+
 // The Grid component allows an element to be located
 // on a grid of tiles
 Crafty.c('Grid', {
@@ -69,16 +70,32 @@ this.requires('Actor, Solid, spr_bush');
 // This is the player-controlled character
 Crafty.c('PlayerCharacter', {
 init: function() {
-this.requires('Actor, Fourway, Collision, spr_player, SpriteAnimation')
+var direction;
+this.requires('Actor, Fourway, Collision, spr_player, SpriteAnimation,Keyboard')
 .fourway(4)
 .onHit('Village', this.visitVillage)
 .onHit('Door', this.enterRoom)
 .stopOnSolids() // put after all collision detection
+.bind("EnterFrame", function(e) {
+    
+        if (this.isDown("W")) {
+            direction = "up";
+        } else if (this.isDown("A")) {
+            direction = "left";
+        } else if (this.isDown("D")) {
+            direction = "right";
+        } else if (this.isDown("S")) {
+            direction =  "down";
+        }
+        console.log(direction);
+    
+    
+})
+    
 .animate('Pup',0,0,2)
 .animate('Pr',0,1,2)
 .animate('Pd',0,2,2)
 .animate('Pl',0,3,2);
-
 var animation_speed = 8;
 this.bind('NewDirection',function(data){
  if (data.x > 0) {
@@ -176,7 +193,10 @@ this.requires('Actor, spr_village');
 visit: function() {
 this.destroy();
 Crafty.trigger('VillageVisited', this);
-}
+},
+
+
+
 });
 
 

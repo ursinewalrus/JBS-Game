@@ -12,7 +12,9 @@ this.occupied[i][y] = false;
 }
  
 // Player character, placed at 5, 5 on our grid
+// Player character, placed at 5, 5 on our grid
 this.player = Crafty.e('PlayerCharacter').at(player_X, player_Y);
+//this.player.setDirection();
 this.occupied[this.player.at().x][this.player.at().y] = true;
  
 // Place a tree at every edge square on our grid of 16x16 tiles
@@ -83,7 +85,7 @@ Crafty.scene('Game');
 // multiple restarts of the game
 this.unbind('KeyDown', this.restart_game);
 });
- 
+
 // Loading scene
 // -------------
 // Handles the loading of binary assets such as images and audio files
