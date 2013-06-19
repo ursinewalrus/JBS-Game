@@ -69,11 +69,27 @@ this.requires('Actor, Solid, spr_bush');
 // This is the player-controlled character
 Crafty.c('PlayerCharacter', {
 init: function() {
-this.requires('Actor, Fourway, spr_player, SpriteAnimation')
+var direction;
+this.requires('Actor, Fourway, spr_player, SpriteAnimation,Keyboard')
 .fourway(4)
 .onHit('Village', this.visitVillage)
 .onHit('Door', this.enterRoom)
 .stopOnSolids() // put after all collision detection
+.bind("EnterFrame", function(e) {
+    
+        if (this.isDown("W")) {
+            direction = "up";
+        } else if (this.isDown("A")) {
+            direction = "left";
+        } else if (this.isDown("D")) {
+            direction = "right";
+        } else if (this.isDown("S")) {
+            direction =  "down";
+        }
+        console.log(direction);
+    
+    
+})
 .animate('Pup',0,0,2)
 .animate('Pr',0,1,2)
 .animate('Pd',0,2,2)
