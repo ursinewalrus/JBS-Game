@@ -23,7 +23,7 @@ return this;
 // via our logical coordinate grid
 Crafty.c('Actor', {
 init: function() {
-this.requires('2D, Canvas, Grid');
+this.requires('2D, Canvas, Grid, Collision');
 },
 
 // Registers a stop-movement function to be called when
@@ -69,7 +69,7 @@ this.requires('Actor, Solid, spr_bush');
 // This is the player-controlled character
 Crafty.c('PlayerCharacter', {
 init: function() {
-this.requires('Actor, Fourway, Collision, spr_player, SpriteAnimation')
+this.requires('Actor, Fourway, spr_player, SpriteAnimation')
 .fourway(4)
 .onHit('Village', this.visitVillage)
 .onHit('Door', this.enterRoom)
@@ -143,25 +143,27 @@ return data[0];
 
 Crafty.c('NPC', {
 init: function() {
-this.requires('Actor, Collision')
-.NPCRandomMove()
-.stopOnSolids();
+this.requires('Actor, spr_npc')
+.NPCRandomMove();
+//.stopOnSolids();
 },
 
 NPCRandomMove: function() {
-	var newDirection = Math.randomNumber(0, 3);
-	if (newDirection == 0) {
-		this.move('n', 2);
+	
+	var newDirection = Math.random();
+	if (newDirection < .25) {
+		this.move('n', 32);
 	} 
-	else if (newDirection == 1) {
-		this.move('s', 2);
+	else if (newDirection > .25 && newDirection < .5) {
+		this.move('s', 32);
 	}
-	else if (newDirection == 2) {
-		this.move('e', 2);
+	else if (newDirection >.5 && newDirection < .75) {
+		this.move('e', 32);
 	}
-	else if (newDirection == 3) {
-		this.move('w', 2);
+	else if (newDirection > .76) {
+		this.move('w', 32);//fdfd
 	}
+	
 }
 });
 

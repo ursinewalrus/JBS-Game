@@ -26,13 +26,17 @@ if (at_edge) {
 // Place a tree entity at the current tile
 Crafty.e('Tree').at(x, y);
 this.occupied[x][y] = true;
-} else if (Math.random() < 0.06 && !this.occupied[x][y] && middle) {
+} 
+if (Math.random() < 0.06 && !this.occupied[x][y] && middle) {
 // Place a bush entity at the current tile
 Crafty.e('Bush').at(x, y);
 this.occupied[x][y] = true;
-}
+} 
 if (trans) {
 Crafty.e('Door').at(x,y);
+}
+if(Math.random()<.03 && !this.occupied[x][y] && middle){
+	Crafty.e('NPC').at(x,y);
 }
 }
 }
@@ -106,7 +110,8 @@ Crafty.load(['assets/16x16_forest_1.gif','assets/16x16_forest_2.gif'], function(
 // to be drawn with a certain sprite
 	
 Crafty.sprite(16, 'assets/16x16_forest_2.gif', {
-spr_door:[1,1]
+spr_door:[1,1],
+spr_npc: [0,0]
 }),
 Crafty.sprite(16, 'assets/16x16_forest_1.gif', {
 spr_tree: [0, 0],
