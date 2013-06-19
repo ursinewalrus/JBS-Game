@@ -121,6 +121,24 @@ this.requires('Actor, spr_village');
 visit: function() {
 this.destroy();
 Crafty.trigger('VillageVisited', this);
+},
+
+setDirection: function() {
+    var direction;
+    Crafty.c("Keyboard", {
+        isDown: function (key) {
+        if (this.isDown("w")) {
+            this.direction = "up";
+        } else if (this.isDown("a")) {
+            this.direction = "left";
+        } else if (this.isDown("d")) {
+            this.direction = "right";
+        } else if (this.isDown("s")) {
+            this.direction =  "down";
+        }
+    }
+  })
+    console.log (direction);
 }
 });
 
