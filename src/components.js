@@ -23,33 +23,15 @@ return this;
 // via our logical coordinate grid
 Crafty.c('Actor', {
 init: function() {
-this.requires('2D, Canvas, Grid, Collision');
-},
-
-// Registers a stop-movement function to be called when
-// this entity hits an entity with the "Solid" component
-stopOnSolids: function() {
-this.onHit('Solid', this.stopMovement);
- 
-return this;
-},
- 
-// Stops the movement
-stopMovement: function() {
-this._speed = 0;
-if (this._movement) {
-this.x -= this._movement.x;
-this.y -= this._movement.y;
+this.requires('2D, Canvas, Grid');
 }
-}
-
 });
  
 // A Tree is just an Actor with a certain sprite
 Crafty.c('Tree', {
 init: function() {
 this.requires('Actor, Solid, spr_tree');
-},
+}
 });
 
 Crafty.c('Door',{
@@ -62,14 +44,14 @@ this.requires('Actor, Solid, spr_door');
 Crafty.c('Bush', {
 init: function() {
 this.requires('Actor, Solid, spr_bush');
-},
+}
 });
 
  
 // This is the player-controlled character
 Crafty.c('PlayerCharacter', {
 init: function() {
-this.requires('Actor, Fourway, spr_player, SpriteAnimation')
+this.requires('Actor, Fourway, Collision, spr_player, SpriteAnimation')
 .fourway(4)
 .onHit('Village', this.visitVillage)
 .onHit('Door', this.enterRoom)
@@ -78,6 +60,7 @@ this.requires('Actor, Fourway, spr_player, SpriteAnimation')
 .animate('Pr',0,1,2)
 .animate('Pd',0,2,2)
 .animate('Pl',0,3,2);
+
 var animation_speed = 8;
 this.bind('NewDirection',function(data){
  if (data.x > 0) {
@@ -94,6 +77,21 @@ this.stop();
 });
 
 },
+
+stopOnSolids: function() {
+this.onHit('Solid', this.stopMovement);
+	return this;
+},
+
+	// Stops the movement
+stopMovement: function() {
+this._speed = 0;
+if (this._movement) {
+	this.x -= this._movement.x;
+	this.y -= this._movement.y;
+}
+},
+
 
 enterRoom: function(data) {
 dooor = data[0].obj;
@@ -142,23 +140,34 @@ return data[0];
 
 Crafty.c('NPC', {
 init: function() {
-this.requires('Actor, spr_npc')
-.bind('EnterFrame',function() {
-	var newDirection = Math.random();
+this.requires('Actor, Collision, spr_npc')
+.bind('EnterFrame' , function() {
+var newDirection = Math.random();
 	if (newDirection < .25) {
 		this.move('n', 1);
-	} 
+		if (this.hit('Solid')) {
+			this.move('s', 1);
+		}
+	}
 	else if (newDirection > .25 && newDirection < .5) {
 		this.move('s', 1);
+		if (this.hit('Solid')) {
+			this.move('n', 1);
+		}
 	}
 	else if (newDirection >.5 && newDirection < .75) {
 		this.move('e', 1);
+		if (this.hit('Solid')) {
+			this.move('w', 1);
+		}
 	}
-	else if (newDirection > .76 && newDirection < 1) {
+	else if (newDirection > .76) {
 		this.move('w', 1);
+		if (this.hit('Solid')) {
+			this.move('e', 1);
+		}
 	}
-})
-.stopOnSolids();
+});
 }
 });
 
