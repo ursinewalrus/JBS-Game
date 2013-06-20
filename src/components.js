@@ -55,7 +55,8 @@ this.requires('Actor, Fourway, Collision, spr_player, SpriteAnimation')
 .fourway(4)
 .onHit('Village', this.visitVillage)
 .onHit('Door', this.enterRoom)
-.stopOnSolids() // put after all collision detection
+.stopOnSolids(); // put after all collision detection
+/*
 .animate('Pup',0,0,2)
 .animate('Pr',0,1,2)
 .animate('Pd',0,2,2)
@@ -75,7 +76,7 @@ this.animate('PlayerMovingUp', animation_speed, -1);
 this.stop();
 }
 });
-
+*/
 },
 
 stopOnSolids: function() {
@@ -140,33 +141,36 @@ return data[0];
 
 Crafty.c('NPC', {
 init: function() {
+this.direction = 'n'
+this.reverseDirection = 's'
 this.requires('Actor, Collision, spr_npc')
 .bind('EnterFrame' , function() {
-var newDirection = Math.random();
-	if (newDirection < .25) {
-		this.move('n', 1);
-		if (this.hit('Solid')) {
-			this.move('s', 1);
+if (Math.random() > .95) {
+	var newDirection = Math.random();
+		if (newDirection < .25) {
+			this.direction = 'n'
+			this.reverseDirection = 's'
 		}
-	}
-	else if (newDirection > .25 && newDirection < .5) {
-		this.move('s', 1);
-		if (this.hit('Solid')) {
-			this.move('n', 1);
+		else if (newDirection > .25 && newDirection < .5) {
+			this.direction = 's'
+			this.reverseDirection = 'n'
 		}
-	}
-	else if (newDirection >.5 && newDirection < .75) {
-		this.move('e', 1);
-		if (this.hit('Solid')) {
-			this.move('w', 1);
+		else if (newDirection >.5 && newDirection < .75) {
+			this.direction = 'e'
+			this.reverseDirection = 'w'
 		}
-	}
-	else if (newDirection > .76) {
-		this.move('w', 1);
-		if (this.hit('Solid')) {
-			this.move('e', 1);
+		else if (newDirection > .76) {
+			this.direction = 'w'
+			this.reverseDirection = 'e'
 		}
-	}
+}
+this.move(this.direction, 1);
+if (this.hit('Solid')) {
+	this.move(this.reverseDirection, 1);
+}
+if (this.hit('PlayerCharacter')) {
+	Crafty.scene('YouLose');
+}
 });
 }
 });
