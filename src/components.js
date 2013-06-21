@@ -52,12 +52,15 @@ this.requires('Actor, Solid, spr_bush');
 // This is the player-controlled character
 Crafty.c('PlayerCharacter', {
 init: function() {
+this.hp = 3;
 this.arrowTimer = 0;
+this.hurtTimer = 0;
 this.direction = 'n'
 this.requires('Actor, Fourway, Collision, Keyboard, spr_player, SpriteAnimation')
 .fourway(3)
 .onHit('Village', this.visitVillage)
 .onHit('Door', this.enterRoom)
+.onHit('NPC', this.hurt)
 .stopOnSolids() // put after all collision detection
 .bind('EnterFrame', function() {
 	if (this.isDown('W')) {
@@ -77,6 +80,10 @@ this.requires('Actor, Fourway, Collision, Keyboard, spr_player, SpriteAnimation'
 	if (this.arrowTimer > 0) {
 		this.arrowTimer = this.arrowTimer - 1;
 	}
+	if (this.hurtTimer > 0) {
+        this.hurtTimer -= 1;
+    }
+	
 }); 
 
 //for animation later
@@ -105,6 +112,20 @@ this.stop();
 stopOnSolids: function() {
 this.onHit('Solid', this.stopMovement);
 	return this;
+},
+
+hurt:function() {
+    console.log(this.hp);
+    if (this.hurtTimer == 0) {
+        this.hp -= 1;
+    }
+    this.hurtTimer = 20;
+    
+    
+    if (this.hp <= 0) {
+        Crafty.scene("YouLose");
+    }
+    
 },
 
 // Stops the movement
@@ -192,9 +213,7 @@ this.move(this.direction, 1);
 if (this.hit('Solid')) {
 	this.move(this.reverseDirection, 1);
 }
-if (this.hit('PlayerCharacter')) {
-	Crafty.scene('YouLose');
-}
+
 //if (this.hit('Arrow')){
 	//this.hp-=1;
 //}
@@ -214,9 +233,7 @@ this.direction = ''
 this.requires('Actor, spr_player,Collision')
 .onHit('NPC',this.hurt)
 .onHit('NPC',this.shatter)
-.onHit('Bush',this.shatter)
-.onHit('Tree',this.shatter)
-.onHit('Door',this.shatter)
+.onHit('Solid',this.shatter)
 .bind('EnterFrame', function() {
 	this.move(this.direction, 3);
 });
