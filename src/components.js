@@ -52,7 +52,6 @@ this.requires('Actor, Solid, spr_bush');
 // This is the player-controlled character
 Crafty.c('PlayerCharacter', {
 init: function() {
-this.hp = 3;
 this.arrowTimer = 0;
 this.hurtTimer = 0;
 this.direction = 'n'
@@ -115,14 +114,14 @@ this.onHit('Solid', this.stopMovement);
 },
 
 hurt:function() {
-    console.log(this.hp);
+    console.log(player_hp);
     if (this.hurtTimer == 0) {
-        this.hp -= 1;
+        player_hp -= 1;
     }
     this.hurtTimer = 20;
     
     
-    if (this.hp <= 0) {
+    if (player_hp <= 0) {
         Crafty.scene("YouLose");
     }
     
