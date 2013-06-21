@@ -187,7 +187,8 @@ init: function() {
 this.direction = 'n'
 this.hp = 2;
 this.reverseDirection = 's'
-this.requires('Actor, Collision, spr_npc')
+this.requires('Actor, Collision, Solid, spr_npc')
+.onHit('PlayerCharacter', this.hurtPlayer)
 .bind('EnterFrame' , function() {
 if (Math.random() > .95) {
 	var newDirection = Math.random();
@@ -221,6 +222,13 @@ if(this.hp<=0){
 }
 });
 },
+
+hurtPlayer : function (data) {
+	plaayer = data[0].obj;
+	plaayer.hurt();
+	this.move(this.reverseDirection, 1);
+},
+
 ouch : function () {
 	this.hp-=1;
 },
@@ -237,9 +245,11 @@ this.requires('Actor, spr_player,Collision')
 	this.move(this.direction, 3);
 });
 },
+
 shatter : function(){
 	this.destroy();
 },
+
 hurt: function(data) {
 	damage = data[0].obj;
 	damage.ouch();
