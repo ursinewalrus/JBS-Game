@@ -165,6 +165,7 @@ return data[0];
 Crafty.c('NPC', {
 init: function() {
 this.direction = 'n'
+this.hp = 2;
 this.reverseDirection = 's'
 this.requires('Actor, Collision, spr_npc')
 .bind('EnterFrame' , function() {
@@ -194,18 +195,40 @@ if (this.hit('Solid')) {
 if (this.hit('PlayerCharacter')) {
 	Crafty.scene('YouLose');
 }
-});
+//if (this.hit('Arrow')){
+	//this.hp-=1;
+//}
+if(this.hp<=0){
+	this.destroy();
 }
+});
+},
+ouch : function () {
+	this.hp-=1;
+},
 });
 
 Crafty.c('Arrow', {
 init: function() {
 this.direction = ''
-this.requires('Actor, spr_player')
+this.requires('Actor, spr_player,Collision')
+.onHit('NPC',this.hurt)
+.onHit('NPC',this.shatter)
+.onHit('Bush',this.shatter)
+.onHit('Tree',this.shatter)
+.onHit('Door',this.shatter)
 .bind('EnterFrame', function() {
 	this.move(this.direction, 2);
 });
-}
+},
+shatter : function(){
+	this.destroy();
+},
+hurt: function(data) {
+	damage = data[0].obj;
+	damage.ouch();
+	return data[0];
+	},
 });
 
 
