@@ -51,11 +51,27 @@ this.requires('Actor, Solid, spr_bush');
 // This is the player-controlled character
 Crafty.c('PlayerCharacter', {
 init: function() {
-this.requires('Actor, Fourway, Collision, spr_player, SpriteAnimation')
+this.direction = 'n'
+this.requires('Actor, Fourway, Collision, Keyboard, spr_player, SpriteAnimation')
 .fourway(4)
 .onHit('Village', this.visitVillage)
 .onHit('Door', this.enterRoom)
-.stopOnSolids(); // put after all collision detection
+.stopOnSolids() // put after all collision detection
+.bind('EnterFrame', function() {
+	if (this.isDown('W')) {
+		this.direction = 'n'
+	} else if (this.isDown('S')) {
+		this.direction = 's'
+	} else if (this.isDown('A')) {
+		this.direction = 'w'
+	} else if (this.isDown('D')) {
+		this.direction = 'e'
+	} if (this.isDown('SPACE')) {
+		Crafty.e('Arrow').at(this.at().x,this.at().y).direction = this.direction;
+	}
+}); 
+
+//for animation later
 /*
 .animate('Pup',0,0,2)
 .animate('Pr',0,1,2)
@@ -171,6 +187,16 @@ if (this.hit('Solid')) {
 if (this.hit('PlayerCharacter')) {
 	Crafty.scene('YouLose');
 }
+});
+}
+});
+
+Crafty.c('Arrow', {
+init: function() {
+this.direction = 'n'
+this.requires('Actor, spr_player')
+.bind('EnterFrame', function() {
+	this.move(this.direction, 1);
 });
 }
 });
