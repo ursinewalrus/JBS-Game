@@ -25,20 +25,22 @@ var trans = ((y>6 && y<9)&&(x==0 || x == Game.map_grid.width-1)) || ((x>10 && x<
 var middle = !at_edge && !trans;
 
 if (at_edge) {
-// Place a tree entity at the current tile
-Crafty.e('Tree').at(x, y);
-this.occupied[x][y] = true;
+	// Place a tree entity at the current tile
+	Crafty.e('Tree').at(x, y);
+	this.occupied[x][y] = true;
 } 
 if (Math.random() < 0.06 && !this.occupied[x][y] && middle) {
-// Place a bush entity at the current tile
-Crafty.e('Bush').at(x, y);
-this.occupied[x][y] = true;
+	// Place a bush entity at the current tile
+	Crafty.e('Bush').at(x, y);
+	this.occupied[x][y] = true;
 } 
-if (trans) {
-Crafty.e('Door').at(x,y);
+if (trans && !this.occupied[x][y]) {
+	Crafty.e('Door').at(x,y);
+	this.occupied[x][y] = true;
 }
 if(Math.random()<.03 && !this.occupied[x][y] && middle){
 	Crafty.e('NPC').at(x,y);
+	this.occupied[x][y] = true;
 }
 }
 }
@@ -92,12 +94,12 @@ this.unbind('KeyDown', this.restart_game);
 
 // Losing Scene
 // -------------
-// Tells the player when they've won and lets them start a new game
+// Tells the player when they've lost and lets them start a new game
 Crafty.scene('YouLose', function() {
-// Display some text in celebration of the victory
+// Display some text showing the loss
 Crafty.e('2D, DOM, Text')
 .attr({ x: 0, y: 0 })
-.text('Eat A Dick');
+.text('Woah you got eaten by a tree');
  
 // Watch for the player to press a key, then restart the game
 // when a key is pressed

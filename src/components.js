@@ -55,7 +55,7 @@ init: function() {
 this.arrowTimer = 0;
 this.direction = 'n'
 this.requires('Actor, Fourway, Collision, Keyboard, spr_player, SpriteAnimation')
-.fourway(4)
+.fourway(3)
 .onHit('Village', this.visitVillage)
 .onHit('Door', this.enterRoom)
 .stopOnSolids() // put after all collision detection
@@ -107,7 +107,7 @@ this.onHit('Solid', this.stopMovement);
 	return this;
 },
 
-	// Stops the movement
+// Stops the movement
 stopMovement: function() {
 this._speed = 0;
 if (this._movement) {
@@ -218,7 +218,7 @@ this.requires('Actor, spr_player,Collision')
 .onHit('Tree',this.shatter)
 .onHit('Door',this.shatter)
 .bind('EnterFrame', function() {
-	this.move(this.direction, 2);
+	this.move(this.direction, 3);
 });
 },
 shatter : function(){
