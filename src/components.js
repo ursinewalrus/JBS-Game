@@ -52,6 +52,7 @@ this.requires('Actor, Solid, spr_bush');
 // This is the player-controlled character
 Crafty.c('PlayerCharacter', {
 init: function() {
+this.arrowTimer = 0;
 this.direction = 'n'
 this.requires('Actor, Fourway, Collision, Keyboard, spr_player, SpriteAnimation')
 .fourway(4)
@@ -68,7 +69,13 @@ this.requires('Actor, Fourway, Collision, Keyboard, spr_player, SpriteAnimation'
 	} else if (this.isDown('D')) {
 		this.direction = 'e'
 	} if (this.isDown('SPACE')) {
-		Crafty.e('Arrow').at(this.at().x,this.at().y).direction = this.direction;
+		if (this.arrowTimer == 0) {
+			Crafty.e('Arrow').at(this.at().x,this.at().y).direction = this.direction;
+			this.arrowTimer = 30;
+		}
+	}
+	if (this.arrowTimer > 0) {
+		this.arrowTimer = this.arrowTimer - 1;
 	}
 }); 
 
@@ -193,10 +200,10 @@ if (this.hit('PlayerCharacter')) {
 
 Crafty.c('Arrow', {
 init: function() {
-this.direction = 'n'
+this.direction = ''
 this.requires('Actor, spr_player')
 .bind('EnterFrame', function() {
-	this.move(this.direction, 1);
+	this.move(this.direction, 2);
 });
 }
 });
