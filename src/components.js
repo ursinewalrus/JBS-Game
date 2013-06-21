@@ -25,32 +25,14 @@ return this;
 Crafty.c('Actor', {
 init: function() {
 this.requires('2D, Canvas, Grid');
-},
-
-// Registers a stop-movement function to be called when
-// this entity hits an entity with the "Solid" component
-stopOnSolids: function() {
-this.onHit('Solid', this.stopMovement);
- 
-return this;
-},
- 
-// Stops the movement
-stopMovement: function() {
-this._speed = 0;
-if (this._movement) {
-this.x -= this._movement.x;
-this.y -= this._movement.y;
 }
-}
-
 });
  
 // A Tree is just an Actor with a certain sprite
 Crafty.c('Tree', {
 init: function() {
 this.requires('Actor, Solid, spr_tree');
-},
+}
 });
 
 Crafty.c('Door',{
@@ -63,35 +45,35 @@ this.requires('Actor, Solid, spr_door');
 Crafty.c('Bush', {
 init: function() {
 this.requires('Actor, Solid, spr_bush');
-},
+}
 });
 
  
 // This is the player-controlled character
 Crafty.c('PlayerCharacter', {
 init: function() {
-var direction;
-this.requires('Actor, Fourway, Collision, spr_player, SpriteAnimation,Keyboard')
+this.direction = 'n'
+this.requires('Actor, Fourway, Collision, Keyboard, spr_player, SpriteAnimation')
 .fourway(4)
 .onHit('Village', this.visitVillage)
 .onHit('Door', this.enterRoom)
 .stopOnSolids() // put after all collision detection
-.bind("EnterFrame", function(e) {
-    
-        if (this.isDown("W")) {
-            direction = "up";
-        } else if (this.isDown("A")) {
-            direction = "left";
-        } else if (this.isDown("D")) {
-            direction = "right";
-        } else if (this.isDown("S")) {
-            direction =  "down";
-        }
-        console.log(direction);
-    
-    
-})
-    
+.bind('EnterFrame', function() {
+	if (this.isDown('W')) {
+		this.direction = 'n'
+	} else if (this.isDown('S')) {
+		this.direction = 's'
+	} else if (this.isDown('A')) {
+		this.direction = 'w'
+	} else if (this.isDown('D')) {
+		this.direction = 'e'
+	} if (this.isDown('SPACE')) {
+		Crafty.e('Arrow').at(this.at().x,this.at().y).direction = this.direction;
+	}
+}); 
+
+//for animation later
+/*
 .animate('Pup',0,0,2)
 .animate('Pr',0,1,2)
 .animate('Pd',0,2,2)
@@ -110,8 +92,23 @@ this.animate('PlayerMovingUp', animation_speed, -1);
 this.stop();
 }
 });
-
+*/
 },
+
+stopOnSolids: function() {
+this.onHit('Solid', this.stopMovement);
+	return this;
+},
+
+	// Stops the movement
+stopMovement: function() {
+this._speed = 0;
+if (this._movement) {
+	this.x -= this._movement.x;
+	this.y -= this._movement.y;
+}
+},
+
 
 enterRoom: function(data) {
 dooor = data[0].obj;
@@ -160,25 +157,47 @@ return data[0];
 
 Crafty.c('NPC', {
 init: function() {
-this.requires('Actor, Collision')
-.NPCRandomMove()
-.stopOnSolids();
-},
+this.direction = 'n'
+this.reverseDirection = 's'
+this.requires('Actor, Collision, spr_npc')
+.bind('EnterFrame' , function() {
+if (Math.random() > .95) {
+	var newDirection = Math.random();
+		if (newDirection < .25) {
+			this.direction = 'n'
+			this.reverseDirection = 's'
+		}
+		else if (newDirection > .25 && newDirection < .5) {
+			this.direction = 's'
+			this.reverseDirection = 'n'
+		}
+		else if (newDirection >.5 && newDirection < .75) {
+			this.direction = 'e'
+			this.reverseDirection = 'w'
+		}
+		else if (newDirection > .76) {
+			this.direction = 'w'
+			this.reverseDirection = 'e'
+		}
+}
+this.move(this.direction, 1);
+if (this.hit('Solid')) {
+	this.move(this.reverseDirection, 1);
+}
+if (this.hit('PlayerCharacter')) {
+	Crafty.scene('YouLose');
+}
+});
+}
+});
 
-NPCRandomMove: function() {
-	var newDirection = Math.randomNumber(0, 3);
-	if (newDirection == 0) {
-		this.move('n', 2);
-	} 
-	else if (newDirection == 1) {
-		this.move('s', 2);
-	}
-	else if (newDirection == 2) {
-		this.move('e', 2);
-	}
-	else if (newDirection == 3) {
-		this.move('w', 2);
-	}
+Crafty.c('Arrow', {
+init: function() {
+this.direction = 'n'
+this.requires('Actor, spr_player')
+.bind('EnterFrame', function() {
+	this.move(this.direction, 1);
+});
 }
 });
 

@@ -28,13 +28,17 @@ if (at_edge) {
 // Place a tree entity at the current tile
 Crafty.e('Tree').at(x, y);
 this.occupied[x][y] = true;
-} else if (Math.random() < 0.06 && !this.occupied[x][y] && middle) {
+} 
+if (Math.random() < 0.06 && !this.occupied[x][y] && middle) {
 // Place a bush entity at the current tile
 Crafty.e('Bush').at(x, y);
 this.occupied[x][y] = true;
-}
+} 
 if (trans) {
 Crafty.e('Door').at(x,y);
+}
+if(Math.random()<.03 && !this.occupied[x][y] && middle){
+	Crafty.e('NPC').at(x,y);
 }
 }
 }
@@ -86,6 +90,27 @@ Crafty.scene('Game');
 this.unbind('KeyDown', this.restart_game);
 });
 
+// Losing Scene
+// -------------
+// Tells the player when they've won and lets them start a new game
+Crafty.scene('YouLose', function() {
+// Display some text in celebration of the victory
+Crafty.e('2D, DOM, Text')
+.attr({ x: 0, y: 0 })
+.text('Eat A Dick');
+ 
+// Watch for the player to press a key, then restart the game
+// when a key is pressed
+this.restart_game = this.bind('KeyDown', function() {
+Crafty.scene('Game');
+});
+}, function() {
+// Remove our event binding from above so that we don't
+// end up having multiple redundant event watchers after
+// multiple restarts of the game
+this.unbind('KeyDown', this.restart_game);
+});
+
 // Loading scene
 // -------------
 // Handles the loading of binary assets such as images and audio files
@@ -108,7 +133,8 @@ Crafty.load(['assets/16x16_forest_1.gif','assets/16x16_forest_2.gif'], function(
 // to be drawn with a certain sprite
 	
 Crafty.sprite(16, 'assets/16x16_forest_2.gif', {
-spr_door:[1,1]
+spr_door:[1,1],
+spr_npc: [0,0]
 }),
 Crafty.sprite(16, 'assets/16x16_forest_1.gif', {
 spr_tree: [0, 0],
