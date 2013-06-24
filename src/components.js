@@ -31,7 +31,7 @@ this.requires('2D, Canvas, Grid');
 // A Tree is just an Actor with a certain sprite
 Crafty.c('Tree', {
 init: function() {
-this.requires('Actor, Solid, spr_tree');
+this.requires('Actor, Solid, spr_tree2');
 }
 });
 
@@ -54,9 +54,9 @@ Crafty.c('PlayerCharacter', {
 init: function() {
 this.arrowTimer = 0;
 this.hurtTimer = 0;
-this.direction = 'n'
+this.direction = 'n';
 this.requires('Actor, Fourway, Collision, Keyboard, spr_player, SpriteAnimation')
-.fourway(3)
+.fourway(2)
 .onHit('Village', this.visitVillage)
 .onHit('Door', this.enterRoom)
 .onHit('NPC', this.hurt)
@@ -169,7 +169,11 @@ if ((roundedY == Game.map_grid.height - 2) ||
 	player_Y = roundedY;
 }
 */
-Crafty.scene('Game');
+if(Math.random()>.5){
+	Crafty.scene('Game');
+} else {
+	Crafty.scene('Room2');
+}
 },
 
 
@@ -187,7 +191,7 @@ init: function() {
 this.direction = 'n'
 this.hp = 2;
 this.reverseDirection = 's'
-this.requires('Actor, Collision, Solid, spr_npc')
+this.requires('Actor, Collision, Solid, spr_wolfyfront')
 .onHit('PlayerCharacter', this.hurtPlayer)
 .bind('EnterFrame' , function() {
 if (Math.random() > .95) {
@@ -237,12 +241,12 @@ ouch : function () {
 Crafty.c('Arrow', {
 init: function() {
 this.direction = ''
-this.requires('Actor, spr_player,Collision')
+this.requires('Actor, spr_arrow2N,Collision')
 .onHit('NPC',this.hurt)
 .onHit('NPC',this.shatter)
 .onHit('Solid',this.shatter)
 .bind('EnterFrame', function() {
-	this.move(this.direction, 3);
+	this.move(this.direction, 6);
 });
 },
 
