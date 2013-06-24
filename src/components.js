@@ -169,9 +169,9 @@ if ((roundedY == Game.map_grid.height - 2) ||
 	player_Y = roundedY;
 }
 */
-if(Math.random()>.5){
-	Crafty.scene('Game');
-} else {
+if(Math.random()>.5 && this.isDown('F')){
+		Crafty.scene('Game');
+} else if(this.isDown('F')) {
 	Crafty.scene('Room2');
 }
 },
