@@ -314,9 +314,13 @@ var HUDHP_Array = new Array ()
 
 HUD_HP = function () { 
 	var hp = Crafty.e("2D, DOM,Color")
-	hp.color('rgb(0,0,0)')
-	hp.attr({w:player_hp*33, h:25,x:0,y:24,alpha:1.0})
+	hp.color('rgb(255,0,0)')
+	hp.attr({w:player_hp*33, h:25,x:0,y:240,alpha:1.0})
 	HUDHP_Array.push(hp);
+	
+	var hp_text = Crafty.e('2D, DOM, Color, Text')
+	hp_text.attr({x:20,y:230,alpha:1.0})
+	hp_text.text('HP')
 }
 
     
