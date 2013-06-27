@@ -85,16 +85,18 @@ this.requires('Actor, Fourway, Collision, Keyboard, spr_player, SpriteAnimation'
 		deleteInventory();
 	}
 	//****** displays hp, will want to move this ********
-	if(this.isDown('O')){
-		HUD_HP();
-		
-	}
 	if (this.arrowTimer > 0) {
 		this.arrowTimer = this.arrowTimer - 1;
 	}
 	if (this.hurtTimer > 0) {
         this.hurtTimer -= 1;
     }
+    
+    
+        
+        resetHP();
+		HUD_HP();
+        
 	
 }); 
 
@@ -316,6 +318,8 @@ HUD_HP = function () {
 	hp.attr({w:player_hp*33, h:25,x:0,y:24,alpha:1.0})
 	HUDHP_Array.push(hp);
 }
+
+    
 
 resetHP = function() {
     while(HUDHP_Array.length > 0)
