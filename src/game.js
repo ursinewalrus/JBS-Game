@@ -10,6 +10,8 @@ tile: {
 width: 16,
 height: 16
 }
+
+
 },
  
 // The total width of the game screen. Since our grid takes up the entire screen
@@ -29,6 +31,7 @@ start: function() {
 // Start crafty and set a background color so that we can see it's working
 Crafty.init(Game.width(), Game.height());
 Crafty.background('rgb(35, 109, 20)');
+
  
 // Simply start the "Loading" scene to get things going
 

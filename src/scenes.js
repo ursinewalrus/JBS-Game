@@ -46,7 +46,7 @@ if(Math.random()<.03 && !this.occupied[x][y] && middle){
 }
 }
 }
- 
+     Crafty.e('hud, Persist').at(5,5);
 // Generate up to five villages on the map in random locations
 var max_villages = 5;
 for (var x = 0; x < Game.map_grid.width; x++) {
@@ -185,6 +185,8 @@ Crafty.scene('Game');
 // -------------
 // Runs the core gameplay loop
 Crafty.scene('Room1', function() {
+
+
 // A 2D array to keep track of all occupied tiles
 this.occupied = new Array(Game.map_grid.width);
 for (var i = 0; i < Game.map_grid.width; i++) {
@@ -194,8 +196,8 @@ this.occupied[i][y] = false;
 }
 }
  
-// Player character, placed at 5, 5 on our grid
-// Player character, placed at 5, 5 on our grid
+
+    
 this.player = Crafty.e('PlayerCharacter').at(player_X, player_Y);
 //this.player.setDirection();
 this.occupied[this.player.at().x][this.player.at().y] = true;
@@ -228,7 +230,7 @@ if(Math.random()<.03 && !this.occupied[x][y] && middle){
 }
 }
 }
- 
+
 // Generate up to five villages on the map in random locations
 var max_villages = 5;
 for (var x = 0; x < Game.map_grid.width; x++) {

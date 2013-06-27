@@ -114,7 +114,6 @@ this.onHit('Solid', this.stopMovement);
 },
 
 hurt:function() {
-    console.log(player_hp);
     if (this.hurtTimer == 0) {
         player_hp -= 1;
     }
@@ -185,6 +184,15 @@ return data[0];
 }
 });
 
+Crafty.c('hud', {
+    
+    init :function() {
+        this.requires('Actor, Color')
+            .color('#FF0000');
+            
+    },
+});
+    
 
 Crafty.c('NPC', {
 init: function() {
