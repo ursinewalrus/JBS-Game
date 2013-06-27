@@ -143,20 +143,12 @@ hurt:function() {
 },
 
 // Stops the movement
-stopMovement: function () {
-    if (this._movement) {
-        this.x -= this._movement.x;
-        if (this.hit('Solid')) {
-            this.x += this._movement.x;
-            this.y -= this._movement.y;
-            if (this.hit('Solid')) {
-                this.x -= this._movement.x;
-                this.y -= this._movement.y;
-            }
-        }
-    } else {
-        this._speed = 0;
-    }
+stopMovement: function() {
+this._speed = 0;
+if (this._movement) {
+	this.x -= this._movement.x;
+	this.y -= this._movement.y;
+}
 },
 
 
@@ -329,8 +321,6 @@ HUD_HP = function () {
 	var hp_text = Crafty.e('2D, DOM, Color, Text')
 	hp_text.attr({x:20,y:230,alpha:1.0})
 	hp_text.text('HP')
-	
-	
 }
 
     
