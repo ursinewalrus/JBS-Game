@@ -300,7 +300,7 @@ hurt: function(data) {
 Crafty.c('Tree', {
 init: function() {
 this.enttype = 'Tree';
-this.requires('Actor, Solid, DontRemove, spr_tree2');
+this.requires('Actor, Solid, DontRemove, spr_tree2,Block');
 }
 });
 
