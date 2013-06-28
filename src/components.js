@@ -92,12 +92,25 @@ this.requires('Actor, Fourway, Collision, Keyboard, spr_player, SpriteAnimation'
 			this.arrowTimer = 30;
 		}
 	}
+	//brings up inventory screen
+	if (this.isDown('I')){
+		makeInventory();
+	}
+	//gets rid of inventory screen
+	if(this.isDown('P')){
+		deleteInventory();
+	}
+	//****** displays hp, will want to move this ********
 	if (this.arrowTimer > 0) {
 		this.arrowTimer = this.arrowTimer - 1;
 	}
 	if (this.hurtTimer > 0) {
         this.hurtTimer -= 1;
     }
+    
+    
+		resetHUD();
+		HUD();
 	
 });
 this.entType = 'PlayerCharacter'; 
@@ -199,7 +212,6 @@ visitVillage: function(data) {
 }
 });
 
-
 Crafty.c('NPC', {
 init: function() {
 this.direction = 'n'
@@ -296,10 +308,59 @@ visit: function() {
 this.destroy();
 Crafty.trigger('VillageVisited', this);
 },
-
-
-
 });
+
+var inventoryArray = new Array()
+
+makeInventory = function() {
+	var inventoryScreen = Crafty.e("2D, DOM, Color, Mouse")
+	inventoryScreen.color('rgb(255,255,255)')
+	inventoryScreen.attr({w:384, h:256,x:0,y:0,alpha:1.0})
+	var inventoryTitle = Crafty.e("2D,DOM,Text")
+		.attr({x:Game.map_grid.width+110, y:Game.map_grid.height,w:70, h:30})
+		.text("INVENTORY")
+		.css({"font" : "16pt Arial","color":"0F0","test-align":"center"});
+	inventoryArray.push(inventoryScreen,inventoryTitle);
+};
+
+deleteInventory = function() {
+    while(inventoryArray.length > 0)
+    {
+    try{inventoryArray[0].destroy();}catch(err){console.log("Destroy failed");};
+    try{inventoryArray.splice(0, 1);}catch(err){console.log("Splice failed")};//remove the first entity
+    }
+}
+
+var HUD_Array = new Array ()
+
+HUD = function () { 
+	var hp = Crafty.e("2D, DOM,Color")
+	hp.color('rgb(255,0,0)')
+	hp.attr({w:player_hp*33, h:25,x:0,y:240,alpha:1.0})
+	
+	var hp_text = Crafty.e('2D, DOM, Color, Text')
+	hp_text.attr({x:20,y:230,alpha:1.0})
+	hp_text.text('HP')
+	
+	var Inventory_Button = Crafty.e("2D,DOM,Color,Mouse")
+	Inventory_Button.color('rgb(255,216,0)')
+	Inventory_Button.attr({w:20,h:20,x:0,y:220,alpha:0.5})
+	Inventory_Button.bind("Click",function(e){makeInventory();});
+	
+	HUD_Array.push(hp,hp_text,Inventory_Button);
+}
+
+    
+
+resetHUD = function() {
+    while(HUD_Array.length > 0)
+    {
+    try{HUD_Array[0].destroy();}catch(err){console.log("Destroy failed");};
+    try{HUD_Array.splice(0, 1);}catch(err){console.log("Splice failed")};
+    }
+   
+}
+
 
 
 
