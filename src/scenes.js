@@ -101,7 +101,7 @@ Crafty.scene('YouLose', function() {
 // Display some text showing the loss
 Crafty.e('2D, DOM, Text')
 .attr({ x: 0, y: 0 })
-.text('Oh noes a wolf bit your dick off!');
+.text('kk fix this');
  
 // Watch for the player to press a key, then restart the game
 // when a key is pressed
