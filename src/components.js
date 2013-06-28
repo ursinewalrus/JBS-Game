@@ -20,6 +20,10 @@ return this;
 }
 });
  
+//----------------------------------------------------------
+//--------------Basic Components----------------------------
+//----------------------------------------------------------
+
 // An "Actor" is an entity that is drawn in 2D on canvas
 // via our logical coordinate grid
 Crafty.c('Actor', {
@@ -28,42 +32,11 @@ this.requires('2D, Canvas, Grid');
 }
 });
 
-Crafty.c('DontRemove', {
-init: function() {}
-});
- 
-// A Tree is just an Actor with a certain sprite
-Crafty.c('Tree', {
-init: function() {
-this.enttype = 'Tree';
-this.requires('Actor, Solid, DontRemove, spr_tree2');
-}
-});
 
-Crafty.c('Door',{
-init:function(){
-	this.enttype = 'Door';
-	this.requires('Actor, Solid, DontRemove, spr_door');
-	this.currentScene = '';
-	this.nextScene = '';
-},
-setCurrentScene: function(cScene) {
-	this.currentScene = cScene;
-},
-setNextScene: function(nScene) {
-	this.nextScene = nScene;
-}
-});
+//----------------------------------------------------------
+//--------------Moving Components---------------------------
+//----------------------------------------------------------
 
-// A Bush is just an Actor with a certain sprite
-Crafty.c('Bush', {
-init: function() {
-this.enttype = 'Bush';
-this.requires('Actor, Solid, DontRemove, spr_bush');
-}
-});
-
- 
 // This is the player-controlled character
 Crafty.c('PlayerCharacter', {
 init: function() {
@@ -71,7 +44,7 @@ this.arrowTimer = 0;
 this.hurtTimer = 0;
 this.direction = 'n';
 this.enttype = 'PlayerCharacter';
-this.requires('Actor, Fourway, Collision, Keyboard, spr_player, SpriteAnimation')
+this.requires('Actor, Fourway, Collision, Persist, Keyboard, spr_player, SpriteAnimation')
 .fourway(2)
 .onHit('Village', this.visitVillage)
 .onHit('Door', this.enterRoom)
@@ -169,6 +142,8 @@ stopMovement: function() {
 
 enterRoom: function(data) {
 	dooor = data[0].obj;
+	var player_X;
+	var player_Y;
 	var roundedX =  Math.round(this.at().x);
 	if ((dooor.at().x == Game.map_grid.width - 1) ||
 		(dooor.at().x == 0)) {
@@ -183,6 +158,7 @@ enterRoom: function(data) {
 	} else {
 		player_Y = roundedY;
 	}
+	this.at(player_X, player_Y);
 /*
 var roundedX =  Math.round(this.at().x);
 if ((roundedX == Game.map_grid.width - 2) ||
@@ -294,6 +270,40 @@ hurt: function(data) {
 	},
 });
 
+//----------------------------------------------------------
+//--------------Non Moving Components-----------------------
+//----------------------------------------------------------
+
+// A Tree is just an Actor with a certain sprite
+Crafty.c('Tree', {
+init: function() {
+this.enttype = 'Tree';
+this.requires('Actor, Solid, DontRemove, spr_tree2');
+}
+});
+
+Crafty.c('Door',{
+init:function(){
+	this.enttype = 'Door';
+	this.requires('Actor, Solid, DontRemove, spr_door');
+	this.currentScene = '';
+	this.nextScene = '';
+},
+setCurrentScene: function(cScene) {
+	this.currentScene = cScene;
+},
+setNextScene: function(nScene) {
+	this.nextScene = nScene;
+}
+});
+
+// A Bush is just an Actor with a certain sprite
+Crafty.c('Bush', {
+init: function() {
+this.enttype = 'Bush';
+this.requires('Actor, Solid, DontRemove, spr_bush');
+}
+});
 
 // A village is a tile on the grid that the PC must visit in order to win the game
 Crafty.c('Village', {

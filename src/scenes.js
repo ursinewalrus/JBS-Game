@@ -17,7 +17,7 @@ function EntityData(ent, x, y) {
 	}
 };
 
-
+/*
 
 //Data Structure to save all entity data in a Scene for load and exit
 function Room(name) {
@@ -77,6 +77,7 @@ function initializeScenes() {
 	room1.createScene();
 };
 
+*/
 
 // Game scene
 // -------------
@@ -96,9 +97,9 @@ function mainRoom (name) {
  
 	// Player character, placed at 5, 5 on our grid
 	// Player character, placed at 5, 5 on our grid
-	this.player = Crafty.e('PlayerCharacter').at(player_X, player_Y);
+	Crafty.e('PlayerCharacter').at(5, 5);
 	//this.player.setDirection();
-	this.occupied[this.player.at().x][this.player.at().y] = true;
+	this.occupied[5][5] = true;
  
 	// Place a tree at every edge square on our grid of 16x16 tiles
 	for (var x = 0; x < Game.map_grid.width; x++) {
@@ -164,7 +165,6 @@ mainRoom.prototype.exit = function() {
 		tempstore[i] = entsave;
 	};
 	Crafty.scene(this.name, function() {
-		Crafty.e('PlayerCharacter').at(player_X, player_Y);
 		for (var i = 0; i < tempstore.length; i++) {
 			Crafty.e(tempstore[i].name).at(tempstore[i].x, tempstore[i].y);
 		}
@@ -172,8 +172,6 @@ mainRoom.prototype.exit = function() {
 };
 
 /*
-
-
 // Alternate Game Scene
 // -------------
 // Runs the core gameplay loop
@@ -247,6 +245,8 @@ Crafty.scene('Victory');
 this.unbind('VillageVisited', this.show_victory);
 });
 
+*/
+
 
  
 // Victory scene
@@ -261,7 +261,8 @@ Crafty.e('2D, DOM, Text')
 // Watch for the player to press a key, then restart the game
 // when a key is pressed
 this.restart_game = this.bind('KeyDown', function() {
-Crafty.scene('Game');
+Game.room1 = new mainRoom('room1');
+Crafty.scene('room1');
 });
 }, function() {
 // Remove our event binding from above so that we don't
@@ -285,7 +286,8 @@ Crafty.e('2D, DOM, Text')
 // Watch for the player to press a key, then restart the game
 // when a key is pressed
 this.restart_game = this.bind('KeyDown', function() {
-Crafty.scene('Game');
+Game.room1 = new mainRoom('room1');
+Crafty.scene('room1');
 });
 }, function() {
 // Remove our event binding from above so that we don't
@@ -295,7 +297,6 @@ this.unbind('KeyDown', this.restart_game);
 });
 
 
-*/
 
 
 // Loading scene
