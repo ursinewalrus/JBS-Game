@@ -31,20 +31,20 @@ this.requires('2D, Canvas, Grid');
 // A Tree is just an Actor with a certain sprite
 Crafty.c('Tree', {
 init: function() {
-this.requires('Actor, Solid, spr_tree2');
+this.requires('Actor, Solid, spr_tree2,block');
 }
 });
 
 Crafty.c('Door',{
 init:function(){
-this.requires('Actor, Solid, spr_door');
+this.requires('Actor, Solid, spr_door,block');
 }
 });
 
 // A Bush is just an Actor with a certain sprite
 Crafty.c('Bush', {
 init: function() {
-this.requires('Actor, Solid, spr_bush');
+this.requires('Actor, Solid, spr_bush,block');
 }
 });
 
@@ -60,7 +60,8 @@ this.requires('Actor, Fourway, Collision, Keyboard, spr_player, SpriteAnimation'
 .onHit('Village', this.visitVillage)
 .onHit('Door', this.enterRoom)
 .onHit('NPC', this.hurt)
-.stopOnSolids() // put after all collision detection
+.stopOnSolids()
+.stopOnNPC()
 .bind('EnterFrame', function() {
 	if (this.isDown('W')) {
 		this.direction = 'n'
@@ -122,9 +123,39 @@ this.stop();
 },
 
 stopOnSolids: function() {
-this.onHit('Solid', this.stopMovement);
-	return this;
+	if(this.onHit('block', this.stopMovement)){
+		return this;
+	}
 },
+
+stopMovement: function () {
+	if (this._movement) {
+		this.x -= this._movement.x;
+			if (this.hit('block') != false) {
+					this.x += this._movement.x;
+						this.y -= this._movement.y;
+							if (this.hit('block') != false) {
+								this.x -= this._movement.x;
+									this.y -= this._movement.y;
+							}
+			}
+	} else {
+	this._speed = 0;
+	}
+},
+
+stopOnNPC: function () {
+	(this.onHit('npc',this.stopNPC));
+		return this;
+},
+
+//Stops the movement
+stopNPC: function() {
+	this._speed = 0;
+	if (this._movement) {
+		this.x -= this._movement.x;
+		this.y -= this._movement.y;
+}},
 
 hurt:function() {
     console.log(player_hp);
@@ -139,14 +170,6 @@ hurt:function() {
     }
     
 },
-
-// Stops the movement
-stopMovement: function() {
-	this._speed = 0;
-	if (this._movement) {
-		this.x -= this._movement.x;
-		this.y -= this._movement.y;
-}},
 
 
 
@@ -203,7 +226,7 @@ init: function() {
 this.direction = 'n'
 this.hp = 2;
 this.reverseDirection = 's'
-this.requires('Actor, Collision, Solid, spr_wolfyfront')
+this.requires('Actor, Collision, Solid, spr_wolfyfront,npc')
 .onHit('PlayerCharacter', this.hurtPlayer)
 .bind('EnterFrame' , function() {
 if (Math.random() > .95) {
