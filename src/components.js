@@ -49,7 +49,8 @@ this.requires('Actor, Fourway, Collision, Persist, Keyboard, spr_player, SpriteA
 .onHit('Village', this.visitVillage)
 .onHit('Door', this.enterRoom)
 .onHit('NPC', this.hurt)
-.stopOnSolids() // put after all collision detection
+.stopOnSolids()
+.stopOnNPC()
 .bind('EnterFrame', function() {
 	if (this.isDown('W')) {
 		this.direction = 'n'
@@ -112,9 +113,38 @@ this.stop();
 },
 
 stopOnSolids: function() {
-	this.onHit('Solid', this.stopMovement);
+	this.onHit('Block', this.stopMovement);
 	return this;
 },
+
+stopMovement: function () {
+	if (this._movement) {
+		this.x -= this._movement.x;
+			if (this.hit('Block') != false) {
+					this.x += this._movement.x;
+						this.y -= this._movement.y;
+							if (this.hit('Block') != false) {
+								this.x -= this._movement.x;
+									this.y -= this._movement.y;
+							}
+			}
+	} else {
+	this._speed = 0;
+	}
+},
+
+stopOnNPC: function () {
+	(this.onHit('NPC',this.stopNPC));
+		return this;
+},
+
+//Stops the movement
+stopNPC: function() {
+	this._speed = 0;
+	if (this._movement) {
+		this.x -= this._movement.x;
+		this.y -= this._movement.y;
+}},
 
 hurt:function() {
     console.log(player_hp);
@@ -125,18 +155,10 @@ hurt:function() {
     
     
     if (player_hp <= 0) {
+		this.destroy();
         Crafty.scene("YouLose");
     }
     
-},
-
-// Stops the movement
-stopMovement: function() {
-	this._speed = 0;
-	if (this._movement) {
-		this.x -= this._movement.x;
-		this.y -= this._movement.y;
-	}
 },
 
 
@@ -285,7 +307,7 @@ this.requires('Actor, Solid, DontRemove, spr_tree2');
 Crafty.c('Door',{
 init:function(){
 	this.enttype = 'Door';
-	this.requires('Actor, Solid, DontRemove, spr_door');
+	this.requires('Actor, Solid, DontRemove, Block, spr_door');
 	this.currentScene = '';
 	this.nextScene = '';
 },
@@ -301,7 +323,7 @@ setNextScene: function(nScene) {
 Crafty.c('Bush', {
 init: function() {
 this.enttype = 'Bush';
-this.requires('Actor, Solid, DontRemove, spr_bush');
+this.requires('Actor, Solid, DontRemove, Block, spr_bush');
 }
 });
 
@@ -309,7 +331,7 @@ this.requires('Actor, Solid, DontRemove, spr_bush');
 Crafty.c('Village', {
 init: function() {
 this.enttype = 'Village';
-this.requires('Actor, DontRemove, spr_village');
+this.requires('Actor, DontRemove, Block, spr_village');
 this.entType = 'Village';
 },
  

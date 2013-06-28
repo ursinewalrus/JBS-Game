@@ -97,7 +97,7 @@ function mainRoom (name) {
  
 	// Player character, placed at 5, 5 on our grid
 	// Player character, placed at 5, 5 on our grid
-	Crafty.e('PlayerCharacter').at(5, 5);
+	this.player = Crafty.e('PlayerCharacter').at(5, 5);
 	//this.player.setDirection();
 	this.occupied[5][5] = true;
  
@@ -145,6 +145,7 @@ function mainRoom (name) {
 	// Show the victory screen once all villages are visisted
 	this.show_victory = this.bind('VillageVisited', function() {
 	if (!Crafty('Village').length) {
+		Crafty(Crafty('PlayerCharacter')[0]).destroy();
 		Crafty.scene('Victory');
 	}
 	});
@@ -281,7 +282,7 @@ Crafty.scene('YouLose', function() {
 // Display some text showing the loss
 Crafty.e('2D, DOM, Text')
 .attr({ x: 0, y: 0 })
-.text('Oh noes a wolf bit your dick off!');
+.text('kk fix this');
  
 // Watch for the player to press a key, then restart the game
 // when a key is pressed
