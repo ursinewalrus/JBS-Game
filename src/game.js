@@ -1,6 +1,5 @@
 var player_X = 5;
 var player_Y = 5;
-var player_hp = 3;
 Game = {
 // This defines our grid's size and the size of each of its tiles
 map_grid: {

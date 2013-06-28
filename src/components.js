@@ -52,6 +52,13 @@ this.requires('Actor, Solid, spr_bush');
 // This is the player-controlled character
 Crafty.c('PlayerCharacter', {
 init: function() {
+
+this.attributes = new Array(10,10,10,10);
+this.str = this.attributes[0];
+this.dex = this.attributes[1];
+this.intel = this.attributes[2];
+this.beard = this.attributes[3];
+
 this.arrowTimer = 0;
 this.hurtTimer = 0;
 this.direction = 'n';
@@ -127,7 +134,6 @@ this.onHit('Solid', this.stopMovement);
 },
 
 hurt:function() {
-    console.log(player_hp);
     if (this.hurtTimer == 0) {
         player_hp -= 1;
     }
