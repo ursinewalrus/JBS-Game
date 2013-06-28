@@ -93,10 +93,8 @@ this.requires('Actor, Fourway, Collision, Keyboard, spr_player, SpriteAnimation'
     }
     
     
-        
-        resetHP();
-		HUD_HP();
-        
+		resetHUD();
+		HUD();
 	
 }); 
 
@@ -144,12 +142,12 @@ hurt:function() {
 
 // Stops the movement
 stopMovement: function() {
-this._speed = 0;
-if (this._movement) {
-	this.x -= this._movement.x;
-	this.y -= this._movement.y;
-}
-},
+	this._speed = 0;
+	if (this._movement) {
+		this.x -= this._movement.x;
+		this.y -= this._movement.y;
+}},
+
 
 
 enterRoom: function(data) {
@@ -310,27 +308,34 @@ deleteInventory = function() {
     }
 }
 
-var HUDHP_Array = new Array ()
+var HUD_Array = new Array ()
 
-HUD_HP = function () { 
+HUD = function () { 
 	var hp = Crafty.e("2D, DOM,Color")
 	hp.color('rgb(255,0,0)')
 	hp.attr({w:player_hp*33, h:25,x:0,y:240,alpha:1.0})
-	HUDHP_Array.push(hp);
 	
 	var hp_text = Crafty.e('2D, DOM, Color, Text')
 	hp_text.attr({x:20,y:230,alpha:1.0})
 	hp_text.text('HP')
+	
+	var Inventory_Button = Crafty.e("2D,DOM,Color,Mouse")
+	Inventory_Button.color('rgb(255,216,0)')
+	Inventory_Button.attr({w:20,h:20,x:0,y:220,alpha:0.5})
+	Inventory_Button.bind("Click",function(e){makeInventory();});
+	
+	HUD_Array.push(hp,hp_text,Inventory_Button);
 }
 
     
 
-resetHP = function() {
-    while(HUDHP_Array.length > 0)
+resetHUD = function() {
+    while(HUD_Array.length > 0)
     {
-    try{HUDHP_Array[0].destroy();}catch(err){console.log("Destroy failed");};
-    try{HUDHP_Array.splice(0, 1);}catch(err){console.log("Splice failed")};//remove the first entity
+    try{HUD_Array[0].destroy();}catch(err){console.log("Destroy failed");};
+    try{HUD_Array.splice(0, 1);}catch(err){console.log("Splice failed")};
     }
+   
 }
 
 
