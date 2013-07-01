@@ -165,6 +165,11 @@ mainRoom.prototype.exit = function() {
 		var entsave = new EntityData(Crafty(ents[i]));
 		tempstore[i] = entsave;
 	};
+	saveRooms.save({lastRoom: tempstore}, {
+		error: function(object) {
+			alert("save didn't work");
+		}
+	});
 	Crafty.scene(this.name, function() {
 		for (var i = 0; i < tempstore.length; i++) {
 			Crafty.e(tempstore[i].name).at(tempstore[i].x, tempstore[i].y);
