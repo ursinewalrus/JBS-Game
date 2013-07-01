@@ -52,6 +52,7 @@ this.requires('Actor, Fourway, Collision, Persist, Keyboard, spr_player, SpriteA
 .stopOnSolids()
 .stopOnNPC()
 .bind('EnterFrame', function() {
+    
 	if (this.isDown('W')) {
 		this.direction = 'n'
 	} else if (this.isDown('S')) {
@@ -74,6 +75,23 @@ this.requires('Actor, Fourway, Collision, Persist, Keyboard, spr_player, SpriteA
 	if(this.isDown('P')){
 		deleteInventory();
 	}
+	
+	if(this.isDown('F') && Crafty('Item').length > 0) {
+        if (this.direction == 's' && Crafty('Item').at().y  ==  this.at().y-1)     {
+        Crafty('Item').pickUp();
+        }
+        if (this.direction == 'n' && Crafty("Item").at().y == this.at().y+1)     {
+        Crafty('Item').pickUp();
+        }
+        if (this.direction == 'w' && Crafty("Item").at().x == this.at().x+1)     {
+        Crafty('Item').pickUp();
+        }
+        if (this.direction == 'e' && Crafty("Item").at().x == this.at().x-1)     {
+        Crafty('Item').pickUp();
+        }
+    }
+    
+       
 	//****** displays hp, will want to move this ********
 	if (this.arrowTimer > 0) {
 		this.arrowTimer = this.arrowTimer - 1;
@@ -85,6 +103,7 @@ this.requires('Actor, Fourway, Collision, Persist, Keyboard, spr_player, SpriteA
     
 		resetHUD();
 		HUD();
+		console.log(inventory[0]);
 	
 });
 this.entType = 'PlayerCharacter'; 
@@ -115,6 +134,10 @@ this.stop();
 stopOnSolids: function() {
 	this.onHit('Block', this.stopMovement);
 	return this;
+},
+
+pickUp: function() {
+
 },
 
 stopMovement: function () {
@@ -304,6 +327,26 @@ this.requires('Actor, Solid, DontRemove, spr_tree2,Block');
 }
 });
 
+Crafty.c('Item', {
+    init: function () {
+        this.enttype = 'Item';
+        this.requires( 'Actor, Color, DontRemove, Collision')
+        .color('rgb(0,0,255)')
+    },
+    
+    pickUp : function() {
+        inventory.push(this);
+        this.destroy();
+    }
+});
+
+Crafty.c('Potion', {
+    init: function() {
+        this.requires('Item')
+    },
+    
+});
+
 Crafty.c('Door',{
 init:function(){
 	this.enttype = 'Door';
@@ -343,6 +386,7 @@ Crafty.trigger('VillageVisited', this);
 });
 
 var inventoryArray = new Array()
+var inventory = new Array()
 
 makeInventory = function() {
 	var inventoryScreen = Crafty.e("2D, DOM, Color, Mouse")

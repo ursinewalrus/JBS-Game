@@ -129,6 +129,8 @@ function mainRoom (name) {
 			}
 		}
 	}
+	
+	Crafty.e('Potion').at(6,6);
  
 	// Generate up to five villages on the map in random locations
 	var max_villages = 5;
