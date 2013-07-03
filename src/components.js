@@ -86,8 +86,11 @@ this.requires('Actor, Fourway, Collision, Persist, Keyboard, spr_player, SpriteA
 		resetHUD();
 		HUD();
 	
+})
+.bind("SaveData", function (data, prepare) {
+    data.attr.x = this.x;
+    data.attr.y = this.y;
 });
-this.entType = 'PlayerCharacter'; 
 
 //for animation later
 /*
@@ -147,7 +150,6 @@ stopNPC: function() {
 }},
 
 hurt:function() {
-    console.log(player_hp);
     if (this.hurtTimer == 0) {
         player_hp -= 1;
     }
@@ -181,24 +183,9 @@ enterRoom: function(data) {
 		player_Y = roundedY;
 	}
 	this.at(player_X, player_Y);
-/*
-var roundedX =  Math.round(this.at().x);
-if ((roundedX == Game.map_grid.width - 2) ||
-	(roundedX == 1)) {
-	player_X = Game.map_grid.width - roundedX - 1;
-} else {
-	player_X = roundedX;
-}
-var roundedY = Math.round(this.at().y);
-if ((roundedY == Game.map_grid.height - 2) ||
-	(roundedY == 1)) {
-	player_Y = Game.map_grid.height - roundedY - 1;
-} else {
-	player_Y = roundedY;
-}
-*/
-	Game.room1.exit();
-	Crafty.scene('room1');
+	allRooms[dooor.thisRoom].exit();
+	console.log(dooor.linkedRoom);
+	Crafty.scene(dooor.linkedRoom);
 },
 
 
@@ -215,7 +202,6 @@ init: function() {
 this.direction = 'n'
 this.hp = 2;
 this.reverseDirection = 's'
-this.enttype = 'NPC';
 this.requires('Actor, Collision, DontRemove, Solid, spr_wolfyfront')
 .onHit('PlayerCharacter', this.hurtPlayer)
 .bind('EnterFrame' , function() {
@@ -253,7 +239,11 @@ if(this.hp<=0){
 	this.destroy();
 }
 }
-);
+)
+.bind("SaveData", function (data, prepare) {
+    data.attr.x = this.x;
+    data.attr.y = this.y;
+});
 },
 
 hurtPlayer : function (data) {
@@ -269,9 +259,7 @@ ouch : function () {
 
 Crafty.c('Arrow', {
 init: function() {
-this.enttype = 'Arrow';
 this.direction = ''
-this.entType = 'Arrow';
 this.requires('Actor, spr_arrow2N, Collision')
 .onHit('NPC',this.hurt)
 .onHit('NPC',this.shatter)
@@ -299,39 +287,53 @@ hurt: function(data) {
 // A Tree is just an Actor with a certain sprite
 Crafty.c('Tree', {
 init: function() {
-this.enttype = 'Tree';
-this.requires('Actor, Solid, DontRemove, spr_tree2');
+this.requires('Actor, Solid, Block, DontRemove, spr_tree2')
+.bind("SaveData", function (data, prepare) {
+    data.attr.x = this.x;
+    data.attr.y = this.y;
+});
 }
 });
 
 Crafty.c('Door',{
 init:function(){
-	this.enttype = 'Door';
-	this.requires('Actor, Solid, DontRemove, Block, spr_door');
-	this.currentScene = '';
-	this.nextScene = '';
+	this.thisRoom;
+	this.linkedRoom;
+	this.requires('Actor, Solid, DontRemove, Block, spr_door')
+	.bind("SaveData", function (data, prepare) {
+		data.attr.x = this.x;
+		data.attr.y = this.y;
+		data.attr.thisRoom = this.thisRoom;
+		data.attr.linkedRoom = this.linkedRoom;
+	});
 },
-setCurrentScene: function(cScene) {
-	this.currentScene = cScene;
+setThisRoom:function(room) {
+	this.thisRoom = room;
 },
-setNextScene: function(nScene) {
-	this.nextScene = nScene;
+setLinkedRoom:function(room) {
+	this.linkedRoom = room;
 }
 });
 
 // A Bush is just an Actor with a certain sprite
 Crafty.c('Bush', {
 init: function() {
-this.enttype = 'Bush';
-this.requires('Actor, Solid, DontRemove, Block, spr_bush');
+this.requires('Actor, Solid, DontRemove, Block, spr_bush')
+.bind("SaveData", function (data, prepare) {
+	data.attr.x = this.x;
+	data.attr.y = this.y;
+});
 }
 });
 
 // A village is a tile on the grid that the PC must visit in order to win the game
 Crafty.c('Village', {
 init: function() {
-this.enttype = 'Village';
-this.requires('Actor, DontRemove, Block, spr_village');
+this.requires('Actor, DontRemove, Block, spr_village')
+.bind("SaveData", function (data, prepare) {
+	data.attr.x = this.x;
+	data.attr.y = this.y;
+});
 this.entType = 'Village';
 },
  

@@ -5,131 +5,115 @@
 
 //Data Structure for entity data to create entitys for scene load and saving entity data
 //on scene exit
-function EntityData(ent, x, y) {
-	if (arguments.length === 1) {
-		this.name = ent.enttype;
-		this.x = ent.at().x;
-		this.y = ent.at().y;
-	} else {
-		this.name = ent;
-		this.x = x;
-		this.y = y;
-	}
-};
 
-/*
+var allRooms;
 
-//Data Structure to save all entity data in a Scene for load and exit
-function Room(name) {
-	this.name = name;
-	this.entities = new Array();
-	this.northRoom;
-	this.southRoom;
-	this.eastRoom;
-	this.westRoom;
-
-};
-
-Room.prototype.createScene = function () {
-	var rm = this;
-	Crafty.scene(rm.name, function() {
-		for (var i = 0; i < rm.entities.length; i++) {
-			Crafty.e(rm.entities[i].name).at(rm.entities[i].x, rm.entities[i].y);
-		}
-	});
-};
-
-Room.prototype.saveScene = function () {
-	this.entities = new Array();
-	var actors = Crafty('Actor');
-	for (var i = 0; i < actors.length; i++) {
-		this.entities[i] = new EntityData(actors[i]);
-	}
-	this.createScene();
-};
-
-
-
-function occupiedArray() {
-	var occupied = new Array(Game.map_grid.width);
-	for (var i = 0; i < Game.map_grid.width; i++) {
-		occupied[i] = new Array(Game.map_grid.height);
-		for (var y = 0; y < Game.map_grid.height; y++) {
-			occupied[i][y] = false;
-		}
-	}
-	return occupied;
+function RoomLink(nextRoom, direction, locationOnWall) {
+	this.nextRoom = nextRoom;
+	this.direction = direction;
+	this.locationOnWall = locationOnWall;
 }
 
-
-function initializeScenes() {
-	//this.occupied = new occupiedArray();
-	
-		var room1 = new Room('room1');
-	for (var x = 0; x < Game.map_grid.width; x++) {
-		room1.entities.push(new EntityData('Tree', x, 0));
-		room1.entities.push(new EntityData('Tree', x, Game.map_grid.height - 1));
+//after name you can add arguments for rooms to conect this to in the form
+// (room, direction, locationOnWall)
+function Room (name) {
+	this.name = name;
+	this.saveData = new Array();
+	this.roomLinks = new Array(); //items in form [Room, direction, xoryvalue]
+	if (arguments.length === 4) {
+		this.linkRooms(arguments[1], arguments[2], arguments[3]);
+	} else 
+	if (arguments.length > 1) {
+		throw 'wrong number of arguments';
 	}
-	for (var y = 0; y < Game.map_grid.height; y++) {
-		room1.entities.push(new EntityData('Tree', 0, y));
-		room1.entities.push(new EntityData('Tree', Game.map_grid.width - 1, y));
-	}
-	room1.createScene();
+	allRooms[this.name] = this;
 };
 
-*/
-
-// Game scene
-// -------------
-// Runs the core gameplay loop
-function mainRoom (name) {
-	this.name = name;
-	Crafty.scene(name, function() {
-	// A 2D array to keep track of all occupied tiles
-	player_hp = 3;
-	this.occupied = new Array(Game.map_grid.width);
-	for (var i = 0; i < Game.map_grid.width; i++) {
-		this.occupied[i] = new Array(Game.map_grid.height);
-		for (var y = 0; y < Game.map_grid.height; y++) {
-			this.occupied[i][y] = false;
-		}
+Room.prototype.linkRooms  = function(nextRoom, direction, locationOnWall) {
+	this.roomLinks.push(new RoomLink(nextRoom, direction, locationOnWall));
+	var linkedRoomDir;
+	//console.log(direction);
+	if (direction == 'n') {
+		linkedRoomDir = 's';
+	} else
+	if (direction == 's') {
+		linkedRoomDir = 'n';
+	} else
+	if (direction == 'e') {
+		linkedRoomDir = 'w';
+	} else
+	if (direction == 'w') {
+		linkedRoomDir = 'e';
 	}
- 
-	// Player character, placed at 5, 5 on our grid
-	// Player character, placed at 5, 5 on our grid
-	this.player = Crafty.e('PlayerCharacter').at(5, 5);
-	//this.player.setDirection();
-	this.occupied[5][5] = true;
- 
-	// Place a tree at every edge square on our grid of 16x16 tiles
-	for (var x = 0; x < Game.map_grid.width; x++) {
-		for (var y = 0; y < Game.map_grid.height; y++) {
-			var at_edge = ((y<7 || y>8)&&(x==0 || x == Game.map_grid.width-1)) || ((x<11 || x>12)&&(y==0 || y == Game.map_grid.height-1));
-			var buffer_zone = ((y>7 || y<8)&&(x==1 || x == Game.map_grid.width-2)) || ((x>11 || x<12)&&(y==1 || y == Game.map_grid.height-2));
-			var trans = ((y>6 && y<9)&&(x==0 || x == Game.map_grid.width-1)) || ((x>10 && x<13)&&(y==0 || y == Game.map_grid.height-1)) ;
-			var middle = !at_edge && !trans && !buffer_zone;
+	var newRoomLink = new RoomLink(this.name, linkedRoomDir, locationOnWall);
+	allRooms[nextRoom].roomLinks.push(newRoomLink);
+}
 
-			if (at_edge) {
-				// Place a tree entity at the current tile
-				Crafty.e('Tree').at(x, y);
-				this.occupied[x][y] = true;
-			} 
-			if (Math.random() < 0.06 && !this.occupied[x][y] && middle) {
-				// Place a bush entity at the current tile
-				Crafty.e('Bush').at(x, y);
-				this.occupied[x][y] = true;
-			} 
-			if (trans && !this.occupied[x][y]) {
-				Crafty.e('Door').at(x,y);
-				this.occupied[x][y] = true;
-			}
-			if(Math.random()<.03 && !this.occupied[x][y] && middle){
-				Crafty.e('NPC').at(x,y);
-				this.occupied[x][y] = true;
+function buildRoom(rm) {
+	Crafty.scene(rm.name, function() {
+		//console.log(thisRoom.name);
+		// A 2D array to keep track of all occupied tiles
+		player_hp = 3;
+		this.occupied = new Array(Game.map_grid.width);
+		for (var i = 0; i < Game.map_grid.width; i++) {
+			this.occupied[i] = new Array(Game.map_grid.height);
+			for (var y = 0; y < Game.map_grid.height; y++) {
+				this.occupied[i][y] = false;
 			}
 		}
-	}
  
+		// Player character, placed at 5, 5 on our grid
+		// Player character, placed at 5, 5 on our grid
+		//this.player.setDirection();
+		this.occupied[5][5] = true;
+		
+		//places Doors
+		for (var i = 0; i < rm.roomLinks.length; i++) {
+			var roomlnk = rm.roomLinks[i];
+			var newDoor = new Crafty.e('Door');
+			console.log(roomlnk.direction);
+			newDoor.setThisRoom(rm.name);
+			newDoor.setLinkedRoom(roomlnk.nextRoom);
+			if (roomlnk.direction == 'n') {
+				newDoor.at(roomlnk.locationOnWall, 0);
+				this.occupied[roomlnk.locationOnWall][0] = true;
+			} else 
+			if (roomlnk.direction == 's') {
+				newDoor.at(roomlnk.locationOnWall, Game.map_grid.height - 1);
+				this.occupied[roomlnk.locationOnWall][Game.map_grid.height - 1] = true;
+			} else 
+			if (roomlnk.direction == 'e') {
+				newDoor.at(Game.map_grid.width - 1, roomlnk.locationOnWall);
+				this.occupied[Game.map_grid.width - 1][roomlnk.locationOnWall] = true;
+			} else 
+			if (roomlnk.direction == 'w') {
+				newDoor.at(0, roomlnk.locationOnWall);
+				this.occupied[0][roomlnk.locationOnWall] = true;
+			}
+		}
+		
+		// Place a tree at every edge square on our grid of 16x16 tiles
+		for (var x = 0; x < Game.map_grid.width; x++) {
+			for (var y = 0; y < Game.map_grid.height; y++) {
+				var at_edge = ((x==0 || x == Game.map_grid.width-1) || (y==0 || y == Game.map_grid.height-1));
+				var buffer_zone = ((x==1 || x == Game.map_grid.width-2) || (y==1 || y == Game.map_grid.height-2));
+				if (at_edge && !this.occupied[x][y]) {
+					// Place a tree entity at the current tile
+					Crafty.e('Tree').at(x, y);
+					this.occupied[x][y] = true;
+				} 
+				if (Math.random() < 0.06 && !this.occupied[x][y] && !buffer_zone) {
+					// Place a bush entity at the current tile
+					Crafty.e('Bush').at(x, y);
+					this.occupied[x][y] = true;
+				} 
+				if(Math.random()<.03 && !this.occupied[x][y] && !buffer_zone){
+					Crafty.e('NPC').at(x, y);
+					this.occupied[x][y] = true;
+				}
+			}
+		}
+	/*
 	// Generate up to five villages on the map in random locations
 	var max_villages = 5;
 	for (var x = 0; x < Game.map_grid.width; x++) {
@@ -154,28 +138,100 @@ function mainRoom (name) {
 	// end up having multiple redundant event watchers after
 	// multiple restarts of the game
 	this.unbind('VillageVisited', this.show_victory);
+	*/
+	});
+}
+
+Room.prototype.exit = function() {
+	var ents = Crafty('DontRemove');
+	for (var i = 0; i < ents.length; i++) {
+		window.localStorage.setItem(this.name + i, serialize(Crafty(ents[i])));
+	};
+	var sceneName = this.name
+	Crafty.scene(sceneName, function() {
+		var patt = new RegExp(sceneName);
+		for (var i in window.localStorage) {
+			if (patt.test(i)) {
+				console.log(window.localStorage.getItem(i));
+				unserialize(window.localStorage.getItem(i));
+				window.localStorage.removeItem(i);
+			}
+		}
 	});
 };
 
-mainRoom.prototype.exit = function() {
-	var ents = Crafty('DontRemove');
-	tempstore = new Array();
-	//Crafty.storage.open('coolGame');
-	for (var i = 0; i < ents.length; i++) {
-		var entsave = new EntityData(Crafty(ents[i]));
-		tempstore[i] = entsave;
-	};
-	saveRooms.save({lastRoom: tempstore}, {
-		error: function(object) {
-			alert("save didn't work");
+	/*
+	 * Processes a retrieved object.
+	 * Creates an entity if it is one
+	 */
+	function process(obj) {
+		if (obj.c) {
+			var d = Crafty.e(obj.c)
+						.attr(obj.attr)
+						.trigger('LoadData', obj, process);
+			return d;
 		}
-	});
-	Crafty.scene(this.name, function() {
-		for (var i = 0; i < tempstore.length; i++) {
-			Crafty.e(tempstore[i].name).at(tempstore[i].x, tempstore[i].y);
+		else if (typeof obj == 'object') {
+			for (var prop in obj) {
+				obj[prop] = process(obj[prop]);
+			}
 		}
-	});
-};
+		return obj;
+	}
+
+	function unserialize(str) {
+		if (typeof str != 'string') return null;
+		var data = (JSON ? JSON.parse(str) : eval('(' + str + ')'));
+		return process(data);
+	}
+
+	/* recursive function
+	 * searches for entities in an object and processes them for serialization
+	 */
+	function prep(obj) {
+		if (obj.__c) {
+			// object is entity
+			var data = { c: [], attr: {} };
+			obj.trigger("SaveData", data, prep);
+			for (var i in obj.__c) {
+				data.c.push(i);
+			}
+			data.c = data.c.join(', ');
+			obj = data;
+		}
+		else if (typeof obj == 'object') {
+			// recurse and look for entities
+			for (var prop in obj) {
+				obj[prop] = prep(obj[prop]);
+			}
+		}
+		return obj;
+	}
+
+	function serialize(e) {
+		if (JSON) {
+			var data = prep(e);
+			return JSON.stringify(data);
+		}
+		else {
+			alert("Crafty does not support saving on your browser. Please upgrade to a newer browser.");
+			return false;
+		}
+	}
+
+function initializeScene() {
+	Crafty.e('PlayerCharacter').at(5, 5);
+	allRooms = new Object();
+	new Room('mainroom');
+	new Room('1room', 'mainroom', 'n', Game.map_grid.width/2);
+	new Room('2room', 'mainroom', 's', Game.map_grid.width/2);
+	new Room('3room', 'mainroom', 'e', Game.map_grid.height/2);
+	new Room('4room', 'mainroom', 'w', Game.map_grid.height/2);
+	for (var i in allRooms) {
+		buildRoom(allRooms[i]);
+	}
+}
+
 
 /*
 // Alternate Game Scene
@@ -266,10 +322,10 @@ Crafty.e('2D, DOM, Text')
  
 // Watch for the player to press a key, then restart the game
 // when a key is pressed
-this.restart_game = this.bind('KeyDown', function() {
-Game.room1 = new mainRoom('room1');
-Crafty.scene('room1');
-});
+this.restart_game = function() {
+Crafty.scene('Loading');
+}
+this.bind('KeyDown', this.restart_game );
 }, function() {
 // Remove our event binding from above so that we don't
 // end up having multiple redundant event watchers after
@@ -291,11 +347,12 @@ Crafty.e('2D, DOM, Text')
  
 // Watch for the player to press a key, then restart the game
 // when a key is pressed
-this.restart_game = this.bind('KeyDown', function() {
-Game.room1 = new mainRoom('room1');
-Crafty.scene('room1');
-});
-}, function() {
+this.restart_game = function() {
+Crafty.scene('Loading');
+};
+
+this.bind('KeyDown', this.restart_game
+)}, function() {
 // Remove our event binding from above so that we don't
 // end up having multiple redundant event watchers after
 // multiple restarts of the game
@@ -363,11 +420,24 @@ Crafty.sprite(16, 'assets/16x16_forest_1.gif', {
 //spr_bush: [1, 0],
 spr_village: [0, 1],
 spr_player: [1, 1]
-}),
+});
 
 // Now that our sprites are ready to draw, start the game
-Game.room1 = new mainRoom('room1');
-Crafty.scene('room1');
+
+var newpat = '(';
+for (var x in allRooms) {
+	newpat = newpat + x + '|';
+}
+newpat = newpat + ')';
+newpat = new RegExp(newpat);
+for (var x in window.localStorage) {
+	if (newpat.test(x)) {
+		window.localStorage.removeItem(x);
+	}
+}
+
+initializeScene();
+Crafty.scene('mainroom');
 
 });
 

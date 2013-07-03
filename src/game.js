@@ -1,9 +1,6 @@
 //var player_X = 5;
 //var player_Y = 5;
 var player_hp = 3;
-Parse.initialize("cOFI6mF3f2W8Cb9jTrpQTyjIS20e9qG7Ln3JneuM", "U0Q8tv3huXLHReCPmPG6xax1TAiCI0sh4NbW4tGP");
-var SaveRooms = Parse.Object.extend("SaveRooms");
-var saveRooms = new SaveRooms();
 Game = {
 // This defines our grid's size and the size of each of its tiles
 map_grid: {
