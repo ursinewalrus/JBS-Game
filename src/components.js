@@ -103,7 +103,7 @@ this.requires('Actor, Fourway, Collision, Persist, Keyboard, spr_player, SpriteA
     
 		resetHUD();
 		HUD();
-		console.log(inventory[0]);
+		//console.log(inventory[0]);
 	
 });
 this.entType = 'PlayerCharacter'; 
@@ -335,7 +335,7 @@ Crafty.c('Item', {
     },
     
     pickUp : function() {
-        inventory.push(this);
+        helditems.push(this);
         this.destroy();
     }
 });
@@ -385,8 +385,7 @@ Crafty.trigger('VillageVisited', this);
 },
 });
 
-var inventoryArray = new Array()
-var inventory = new Array()
+//var inventory = new Array()
 
 
 

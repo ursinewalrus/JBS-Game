@@ -50,8 +50,8 @@ makeInventory = function() {
 			n++;
 			k=0;
 		}
-		if(i==0){
-			helditems[i] = Crafty.e('2D,DOM,spr_bush,Mouse')
+		if(!helditems[i]==null){
+			
 			helditems[i].attr({w:16,h:16,x:45+(k*20),y:65+(n*20)})
 			k++; 
 		}else {
