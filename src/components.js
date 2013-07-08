@@ -3,20 +3,20 @@
 // on a grid of tiles
 Crafty.c('Grid', {
 init: function() {
-this.attr({
-w: Game.map_grid.tile.width,
-h: Game.map_grid.tile.height
-})
+	this.attr({
+		w: Game.map_grid.tile.width,
+		h: Game.map_grid.tile.height
+	})
 },
  
 // Locate this entity at the given position on the grid
 at: function(x, y) {
-if (x === undefined && y === undefined) {
-return { x: this.x/Game.map_grid.tile.width, y: this.y/Game.map_grid.tile.height }
-} else {
-this.attr({ x: x * Game.map_grid.tile.width, y: y * Game.map_grid.tile.height });
-return this;
-}
+	if (x === undefined && y === undefined) {
+		return { x: this.x/Game.map_grid.tile.width, y: this.y/Game.map_grid.tile.height }
+	} else {
+		this.attr({ x: x * Game.map_grid.tile.width, y: y * Game.map_grid.tile.height });
+		return this;
+	}
 }
 });
  
@@ -28,7 +28,11 @@ return this;
 // via our logical coordinate grid
 Crafty.c('Actor', {
 init: function() {
-this.requires('2D, Canvas, Grid');
+	this.requires('2D, Canvas, Grid')
+	.bind("SaveData", function (data, prepare) {
+		data.attr.x = this.x;
+		data.attr.y = this.y;
+	});
 }
 });
 
@@ -40,18 +44,18 @@ this.requires('2D, Canvas, Grid');
 // This is the player-controlled character
 Crafty.c('PlayerCharacter', {
 init: function() {
-this.arrowTimer = 0;
-this.hurtTimer = 0;
-this.direction = 'n';
-this.enttype = 'PlayerCharacter';
-this.requires('Actor, Fourway, Collision, Persist, Keyboard, spr_player, SpriteAnimation')
-.fourway(2)
-.onHit('Village', this.visitVillage)
-.onHit('Door', this.enterRoom)
-.onHit('NPC', this.hurt)
-.stopOnSolids()
-.stopOnNPC()
-.bind('EnterFrame', function() {
+	this.arrowTimer = 0;
+	this.hurtTimer = 0;
+	this.direction = 'n';
+	this.enttype = 'PlayerCharacter';
+	this.requires('Actor, Fourway, Collision, Persist, Keyboard, spr_player, SpriteAnimation')
+	.fourway(2)
+	.onHit('Village', this.visitVillage)
+	.onHit('Door', this.enterRoom)
+	.onHit('NPC', this.hurt)
+	.stopOnSolids()
+	.stopOnNPC()
+	.bind('EnterFrame', function() {
     
 	if (this.isDown('W')) {
 		this.direction = 'n'
@@ -105,10 +109,6 @@ this.requires('Actor, Fourway, Collision, Persist, Keyboard, spr_player, SpriteA
 		HUD();
 		//console.log(inventory[0]);
 	
-})
-.bind("SaveData", function (data, prepare) {
-    data.attr.x = this.x;
-    data.attr.y = this.y;
 });
 
 //for animation later
@@ -222,51 +222,40 @@ visitVillage: function(data) {
 
 Crafty.c('NPC', {
 init: function() {
-this.direction = 'n'
-this.hp = 2;
-this.reverseDirection = 's'
-this.requires('Actor, Collision, DontRemove, Solid, spr_wolfyfront')
-.onHit('PlayerCharacter', this.hurtPlayer)
-.bind('EnterFrame' , function() {
-if (Math.random() > .95) {
-	var newDirection = Math.random();
-		if (newDirection < .25) {
-			this.direction = 'n'
-			this.reverseDirection = 's'
+	this.direction = 'n'
+	this.hp = 2;
+	this.reverseDirection = 's'
+	this.requires('Actor, Collision, DontRemove, Solid, spr_wolfyfront')
+	.onHit('PlayerCharacter', this.hurtPlayer)
+	.bind('EnterFrame' , function() {
+		if (Math.random() > .95) {
+			var newDirection = Math.random();
+			if (newDirection < .25) {
+				this.direction = 'n'
+				this.reverseDirection = 's'
+			}
+			else if (newDirection > .25 && newDirection < .5) {
+				this.direction = 's'
+				this.reverseDirection = 'n'
+			}
+			else if (newDirection >.5 && newDirection < .75) {
+				this.direction = 'e'
+				this.reverseDirection = 'w'
+			}
+			else if (newDirection > .76) {
+				this.direction = 'w'
+				this.reverseDirection = 'e'
+			}
 		}
-		else if (newDirection > .25 && newDirection < .5) {
-			this.direction = 's'
-			this.reverseDirection = 'n'
+		this.move(this.direction, 1);
+		if (this.hit('Solid')) {
+			this.move(this.reverseDirection, 1);
+		}	
+		if(this.hp<=0){
+			this.destroy();
 		}
-		else if (newDirection >.5 && newDirection < .75) {
-			this.direction = 'e'
-			this.reverseDirection = 'w'
-		}
-		else if (newDirection > .76) {
-			this.direction = 'w'
-			this.reverseDirection = 'e'
-		}
-}
-this.move(this.direction, 1);
-if (this.hit('Solid')) {
-	this.move(this.reverseDirection, 1);
-}
-
-/*
-if (this.hit('Arrow')){
-	this.hp-=1;
-}
-*/
-
-if(this.hp<=0){
-	this.destroy();
-}
-}
-)
-.bind("SaveData", function (data, prepare) {
-    data.attr.x = this.x;
-    data.attr.y = this.y;
-});
+	}
+	);
 },
 
 hurtPlayer : function (data) {
@@ -282,14 +271,14 @@ ouch : function () {
 
 Crafty.c('Arrow', {
 init: function() {
-this.direction = ''
-this.requires('Actor, spr_arrow2N, Collision')
-.onHit('NPC',this.hurt)
-.onHit('NPC',this.shatter)
-.onHit('Solid',this.shatter)
-.bind('EnterFrame', function() {
-	this.move(this.direction, 6);
-});
+	this.direction = ''
+	this.requires('Actor, spr_arrow2N, Collision')
+	.onHit('NPC',this.hurt)
+	.onHit('NPC',this.shatter)
+	.onHit('Solid',this.shatter)
+	.bind('EnterFrame', function() {
+		this.move(this.direction, 6);
+	});
 },
 
 shatter : function(){
@@ -310,32 +299,27 @@ hurt: function(data) {
 // A Tree is just an Actor with a certain sprite
 Crafty.c('Tree', {
 init: function() {
-this.requires('Actor, Solid, Block, DontRemove, spr_tree2')
-.bind("SaveData", function (data, prepare) {
-    data.attr.x = this.x;
-    data.attr.y = this.y;
-});
+	this.requires('Actor, Solid, Block, DontRemove, spr_tree2')
 }
 });
 
 Crafty.c('Item', {
-    init: function () {
-        this.enttype = 'Item';
-        this.requires( 'Actor, Color, DontRemove, Collision')
-        .color('rgb(0,0,255)')
-    },
+init: function () {
+    this.enttype = 'Item';
+    this.requires( 'Actor, Color, DontRemove, Collision')
+    .color('rgb(0,0,255)')
+},
     
-    pickUp : function() {
-        helditems.push(this);
-        this.destroy();
-    }
+pickUp : function() {
+    helditems.push(this);
+    this.destroy();
+}
 });
 
 Crafty.c('Potion', {
-    init: function() {
-        this.requires('Item')
-    },
-    
+init: function() {
+    this.requires('Item')
+},  
 });
 
 Crafty.c('Door',{
@@ -344,8 +328,6 @@ init:function(){
 	this.linkedRoom;
 	this.requires('Actor, Solid, DontRemove, Block, spr_door')
 	.bind("SaveData", function (data, prepare) {
-		data.attr.x = this.x;
-		data.attr.y = this.y;
 		data.attr.thisRoom = this.thisRoom;
 		data.attr.linkedRoom = this.linkedRoom;
 	});
@@ -361,29 +343,20 @@ setLinkedRoom:function(room) {
 // A Bush is just an Actor with a certain sprite
 Crafty.c('Bush', {
 init: function() {
-this.requires('Actor, Solid, DontRemove, Block, spr_bush')
-.bind("SaveData", function (data, prepare) {
-	data.attr.x = this.x;
-	data.attr.y = this.y;
-});
+	this.requires('Actor, Solid, DontRemove, Block, spr_bush');
 }
 });
 
 // A village is a tile on the grid that the PC must visit in order to win the game
 Crafty.c('Village', {
 init: function() {
-this.requires('Actor, DontRemove, Block, spr_village')
-.bind("SaveData", function (data, prepare) {
-	data.attr.x = this.x;
-	data.attr.y = this.y;
-});
-this.entType = 'Village';
+	this.requires('Actor, DontRemove, Block, spr_village');
 },
  
 // Process a visitation with this village
 visit: function() {
-this.destroy();
-Crafty.trigger('VillageVisited', this);
+	this.destroy();
+	Crafty.trigger('VillageVisited', this);
 },
 });
 

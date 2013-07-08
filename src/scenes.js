@@ -320,24 +320,26 @@ this.unbind('VillageVisited', this.show_victory);
 // Victory scene
 // -------------
 // Tells the player when they've won and lets them start a new game
-Crafty.scene('Victory', function() {
-// Display some text in celebration of the victory
-Crafty.e('2D, DOM, Text')
-.attr({ x: 0, y: 0 })
-.text('Victory!');
+Crafty.scene('Victory', 
+	function() {
+		// Display some text in celebration of the victory
+		Crafty.e('2D, DOM, Text')
+		.attr({ x: 0, y: 0 })
+		.text('Victory!');
  
-// Watch for the player to press a key, then restart the game
-// when a key is pressed
-this.restart_game = function() {
-Crafty.scene('Loading');
-}
-this.bind('KeyDown', this.restart_game );
-}, function() {
-// Remove our event binding from above so that we don't
-// end up having multiple redundant event watchers after
-// multiple restarts of the game
-this.unbind('KeyDown', this.restart_game);
-});
+		// Watch for the player to press a key, then restart the game
+		// when a key is pressed
+		this.restart_game = function() {
+			Crafty.scene('Loading');
+		}
+		this.bind('KeyDown', this.restart_game );
+	}, function() {
+		// Remove our event binding from above so that we don't
+		// end up having multiple redundant event watchers after
+		// multiple restarts of the game
+		this.unbind('KeyDown', this.restart_game);
+	}
+);
 
 
 
@@ -345,25 +347,27 @@ this.unbind('KeyDown', this.restart_game);
 // Losing Scene
 // -------------
 // Tells the player when they've lost and lets them start a new game
-Crafty.scene('YouLose', function() {
-// Display some text showing the loss
-Crafty.e('2D, DOM, Text')
-.attr({ x: 0, y: 0 })
-.text('kk fix this');
+Crafty.scene('YouLose', 
+	function() {
+		// Display some text showing the loss
+		Crafty.e('2D, DOM, Text')
+		.attr({ x: 0, y: 0 })
+		.text('kk fix this');
  
-// Watch for the player to press a key, then restart the game
-// when a key is pressed
-this.restart_game = function() {
-Crafty.scene('Loading');
-};
+		// Watch for the player to press a key, then restart the game
+		// when a key is pressed
+		this.restart_game = function() {
+			Crafty.scene('Loading');
+		};
 
-this.bind('KeyDown', this.restart_game
-)}, function() {
-// Remove our event binding from above so that we don't
-// end up having multiple redundant event watchers after
-// multiple restarts of the game
-this.unbind('KeyDown', this.restart_game);
-});
+		this.bind('KeyDown', this.restart_game)
+	}, function() {
+		// Remove our event binding from above so that we don't
+		// end up having multiple redundant event watchers after
+		// multiple restarts of the game
+		this.unbind('KeyDown', this.restart_game);
+	}
+);
 
 
 
