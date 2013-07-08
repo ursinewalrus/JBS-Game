@@ -61,7 +61,10 @@ function buildRoom(rm) {
 				this.occupied[i][y] = false;
 			}
 		}
- 
+		
+		Crafty.e('Potion').at(6,6);
+		this.occupied[6][6] = true;
+		
 		// Player character, placed at 5, 5 on our grid
 		// Player character, placed at 5, 5 on our grid
 		//this.player.setDirection();
@@ -113,7 +116,10 @@ function buildRoom(rm) {
 				}
 			}
 		}
+
 	/*
+
+	}
 	// Generate up to five villages on the map in random locations
 	var max_villages = 5;
 	for (var x = 0; x < Game.map_grid.width; x++) {

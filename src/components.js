@@ -52,6 +52,7 @@ this.requires('Actor, Fourway, Collision, Persist, Keyboard, spr_player, SpriteA
 .stopOnSolids()
 .stopOnNPC()
 .bind('EnterFrame', function() {
+    
 	if (this.isDown('W')) {
 		this.direction = 'n'
 	} else if (this.isDown('S')) {
@@ -74,6 +75,23 @@ this.requires('Actor, Fourway, Collision, Persist, Keyboard, spr_player, SpriteA
 	if(this.isDown('P')){
 		deleteInventory();
 	}
+	
+	if(this.isDown('F') && Crafty('Item').length > 0) {
+        if (this.direction == 's' && Crafty('Item').at().y  ==  this.at().y-1)     {
+        Crafty('Item').pickUp();
+        }
+        if (this.direction == 'n' && Crafty("Item").at().y == this.at().y+1)     {
+        Crafty('Item').pickUp();
+        }
+        if (this.direction == 'w' && Crafty("Item").at().x == this.at().x+1)     {
+        Crafty('Item').pickUp();
+        }
+        if (this.direction == 'e' && Crafty("Item").at().x == this.at().x-1)     {
+        Crafty('Item').pickUp();
+        }
+    }
+    
+       
 	//****** displays hp, will want to move this ********
 	if (this.arrowTimer > 0) {
 		this.arrowTimer = this.arrowTimer - 1;
@@ -85,6 +103,7 @@ this.requires('Actor, Fourway, Collision, Persist, Keyboard, spr_player, SpriteA
     
 		resetHUD();
 		HUD();
+		//console.log(inventory[0]);
 	
 })
 .bind("SaveData", function (data, prepare) {
@@ -118,6 +137,10 @@ this.stop();
 stopOnSolids: function() {
 	this.onHit('Block', this.stopMovement);
 	return this;
+},
+
+pickUp: function() {
+
 },
 
 stopMovement: function () {
@@ -295,6 +318,26 @@ this.requires('Actor, Solid, Block, DontRemove, spr_tree2')
 }
 });
 
+Crafty.c('Item', {
+    init: function () {
+        this.enttype = 'Item';
+        this.requires( 'Actor, Color, DontRemove, Collision')
+        .color('rgb(0,0,255)')
+    },
+    
+    pickUp : function() {
+        helditems.push(this);
+        this.destroy();
+    }
+});
+
+Crafty.c('Potion', {
+    init: function() {
+        this.requires('Item')
+    },
+    
+});
+
 Crafty.c('Door',{
 init:function(){
 	this.thisRoom;
@@ -344,56 +387,8 @@ Crafty.trigger('VillageVisited', this);
 },
 });
 
-var inventoryArray = new Array()
+//var inventory = new Array()
 
-makeInventory = function() {
-	var inventoryScreen = Crafty.e("2D, DOM, Color, Mouse")
-	inventoryScreen.color('rgb(255,255,255)')
-	inventoryScreen.attr({w:384, h:256,x:0,y:0,alpha:1.0})
-	var inventoryTitle = Crafty.e("2D,DOM,Text")
-		.attr({x:Game.map_grid.width+110, y:Game.map_grid.height,w:70, h:30})
-		.text("INVENTORY")
-		.css({"font" : "16pt Arial","color":"0F0","test-align":"center"});
-	inventoryArray.push(inventoryScreen,inventoryTitle);
-};
-
-deleteInventory = function() {
-    while(inventoryArray.length > 0)
-    {
-    try{inventoryArray[0].destroy();}catch(err){console.log("Destroy failed");};
-    try{inventoryArray.splice(0, 1);}catch(err){console.log("Splice failed")};//remove the first entity
-    }
-}
-
-var HUD_Array = new Array ()
-
-HUD = function () { 
-	var hp = Crafty.e("2D, DOM,Color")
-	hp.color('rgb(255,0,0)')
-	hp.attr({w:player_hp*33, h:25,x:0,y:240,alpha:1.0})
-	
-	var hp_text = Crafty.e('2D, DOM, Color, Text')
-	hp_text.attr({x:20,y:230,alpha:1.0})
-	hp_text.text('HP')
-	
-	var Inventory_Button = Crafty.e("2D,DOM,Color,Mouse")
-	Inventory_Button.color('rgb(255,216,0)')
-	Inventory_Button.attr({w:20,h:20,x:0,y:220,alpha:0.5})
-	Inventory_Button.bind("Click",function(e){makeInventory();});
-	
-	HUD_Array.push(hp,hp_text,Inventory_Button);
-}
-
-    
-
-resetHUD = function() {
-    while(HUD_Array.length > 0)
-    {
-    try{HUD_Array[0].destroy();}catch(err){console.log("Destroy failed");};
-    try{HUD_Array.splice(0, 1);}catch(err){console.log("Splice failed")};
-    }
-   
-}
 
 
 
