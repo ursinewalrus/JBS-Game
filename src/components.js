@@ -40,15 +40,18 @@ this.requires('2D, Canvas, Grid');
 // This is the player-controlled character
 Crafty.c('PlayerCharacter', {
 init: function() {
+arrow_spray = false;
 this.arrowTimer = 0;
 this.hurtTimer = 0;
 this.direction = 'n';
+var arrow_damage = 2;
 this.enttype = 'PlayerCharacter';
 this.requires('Actor, Fourway, Collision, Persist, Keyboard, spr_player, SpriteAnimation')
-.fourway(2)
+.fourway(speed)
 .onHit('Village', this.visitVillage)
 .onHit('Door', this.enterRoom)
 .onHit('NPC', this.hurt)
+.onHit('Consumeable',this.feast)
 .stopOnSolids()
 .stopOnNPC()
 .bind('EnterFrame', function() {
@@ -65,26 +68,58 @@ this.requires('Actor, Fourway, Collision, Persist, Keyboard, spr_player, SpriteA
 			Crafty.e('Arrow').at(this.at().x,this.at().y).direction = this.direction;
 			this.arrowTimer = 30;
 		}
+	} 
+		// *** arrow spray spell, activates on pickup at the moment
+	if(this.isDown('G')&& arrow_spray == true){
+		if(this.arrowTimer == 0){
+			saver = this.direction
+			this.direction = 'n'
+			Crafty.e('Arrow').at(this.at().x,this.at().y).direction = this.direction;
+			this.direction = 'e'
+			Crafty.e('Arrow').at(this.at().x,this.at().y).direction = this.direction;	
+			this.direction = 's'
+			Crafty.e('Arrow').at(this.at().x,this.at().y).direction = this.direction;
+			this.direction = 'w'
+			Crafty.e('Arrow').at(this.at().x,this.at().y).direction = this.direction;	
+			//this.arrowTimer = 30;
+			this.direction = saver 
+		}
 	}
-	//brings up inventory screen
-	if (this.isDown('I')){
-		makeInventory();
-	}
-	//gets rid of inventory screen
-	if(this.isDown('P')){
-		deleteInventory();
-	}
-	//****** displays hp, will want to move this ********
+
 	if (this.arrowTimer > 0) {
 		this.arrowTimer = this.arrowTimer - 1;
 	}
 	if (this.hurtTimer > 0) {
         this.hurtTimer -= 1;
     }
+	//level up skeleton stuff
+	if(exp>=next_level){
+		var level_up_array = new Array ()
+		var ding = Crafty.e('2D, DOM, Color, Text')
+		ding.attr({x:50,y:100,w:200,alpha:1.0})
+		//ding.text('Press J to boost HP, K to boost speed and L to boost the D')
+		if(this.isDown('J')&& exp>=next_level){
+			level++;
+			max_hp=+max_hp*1.2
+			player_hp+=max_hp/2
+			var rollOver = exp-next_level
+			exp=rollOver
+			next_level=next_level*1.33
+			ding.destroy()
+		}else if(this.isDown('K') && exp>=next_level){
+			level++;
+			speed+=50
+			var rollOver = exp-next_level
+			exp=rollOver
+			next_level=next_level*1.33
+			ding.destroy()
+		}
+		
+	}
     
     
 		resetHUD();
-		HUD();
+		HUD(this.at().x,this.at().y,this.direction);
 	
 })
 .bind("SaveData", function (data, prepare) {
@@ -135,7 +170,6 @@ stopMovement: function () {
 	this._speed = 0;
 	}
 },
-
 stopOnNPC: function () {
 	(this.onHit('NPC',this.stopNPC));
 		return this;
@@ -162,7 +196,6 @@ hurt:function() {
     }
     
 },
-
 
 enterRoom: function(data) {
 	dooor = data[0].obj;
@@ -193,6 +226,12 @@ enterRoom: function(data) {
 visitVillage: function(data) {
 	villlage = data[0].obj;
 	villlage.visit();
+	return data[0];
+},
+
+feast : function (data){
+	foood = data[0].obj;
+	foood.feast();
 	return data[0];
 }
 });
@@ -237,6 +276,7 @@ if (this.hit('Arrow')){
 
 if(this.hp<=0){
 	this.destroy();
+	exp+=10;
 }
 }
 )
@@ -344,56 +384,48 @@ Crafty.trigger('VillageVisited', this);
 },
 });
 
-var inventoryArray = new Array()
-
-makeInventory = function() {
-	var inventoryScreen = Crafty.e("2D, DOM, Color, Mouse")
-	inventoryScreen.color('rgb(255,255,255)')
-	inventoryScreen.attr({w:384, h:256,x:0,y:0,alpha:1.0})
-	var inventoryTitle = Crafty.e("2D,DOM,Text")
-		.attr({x:Game.map_grid.width+110, y:Game.map_grid.height,w:70, h:30})
-		.text("INVENTORY")
-		.css({"font" : "16pt Arial","color":"0F0","test-align":"center"});
-	inventoryArray.push(inventoryScreen,inventoryTitle);
-};
-
-deleteInventory = function() {
-    while(inventoryArray.length > 0)
-    {
-    try{inventoryArray[0].destroy();}catch(err){console.log("Destroy failed");};
-    try{inventoryArray.splice(0, 1);}catch(err){console.log("Splice failed")};//remove the first entity
-    }
+Crafty.c('Consumeable', {
+init: function () {
+this.requires('Actor,DontRemove,Block')
+.bind("SaveData",function(data,prepare){
+	data.attr.x = this.x;
+	data.attr.y = this.y;
+});
 }
+});
 
-var HUD_Array = new Array ()
+Crafty.c('Full_Heal',{
+init: function () {
+this.requires('Consumeable,spr_village')
+.bind("SaveData",function(data,prepare){
+	data.attr.x = this.x;
+	data.attr.y = this.y;
+});
+},
+feast: function() {
+this.destroy()
+player_hp = max_hp;
+},
+});
 
-HUD = function () { 
-	var hp = Crafty.e("2D, DOM,Color")
-	hp.color('rgb(255,0,0)')
-	hp.attr({w:player_hp*33, h:25,x:0,y:240,alpha:1.0})
-	
-	var hp_text = Crafty.e('2D, DOM, Color, Text')
-	hp_text.attr({x:20,y:230,alpha:1.0})
-	hp_text.text('HP')
-	
-	var Inventory_Button = Crafty.e("2D,DOM,Color,Mouse")
-	Inventory_Button.color('rgb(255,216,0)')
-	Inventory_Button.attr({w:20,h:20,x:0,y:220,alpha:0.5})
-	Inventory_Button.bind("Click",function(e){makeInventory();});
-	
-	HUD_Array.push(hp,hp_text,Inventory_Button);
-}
+Crafty.c('Arrow_Spray',{
+init: function () {
+this.requires('Consumeable,spr_tree2')
+.bind("SaveData",function(data,prepare){
+data.attr.x = this.x;
+data.attr.y = this.y;
+});
+},
+feast: function() {
+this.destroy()
+arrow_spray = true;
+},
+});
 
-    
 
-resetHUD = function() {
-    while(HUD_Array.length > 0)
-    {
-    try{HUD_Array[0].destroy();}catch(err){console.log("Destroy failed");};
-    try{HUD_Array.splice(0, 1);}catch(err){console.log("Splice failed")};
-    }
-   
-}
+
+
+
 
 
 
