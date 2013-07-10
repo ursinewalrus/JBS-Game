@@ -119,7 +119,8 @@ this.requires('Actor, Fourway, Collision, Persist, Keyboard, spr_player, SpriteA
     
     
 		resetHUD();
-		HUD(this.at().x,this.at().y,this.direction);
+		//HUD(this.at().x,this.at().y,this.direction);
+		HUD(this);
 	
 })
 .bind("SaveData", function (data, prepare) {

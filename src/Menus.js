@@ -1,7 +1,7 @@
 // ******** HP HUD ************
 var HUD_Array = new Array ()
 var menubool = true;
-HUD = function (px,py,facing) { 
+HUD = function (/*px,py,facing*/player) { 
 	
 	var hp = Crafty.e("2D, DOM,Color")
 	hp.color('rgb(255,0,0)')
@@ -14,16 +14,33 @@ HUD = function (px,py,facing) {
 	var item1 = Crafty.e("2D,DOM,spr_door,Mouse")
 	.attr({w:16,h:16,x:0,y:214,alpha:1.0})
 	item1.bind("Click",function(e){
-		console.log("FUCK")
-		console.log(facing)
-		console.log(px+" "+py)
+		console.log(player.direction)
+		console.log(player.at().x+" "+player.at().y)
 		//if(arrow_spray == true){
-			Crafty.e('Arrow').at(px.at().x,py.at().y).direction = facing;
+			Crafty.e('Arrow').at(player.at().x,player.at().y).direction = player.direction;
 		//}
 	});
-	
-	var item2 = Crafty.e("2D,DOM,spr_door,Mouse")
-	.attr({w:16,h:16,x:20,y:214,alpha:1.0})
+	if(arrow_spray == false){var item2 = Crafty.e("2D,DOM,spr_door,Mouse")}
+	else{var item2 = Crafty.e("2D,DOM,spr_tree2,Mouse")}
+	//var item2 = Crafty.e("2D,DOM,spr_door,Mouse")
+	item2.attr({w:16,h:16,x:20,y:214,alpha:1.0})
+	item2.bind("Click",function(e){
+		if(arrow_spray == true){
+			if(player.arrowTimer == 0){
+				saver = player.direction
+				player.direction = 'n'
+				Crafty.e('Arrow').at(player.at().x,player.at().y).direction = player.direction;
+				player.direction = 'e'
+				Crafty.e('Arrow').at(player.at().x,player.at().y).direction = player.direction;	
+				player.direction = 's'
+				Crafty.e('Arrow').at(player.at().x,player.at().y).direction = player.direction;
+				player.direction = 'w'
+				Crafty.e('Arrow').at(player.at().x,player.at().y).direction = player.direction;	
+				//this.arrowTimer = 30;
+				this.direction = saver 
+			}
+		}
+	});
 	
 	var item3 = Crafty.e("2D,DOM,spr_door,Mouse")
 	.attr({w:16,h:16,x:40,y:214,alpha:1.0})
