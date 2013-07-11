@@ -85,6 +85,24 @@ this.requires('Actor, Fourway, Collision, Persist, Keyboard, spr_player, SpriteA
 			this.direction = saver 
 		}
 	}
+	if(this.isDown('H')&& this.arrowTimer==0){
+		if(this.direction == 'n'){
+			Crafty.e('Sword').at(this.at().x,this.at().y-1)
+			this.arrowTimer=40
+		}
+		if(this.direction == 's'){
+			Crafty.e('Sword').at(this.at().x,this.at().y+1)
+			this.arrowTimer=40
+		}
+		if(this.direction == 'e'){
+			Crafty.e('Sword').at(this.at().x+1,this.at().y)
+			this.arrowTimer=40
+		}
+		if(this.direction == 'w'){
+			Crafty.e('Sword').at(this.at().x-1,this.at().y)
+			this.arrowTimer=40
+		}
+	}
 
 	if (this.arrowTimer > 0) {
 		this.arrowTimer = this.arrowTimer - 1;
@@ -94,7 +112,7 @@ this.requires('Actor, Fourway, Collision, Persist, Keyboard, spr_player, SpriteA
     }
 	//level up skeleton stuff
 	if(exp>=next_level){
-		var level_up_array = new Array ()
+		//var level_up_array = new Array ()
 		var ding = Crafty.e('2D, DOM, Color, Text')
 		ding.attr({x:50,y:100,w:200,alpha:1.0})
 		//ding.text('Press J to boost HP, K to boost speed and L to boost the D')
@@ -218,7 +236,7 @@ enterRoom: function(data) {
 	}
 	this.at(player_X, player_Y);
 	allRooms[dooor.thisRoom].exit();
-	console.log(dooor.linkedRoom);
+	//console.log(dooor.linkedRoom);
 	Crafty.scene(dooor.linkedRoom);
 },
 
@@ -293,8 +311,8 @@ hurtPlayer : function (data) {
 	this.move(this.reverseDirection, 1);
 },
 
-ouch : function () {
-	this.hp-=1;
+ouch : function (damage_amount) {
+	this.hp-=damage_amount;
 },
 });
 
@@ -315,10 +333,30 @@ shatter : function(){
 },
 
 hurt: function(data) {
+	var damage_amount = 1
 	damage = data[0].obj;
-	damage.ouch();
+	damage.ouch(damage_amount);
 	return data[0];
 	},
+});
+
+Crafty.c('Sword',{
+init: function () {
+this.duration = 8
+this.direction = ''
+this.requires('Actor,spr_arrowN,Collision')
+.onHit('NPC',this.hurt)	
+.bind('EnterFrame',function(){
+	this.duration--;
+	if(this.duration==0){this.destroy()}
+});
+},
+hurt: function(data){
+var damage_amount = 2
+damage = data[0].obj;
+damage.ouch(damage_amount);
+return data[0];
+},
 });
 
 //----------------------------------------------------------

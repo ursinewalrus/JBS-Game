@@ -21,7 +21,7 @@ HUD = function (/*px,py,facing*/player) {
 		//}
 	});
 	if(arrow_spray == false){var item2 = Crafty.e("2D,DOM,spr_door,Mouse")}
-	else{var item2 = Crafty.e("2D,DOM,spr_tree2,Mouse")}
+	else{var item2 = Crafty.e("2D,DOM,spr_tree2,Mouse");}
 	//var item2 = Crafty.e("2D,DOM,spr_door,Mouse")
 	item2.attr({w:16,h:16,x:20,y:214,alpha:1.0})
 	item2.bind("Click",function(e){
@@ -44,11 +44,29 @@ HUD = function (/*px,py,facing*/player) {
 	
 	var item3 = Crafty.e("2D,DOM,spr_door,Mouse")
 	.attr({w:16,h:16,x:40,y:214,alpha:1.0})
-	
+	item3.bind("Click",function(e){
+		if(player.arrowTimer==0)
+			if(player.direction == 'n'){
+				Crafty.e('Sword').at(player.at().x,player.at().y-1)
+				player.arrowTimer=40
+			}
+			if(player.direction == 's'){
+				Crafty.e('Sword').at(player.at().x,player.at().y+1)
+				player.arrowTimer=40
+			}
+			if(player.direction == 'e'){
+				Crafty.e('Sword').at(player.at().x+1,player.at().y)
+				player.arrowTimer=40
+			}
+			if(player.direction == 'w'){
+				Crafty.e('Sword').at(player.at().x-1,player.at().y)
+				player.arrowTimer=40
+			}
+	});
+
 	var exp_bar = Crafty.e('2D,DOM,Color')
 	exp_bar.color('rgb(0,0,255)')
 	exp_bar.attr({w:(exp/next_level)*100,h:10,x:0,y:230,alpha:1.0})
-	console.log(exp)
 	
 	var level_display = Crafty.e('2D,DOM,Color,Text')
 	level_display.attr({x:5,y:10,alpha:1.0})
