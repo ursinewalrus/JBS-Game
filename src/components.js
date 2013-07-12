@@ -45,6 +45,7 @@ this.arrowTimer = 0;
 this.hurtTimer = 0;
 this.direction = 'n';
 var arrow_damage = 2;
+var animation_speed = .01;
 this.enttype = 'PlayerCharacter';
 this.requires('Actor, Fourway, Collision, Persist, Keyboard, spr_player, SpriteAnimation')
 .fourway(speed)
@@ -54,6 +55,23 @@ this.requires('Actor, Fourway, Collision, Persist, Keyboard, spr_player, SpriteA
 .onHit('Consumeable',this.feast)
 .stopOnSolids()
 .stopOnNPC()
+.animate('Pu',0,0,2)
+.animate('Pr',0,1,2)
+.animate('Pd',0,2,2)
+.animate('Pl',0,3,2)
+.bind('NewDirection',function(data){
+ if (data.x > 0) {
+this.animate('Pr', animation_speed, -1);
+} else if (data.x < 0) {
+this.animate('Pl', animation_speed, -1);
+} else if (data.y > 0) {
+this.animate('Pd', animation_speed, -1);
+} else if (data.y < 0) {
+this.animate('Pu', animation_speed, -1);
+} else {
+this.stop();
+}
+})
 .bind('EnterFrame', function() {
 	if (this.isDown('W')) {
 		this.direction = 'n'
@@ -147,26 +165,9 @@ this.requires('Actor, Fourway, Collision, Persist, Keyboard, spr_player, SpriteA
 });
 
 //for animation later
-/*
-.animate('Pup',0,0,2)
-.animate('Pr',0,1,2)
-.animate('Pd',0,2,2)
-.animate('Pl',0,3,2);
-var animation_speed = 8;
-this.bind('NewDirection',function(data){
- if (data.x > 0) {
-this.animate('PlayerMovingRight', animation_speed, -1);
-} else if (data.x < 0) {
-this.animate('PlayerMovingLeft', animation_speed, -1);
-} else if (data.y > 0) {
-this.animate('PlayerMovingDown', animation_speed, -1);
-} else if (data.y < 0) {
-this.animate('PlayerMovingUp', animation_speed, -1);
-} else {
-this.stop();
-}
-});
-*/
+
+
+
 },
 
 stopOnSolids: function() {
@@ -252,7 +253,7 @@ feast : function (data){
 	foood = data[0].obj;
 	foood.feast();
 	return data[0];
-}
+},
 });
 
 Crafty.c('NPC', {

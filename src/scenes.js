@@ -272,7 +272,7 @@ function initializeScene() {
 	
 	new Room('mainroom');
 	
-	var rooms_array = new Array(); 
+	/*var rooms_array = new Array(); 
 	rooms_array.push('mainroom')
 	var lastroom = 'mainroom'
 	for(var a = 0;a<50;a++){
@@ -303,12 +303,12 @@ function initializeScene() {
 		
 		
 		
-	}
-	/*new Room('1room', 'mainroom', 'n', Game.map_grid.width/2);
+	}*/
+	new Room('1room', 'mainroom', 'n', Game.map_grid.width/2);
 	new Room('2room', 'mainroom', 's', Game.map_grid.width/2);
 	new Room('3room', 'mainroom', 'e', Game.map_grid.height/2);
 	new Room('4room', 'mainroom', 'w', Game.map_grid.height/2);
-	new Room('5room', '4room', 'w', Game.map_grid.height/4);*/
+	new Room('5room', '4room', 'w', Game.map_grid.height/4);
 	for (var i in allRooms) {
 		//console.log(i)
 		if(i=='5room'){
@@ -463,13 +463,17 @@ Crafty.e('2D, DOM, Text')
 //Builds Level
  
 // Load our sprite map image
-Crafty.load(['assets1/16x16_forest_1.gif','assets1/16x16_forest_2.gif','assets1/Doors.gif','assets1/arrows.gif','assets1/arrows2.gif','assets1/treesv2.gif','assets1/wolfy.gif'], function(){
+Crafty.load(['assets1/16x16_forest_1.gif','assets1/16x16_forest_2.gif','assets1/Doors.gif','assets1/arrows.gif','assets1/arrows2.gif','assets1/treesv2.gif','assets1/wolfy.gif','assets1/hero.png'], function(){
 // Once the image is loaded...
 // Define the individual sprites in the image
 // Each one (spr_tree, etc.) becomes a component
 // These components' names are prefixed with "spr_"
 // to remind us that they simply cause the entity
 // to be drawn with a certain sprite
+Crafty.sprite(16,'assets1/hero.png',{
+	spr_player : [0,2]
+});
+
 Crafty.sprite(16,'assets1/wolfy.gif',{
 	spr_wolfyback : [0,0],
 	spr_wolfyfront :[0,1],
@@ -506,7 +510,7 @@ Crafty.sprite(16, 'assets1/16x16_forest_1.gif', {
 //spr_tree: [0, 0],
 //spr_bush: [1, 0],
 spr_village: [0, 1],
-spr_player: [1, 1]
+//spr_player: [1, 1]
 });
 
 // Now that our sprites are ready to draw, start the game
