@@ -48,7 +48,7 @@ var arrow_damage = 2;
 var animation_speed = .01;
 this.enttype = 'PlayerCharacter';
 this.requires('Actor, Fourway, Collision, Persist, Keyboard, spr_player, SpriteAnimation')
-.fourway(speed)
+.fourway(2)
 .onHit('Village', this.visitVillage)
 .onHit('Door', this.enterRoom)
 .onHit('NPC', this.hurt)

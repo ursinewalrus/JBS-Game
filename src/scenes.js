@@ -16,14 +16,14 @@ function RoomLink(nextRoom, direction, locationOnWall) {
 
 //after name you can add arguments for rooms to conect this to in the form
 // (room, direction, locationOnWall)
-function Room (name) {
+function Room (name, type) {
 	this.name = name;
-	this.saveData = new Array();
+	this.type = type;
 	this.roomLinks = new Array(); //items in form [Room, direction, xoryvalue]
-	if (arguments.length === 4) {
-		this.linkRooms(arguments[1], arguments[2], arguments[3]);
+	if (arguments.length === 5) {
+		this.linkRooms(arguments[2], arguments[3], arguments[4]);
 	} else 
-	if (arguments.length > 1) {
+	if (arguments.length > 2) {
 		throw 'wrong number of arguments';
 	}
 	allRooms[this.name] = this;
@@ -49,7 +49,8 @@ Room.prototype.linkRooms  = function(nextRoom, direction, locationOnWall) {
 	allRooms[nextRoom].roomLinks.push(newRoomLink);
 }
 
-function buildRoom(rm,type) {
+Room.prototype.buildRoom = function() {
+	var rm = this
 	Crafty.scene(rm.name, function() {
 		//console.log(thisRoom.name);
 		// A 2D array to keep track of all occupied tiles
@@ -92,7 +93,7 @@ function buildRoom(rm,type) {
 		}
 		
 		// Place a tree at every edge square on our grid of 16x16 tiles
-		if(type=='forest'){
+		if(rm.type=='forest'){
 			console.log("forest")
 			for (var x = 0; x < Game.map_grid.width; x++) {
 				for (var y = 0; y < Game.map_grid.height; y++) {
@@ -124,7 +125,7 @@ function buildRoom(rm,type) {
 				}
 			}
 		}
-		else if(type=='grid'){
+		else if(rm.type=='grid'){
 			console.log("grid")
 			for (var x = 0; x < Game.map_grid.width; x++) {
 				for (var y = 0; y < Game.map_grid.height; y++) {
@@ -261,140 +262,102 @@ Room.prototype.exit = function() {
 			return false;
 		}
 	}
+	
+function initializeScene(roomGridX, roomGridY, maxNumOfRooms) {
 
-function initializeScene() {
+	function getRandomInt(min, max) {
+		return Math.floor(Math.random() * (max - min + 1)) + min;
+	}
+	
+	var roomNumber = 1;
+	var roomGrid = new Array();
+	
+	for (var x = 0; x < roomGridX; x++) {
+		roomGrid[x] = new Array();
+		for (var y = 0; y < roomGridY; y++) {
+			roomGrid[x][y] = null;
+		}
+	}
+	
+	function roomPlace(rm, x, y) {
+		if (x-1 >= 0 && roomGrid[x-1][y] === null && 
+				maxNumOfRooms > 0 && Math.random() > .5) {
+				
+			roomGrid[x-1][y] = new Room(roomNumber + 'room', 'forest');
+			rm.linkRooms(roomGrid[x-1][y].name, 'w', Game.map_grid.height/2);
+			roomNumber++;
+			maxNumOfRooms--;
+		}
+		if (x+1 < roomGrid.length && roomGrid[x+1][y]  === null && 
+				maxNumOfRooms > 0 && Math.random() > .5) {
+				
+			roomGrid[x+1][y] = new Room(roomNumber + 'room', 'forest');
+			rm.linkRooms(roomGrid[x+1][y].name, 'e', Game.map_grid.height/2);
+			roomNumber++;
+			maxNumOfRooms--;
+		}
+		if (y-1 >= 0 && roomGrid[x][y-1]  === null && 
+				maxNumOfRooms > 0 && Math.random() > .5) {
+				
+			roomGrid[x][y-1] = new Room(roomNumber + 'room', 'forest');
+			rm.linkRooms(roomGrid[x][y-1].name, 'n', Game.map_grid.width/2);
+			roomNumber++;
+			maxNumOfRooms--;
+		}
+		if (y+1 < roomGrid[0].length && roomGrid[x][y+1]  === null && 
+				maxNumOfRooms > 0 && Math.random() > .5) {
+				
+			roomGrid[x][y+1] = new Room(roomNumber + 'room', 'forest');
+			rm.linkRooms(roomGrid[x][y+1].name, 's', Game.map_grid.width/2);
+			roomNumber++;
+			maxNumOfRooms--;
+		}
+		if (x-1 >= 0 && maxNumOfRooms > 0 && 
+				!(roomGrid[x-1][y] === null) && Math.random() > .5) {
+				
+			roomPlace(roomGrid[x-1][y], x-1, y);
+		}
+		if (x+1 < roomGrid.length && maxNumOfRooms > 0 && 
+				!(roomGrid[x+1][y] === null) && Math.random() > .5) {
+				
+			roomPlace(roomGrid[x+1][y], x+1, y);
+		}
+		if (y-1 >= 0 && maxNumOfRooms > 0 && 
+				!(roomGrid[x][y-1] === null) && Math.random() > .5) {
+				
+			roomPlace(roomGrid[x][y-1], x, y-1);
+		}
+		if (y+1 < roomGrid[0].length && maxNumOfRooms > 0 && 
+				!(roomGrid[x][y+1] === null) && Math.random() > .5) {
+				
+			roomPlace(roomGrid[x][y+1], x, y+1);
+		}
+	}
+	
 	Crafty.e('PlayerCharacter').at(5,5);
-	max_hp = 3
-	player_hp = 3
-	speed = 2
-	exp = 0
+	max_hp = 3;
+	player_hp = 3;
+	speed = 2;
+	exp = 0;
 	allRooms = new Object();
 	
-	new Room('mainroom');
-	
-	/*var rooms_array = new Array(); 
-	rooms_array.push('mainroom')
-	var lastroom = 'mainroom'
-	for(var a = 0;a<50;a++){
-		var name= a+'room';
-	
-		//var room_chooser = Math.floor(Math.random() * (a-0+1))+0;
-		//var where_from = rooms_array[0]
-		console.log(a)
-		//console.log(room_chooser)
-		var sider = Math.random()
-		if(sider>0 && sider <.25){
-			var side = 'n'
-			var where = Game.map_grid.width/2
-		}else if(sider>.25 && sider<.5) {
-			var side = 's'
-			var where = Game.map_grid.width/2
-		}else if(sider>.5 && sider<.75){
-			var side = 'e'
-			var where = Game.map_grid.height/2
-		}else{
-			var side = 'w'
-			var where = Game.map_grid.height/2
-		}
-		
-		new Room(name,lastroom,side,where)
-		lastroom = Room(name,lastroom,side,where)
-		rooms_array.push(new Room(name,lastroom,side,where));
-		
-		
-		
-	}*/
+	var mainroomX = getRandomInt(0, roomGridX-1);
+	var mainroomY = getRandomInt(0, roomGridY-1);
+	roomGrid[mainroomX][mainroomY] = new Room('mainroom', 'forest');
+	roomPlace(roomGrid[mainroomX][mainroomY], mainroomX, mainroomY);
+
+	/*
 	new Room('1room', 'mainroom', 'n', Game.map_grid.width/2);
 	new Room('2room', 'mainroom', 's', Game.map_grid.width/2);
 	new Room('3room', 'mainroom', 'e', Game.map_grid.height/2);
 	new Room('4room', 'mainroom', 'w', Game.map_grid.height/2);
 	new Room('5room', '4room', 'w', Game.map_grid.height/4);
+	*/
 	for (var i in allRooms) {
 		//console.log(i)
-		if(i=='5room'){
-			buildRoom(allRooms[i],'grid')
-		}else{
-			buildRoom(allRooms[i],'forest');
-		}
+		allRooms[i].buildRoom();
 	}
 }
-
-
-/*
-// Alternate Game Scene
-// -------------
-// Runs the core gameplay loop
-Crafty.scene('Game2', function() {
-// A 2D array to keep track of all occupied tiles
-this.occupied = new Array(Game.map_grid.width);
-for (var i = 0; i < Game.map_grid.width; i++) {
-this.occupied[i] = new Array(Game.map_grid.height);
-for (var y = 0; y < Game.map_grid.height; y++) {
-this.occupied[i][y] = false;
-}
-}
- 
-// Player character, placed at 5, 5 on our grid
-// Player character, placed at 5, 5 on our grid
-this.player = Crafty.e('PlayerCharacter').at(player_X, player_Y);
-//this.player.setDirection();
-this.occupied[this.player.at().x][this.player.at().y] = true;
- 
-// Place a tree at every edge square on our grid of 16x16 tiles
-for (var x = 0; x < Game.map_grid.width; x++) {
-for (var y = 0; y < Game.map_grid.height; y++) {
-var at_edge = ((y<7 || y>8)&&(x==0 || x == Game.map_grid.width-1)) || ((x<11 || x>12)&&(y==0 || y == Game.map_grid.height-1));
-var buffer_zone = ((y>7 || y<8)&&(x==1 || x == Game.map_grid.width-2)) || ((x>11 || x<12)&&(y==1 || y == Game.map_grid.height-2));
-var trans = ((y>6 && y<9)&&(x==0 || x == Game.map_grid.width-1)) || ((x>10 && x<13)&&(y==0 || y == Game.map_grid.height-1)) ;
-var middle = !at_edge && !trans && !buffer_zone;
-
-if (at_edge) {
-	// Place a tree entity at the current tile
-	Crafty.e('Tree').at(x, y);
-	this.occupied[x][y] = true;
-} 
-if ((Math.random()>.5 && x%2==1 && y%2==1) && !this.occupied[x][y] && middle) {
-	// Place a bush entity at the current tile
-	Crafty.e('Bush').at(x, y);
-	this.occupied[x][y] = true;
-} 
-if (trans && !this.occupied[x][y]) {
-	Crafty.e('Door').at(x,y);
-	this.occupied[x][y] = true;
-}
-if(Math.random()<.06 && !this.occupied[x][y] && middle){
-	Crafty.e('NPC').at(x,y);
-	this.occupied[x][y] = true;
-}
-}
-}
- 
-// Generate up to five villages on the map in random locations
-var max_villages = 5;
-for (var x = 0; x < Game.map_grid.width; x++) {
-for (var y = 0; y < Game.map_grid.height; y++) {
-if (Math.random() < 0.02) {
-if (Crafty('Village').length < max_villages && !this.occupied[x][y]) {
-Crafty.e('Village').at(x, y);
-}
-}
-}
-}
- 
-// Show the victory screen once all villages are visisted
-this.show_victory = this.bind('VillageVisited', function() {
-if (!Crafty('Village').length) {
-Crafty.scene('Victory');
-}
-});
-}, function() {
-// Remove our event binding from above so that we don't
-// end up having multiple redundant event watchers after
-// multiple restarts of the game
-this.unbind('VillageVisited', this.show_victory);
-});
-
-*/
 
 
  
@@ -451,7 +414,7 @@ this.unbind('KeyDown', this.restart_game);
 
 // Loading scene
 // -------------
-// Handles the loading of binary assets11 such as images and audio files
+// Handles the loading of binary assets1 such as images and audio files
 Crafty.scene('Loading', function(){
 // Draw some text for the player to see in case the file
 // takes a noticeable amount of time to load
@@ -463,50 +426,50 @@ Crafty.e('2D, DOM, Text')
 //Builds Level
  
 // Load our sprite map image
-Crafty.load(['assets1/16x16_forest_1.gif','assets1/16x16_forest_2.gif','assets1/Doors.gif','assets1/arrows.gif','assets1/arrows2.gif','assets1/treesv2.gif','assets1/wolfy.gif','assets1/hero.png'], function(){
+Crafty.load(['assets/16x16_forest_1.gif','assets/16x16_forest_2.gif','assets/Doors.gif','assets/arrows.gif','assets/arrows2.gif','assets/treesv2.gif','assets/wolfy.gif','assets/hero.png'], function(){
 // Once the image is loaded...
 // Define the individual sprites in the image
 // Each one (spr_tree, etc.) becomes a component
 // These components' names are prefixed with "spr_"
 // to remind us that they simply cause the entity
 // to be drawn with a certain sprite
-Crafty.sprite(16,'assets1/hero.png',{
+Crafty.sprite(16,'assets/hero.png',{
 	spr_player : [0,2]
 });
 
-Crafty.sprite(16,'assets1/wolfy.gif',{
+Crafty.sprite(16,'assets/wolfy.gif',{
 	spr_wolfyback : [0,0],
 	spr_wolfyfront :[0,1],
 	spr_wolfyleft : [1,1],
 	spr_wolfyright : [1,0]
 });
-Crafty.sprite(16,'assets1/treesv2.gif',{
+Crafty.sprite(16,'assets/treesv2.gif',{
 	spr_tree1 : [0,0],
 	spr_tree2 : [0,1],
 	spr_tree3 : [1,1],
 	spr_bush  : [1,0]
 	
 });
-Crafty.sprite(16,'assets1/arrows.gif', {
+Crafty.sprite(16,'assets/arrows.gif', {
 	spr_arrowN : [0,0],
 	spr_arrowS : [1,0],
 	spr_arrowE : [0,1],
 	spr_arrowW : [1,1]
 }); 
-Crafty.sprite(16,'assets1/arrows2.gif', {
+Crafty.sprite(16,'assets/arrows2.gif', {
 	spr_arrow2N : [0,0],
 	spr_arrow2S : [1,1],
 	spr_arrow2E : [1,0],
 	spr_arrow2W : [0,1]
 }); 
-Crafty.sprite(16,'assets1/Doors.gif',{
+Crafty.sprite(16,'assets/Doors.gif',{
 spr_door : [0,1],
 }),
-Crafty.sprite(16, 'assets1/16x16_forest_2.gif', {
+Crafty.sprite(16, 'assets/16x16_forest_2.gif', {
 //spr_door:[1,1],
 spr_npc: [0,0]
 }),
-Crafty.sprite(16, 'assets1/16x16_forest_1.gif', {
+Crafty.sprite(16, 'assets/16x16_forest_1.gif', {
 //spr_tree: [0, 0],
 //spr_bush: [1, 0],
 spr_village: [0, 1],
@@ -527,7 +490,7 @@ for (var x in window.localStorage) {
 	}
 }
 
-initializeScene();
+initializeScene(10,10,10);
 Crafty.scene('mainroom');
 
 });
