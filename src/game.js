@@ -1,5 +1,6 @@
-var player_X = 5;
-var player_Y = 5;
+//var player_X = 5;
+//var player_Y = 5;
+var player_hp = 3;
 Game = {
 // This defines our grid's size and the size of each of its tiles
 map_grid: {
@@ -10,7 +11,7 @@ width: 16,
 height: 16
 }
 },
- 
+
 // The total width of the game screen. Since our grid takes up the entire screen
 // this is just the width of a tile times the width of the grid
 width: function() {
