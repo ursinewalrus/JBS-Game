@@ -110,7 +110,7 @@ Room.prototype.buildRoom = function() {
 						this.occupied[x][y] = true;
 					} 
 					if(Math.random()<.03 && !this.occupied[x][y] && !buffer_zone){
-						Crafty.e('NPC').at(x, y);
+						Crafty.e('Wolf').at(x, y);
 						this.occupied[x][y] = true;
 					}
 					if(Math.random()<.01 && !this.occupied[x][y] && !buffer_zone){
@@ -120,6 +120,10 @@ Room.prototype.buildRoom = function() {
 					if(Math.random()<.01 && !this.occupied[x][y] && !buffer_zone){
 						Crafty.e('Arrow_Spray').at(x,y);
 						this.occupied[x][y]
+					}
+					if(Math.random()<.01 && !this.occupied[x][y] && !buffer_zone){
+						Crafty.e('Shooter').at(x, y);
+						this.occupied[x][y] = true;
 					}
 				
 				}
@@ -426,50 +430,50 @@ Crafty.e('2D, DOM, Text')
 //Builds Level
  
 // Load our sprite map image
-Crafty.load(['assets/16x16_forest_1.gif','assets/16x16_forest_2.gif','assets/Doors.gif','assets/arrows.gif','assets/arrows2.gif','assets/treesv2.gif','assets/wolfy.gif','assets/hero.png'], function(){
+Crafty.load(['assets1/16x16_forest_1.gif','assets1/16x16_forest_2.gif','assets1/Doors.gif','assets1/arrows.gif','assets1/arrows2.gif','assets1/treesv2.gif','assets1/wolfy.gif','assets1/hero.png'], function(){
 // Once the image is loaded...
 // Define the individual sprites in the image
 // Each one (spr_tree, etc.) becomes a component
 // These components' names are prefixed with "spr_"
 // to remind us that they simply cause the entity
 // to be drawn with a certain sprite
-Crafty.sprite(16,'assets/hero.png',{
+Crafty.sprite(16,'assets1/hero.png',{
 	spr_player : [0,2]
 });
 
-Crafty.sprite(16,'assets/wolfy.gif',{
+Crafty.sprite(16,'assets1/wolfy.gif',{
 	spr_wolfyback : [0,0],
 	spr_wolfyfront :[0,1],
 	spr_wolfyleft : [1,1],
 	spr_wolfyright : [1,0]
 });
-Crafty.sprite(16,'assets/treesv2.gif',{
+Crafty.sprite(16,'assets1/treesv2.gif',{
 	spr_tree1 : [0,0],
 	spr_tree2 : [0,1],
 	spr_tree3 : [1,1],
 	spr_bush  : [1,0]
 	
 });
-Crafty.sprite(16,'assets/arrows.gif', {
+Crafty.sprite(16,'assets1/arrows.gif', {
 	spr_arrowN : [0,0],
 	spr_arrowS : [1,0],
 	spr_arrowE : [0,1],
 	spr_arrowW : [1,1]
 }); 
-Crafty.sprite(16,'assets/arrows2.gif', {
+Crafty.sprite(16,'assets1/arrows2.gif', {
 	spr_arrow2N : [0,0],
 	spr_arrow2S : [1,1],
 	spr_arrow2E : [1,0],
 	spr_arrow2W : [0,1]
 }); 
-Crafty.sprite(16,'assets/Doors.gif',{
+Crafty.sprite(16,'assets1/Doors.gif',{
 spr_door : [0,1],
 }),
-Crafty.sprite(16, 'assets/16x16_forest_2.gif', {
+Crafty.sprite(16, 'assets1/16x16_forest_2.gif', {
 //spr_door:[1,1],
 spr_npc: [0,0]
 }),
-Crafty.sprite(16, 'assets/16x16_forest_1.gif', {
+Crafty.sprite(16, 'assets1/16x16_forest_1.gif', {
 //spr_tree: [0, 0],
 //spr_bush: [1, 0],
 spr_village: [0, 1],

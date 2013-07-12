@@ -48,10 +48,11 @@ var arrow_damage = 2;
 var animation_speed = .01;
 this.enttype = 'PlayerCharacter';
 this.requires('Actor, Fourway, Collision, Persist, Keyboard, spr_player, SpriteAnimation')
-.fourway(2)
+.fourway(speed)
 .onHit('Village', this.visitVillage)
 .onHit('Door', this.enterRoom)
-.onHit('NPC', this.hurt)
+.onHit('Wolf', this.hurt_wolf)
+.onHit('FoeArrow',this.hurt_wolf)
 .onHit('Consumeable',this.feast)
 .stopOnSolids()
 .stopOnNPC()
@@ -81,25 +82,35 @@ this.stop();
 		this.direction = 'w'
 	} else if (this.isDown('D')) {
 		this.direction = 'e'
-	} if (this.isDown('SPACE')) {
-		if (this.arrowTimer == 0) {
-			Crafty.e('Arrow').at(this.at().x,this.at().y).direction = this.direction;
-			this.arrowTimer = 30;
+	} if (this.isDown('SPACE') && this.arrowTimer == 0 ) {
+		if(this.direction=='n'){
+			Crafty.e('ArrowN').at(this.at().x,this.at().y).direction = this.direction;
+			this.arrowTimer = 30
+		}if(this.direction=='s'){
+			Crafty.e('ArrowS').at(this.at().x,this.at().y).direction = this.direction;
+			this.arrowTimer = 30
+		}if(this.direction=='e'){
+			Crafty.e('ArrowE').at(this.at().x,this.at().y).direction = this.direction;
+			this.arrowTimer = 30
+		}if(this.direction=='w'){
+			Crafty.e('ArrowW').at(this.at().x,this.at().y).direction = this.direction;
+			this.arrowTimer = 30
 		}
+		
 	} 
 		// *** arrow spray spell, activates on pickup at the moment
 	if(this.isDown('G')&& arrow_spray == true){
 		if(this.arrowTimer == 0){
 			saver = this.direction
 			this.direction = 'n'
-			Crafty.e('Arrow').at(this.at().x,this.at().y).direction = this.direction;
-			this.direction = 'e'
-			Crafty.e('Arrow').at(this.at().x,this.at().y).direction = this.direction;	
+			Crafty.e('ArrowN').at(this.at().x,this.at().y).direction = this.direction;
 			this.direction = 's'
-			Crafty.e('Arrow').at(this.at().x,this.at().y).direction = this.direction;
+			Crafty.e('ArrowS').at(this.at().x,this.at().y).direction = this.direction;	
+			this.direction = 'e'
+			Crafty.e('ArrowE').at(this.at().x,this.at().y).direction = this.direction;
 			this.direction = 'w'
-			Crafty.e('Arrow').at(this.at().x,this.at().y).direction = this.direction;	
-			//this.arrowTimer = 30;
+			Crafty.e('ArrowW').at(this.at().x,this.at().y).direction = this.direction;	
+			this.arrowTimer = 30;
 			this.direction = saver 
 		}
 	}
@@ -152,6 +163,10 @@ this.stop();
 		}
 		
 	}
+    if (player_hp <= 0) {
+		this.destroy();
+        Crafty.scene("YouLose");
+    }
     
     
 		resetHUD();
@@ -190,6 +205,10 @@ stopMovement: function () {
 	this._speed = 0;
 	}
 },
+
+ouch : function (damage_amount) {
+	this.hp-=damage_amount;
+},
 stopOnNPC: function () {
 	(this.onHit('NPC',this.stopNPC));
 		return this;
@@ -203,18 +222,18 @@ stopNPC: function() {
 		this.y -= this._movement.y;
 }},
 
-hurt:function() {
+hurt_wolf:function() {
     if (this.hurtTimer == 0) {
         player_hp -= 1;
     }
     this.hurtTimer = 20;
-    
-    
-    if (player_hp <= 0) {
-		this.destroy();
-        Crafty.scene("YouLose");
-    }
-    
+},
+
+hurt_shooter:function(){
+	if(this.hurtTimer==0){
+		player_hp-=2
+	}
+	this.hurtTimer = 20;
 },
 
 enterRoom: function(data) {
@@ -259,10 +278,24 @@ feast : function (data){
 Crafty.c('NPC', {
 init: function() {
 this.direction = 'n'
-this.hp = 2;
+//this.hp = 2;
 this.reverseDirection = 's'
-this.requires('Actor, Collision, DontRemove, Solid, spr_wolfyfront')
+this.requires('Actor, Collision, DontRemove, Solid')
 .onHit('PlayerCharacter', this.hurtPlayer)
+.bind("SaveData", function (data, prepare) {
+    data.attr.x = this.x;
+    data.attr.y = this.y;
+});
+},
+ouch : function (damage_amount) {
+	this.hp-=damage_amount;
+},
+});
+
+Crafty.c('Wolf',{
+init : function () {
+this.hp = 2;
+this.requires('NPC,spr_wolfyfront')
 .bind('EnterFrame' , function() {
 if (Math.random() > .95) {
 	var newDirection = Math.random();
@@ -288,12 +321,6 @@ if (this.hit('Solid')) {
 	this.move(this.reverseDirection, 1);
 }
 
-/*
-if (this.hit('Arrow')){
-	this.hp-=1;
-}
-*/
-
 if(this.hp<=0){
 	this.destroy();
 	exp+=10;
@@ -305,22 +332,92 @@ if(this.hp<=0){
     data.attr.y = this.y;
 });
 },
-
 hurtPlayer : function (data) {
 	plaayer = data[0].obj;
-	plaayer.hurt();
+	plaayer.hurt_wolf();
 	this.move(this.reverseDirection, 1);
 },
 
-ouch : function (damage_amount) {
-	this.hp-=damage_amount;
-},
 });
 
+Crafty.c('Shooter',{
+init : function () {
+this.hp = 5;
+this.requires('NPC,spr_wolfyback')
+.bind('EnterFrame' , function() {
+if (Math.random() > .8) {
+	var newDirection = Math.random();
+		if (newDirection < .25) {
+			this.direction = 'n'
+			this.reverseDirection = 's'
+		}
+		else if (newDirection > .25 && newDirection < .5) {
+			this.direction = 's'
+			this.reverseDirection = 'n'
+		}
+		else if (newDirection >.5 && newDirection < .75) {
+			this.direction = 'e'
+			this.reverseDirection = 'w'
+		}
+		else if (newDirection > .76) {
+			this.direction = 'w'
+			this.reverseDirection = 'e'
+		}
+}
+this.move(this.direction, 1);
+if (this.hit('Solid')) {
+	this.move(this.reverseDirection, 1);
+}
+
+if(this.hp<=0){
+	this.destroy();
+	exp+=25;
+}
+if(Math.random()>.84){
+	Crafty.e('FoeArrow').at(this.at().x,this.at().y).direction = this.direction;
+}
+}
+)
+.bind("SaveData", function (data, prepare) {
+	data.attr.x = this.x;
+	data.attr.y = this.y;
+});
+},
+hurtPlayer : function (data) {
+	plaayer = data[0].obj;
+	plaayer.hurt_shooter();
+	this.move(this.reverseDirection, 1);
+},
+
+});
+
+Crafty.c('FoeArrow',{
+	init: function() {
+		this.direction = ''
+		this.requires('Actor, Collision,spr_arrowN')
+		.onHit('PlayerCharacter',this.hurt)
+		.onHit('PlayerCharacter',this.shatter)
+		.onHit('Block',this.shatter)
+		.bind('EnterFrame', function() {
+			this.move(this.direction, 6);
+		});
+		},
+
+		shatter : function(){
+			this.destroy();
+		},
+
+		hurt: function(data) {
+			var damage_amount = 1
+			damage = data[0].obj;
+			damage.ouch(damage_amount);
+			return data[0];
+			},	
+});
 Crafty.c('Arrow', {
 init: function() {
 this.direction = ''
-this.requires('Actor, spr_arrow2N, Collision')
+this.requires('Actor, Collision')
 .onHit('NPC',this.hurt)
 .onHit('NPC',this.shatter)
 .onHit('Solid',this.shatter)
@@ -340,7 +437,26 @@ hurt: function(data) {
 	return data[0];
 	},
 });
-
+Crafty.c('ArrowN',{
+	init: function () {
+		this.requires('Arrow,spr_arrow2N')
+}
+});
+Crafty.c('ArrowS',{
+	init: function () {
+	this.requires('Arrow,spr_arrow2S')
+}
+});
+Crafty.c('ArrowE',{
+	init: function () {
+	this.requires('Arrow,spr_arrow2E')
+}
+});
+Crafty.c('ArrowW',{
+	init: function () {
+	this.requires('Arrow,spr_arrow2W')
+}
+});
 Crafty.c('Sword',{
 init: function () {
 this.duration = 8
