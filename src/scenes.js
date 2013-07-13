@@ -10,7 +10,10 @@ var allRooms;
 
 var levelTemplate = new Object();
 
-levelTemplate['forest'] = function (rm) {
+levelTemplate['forest'] = new Object();
+
+//is forest template
+levelTemplate['forest']['forest'] = function (rm) {
 	roomInital(rm);
 	console.log("forest")
 	for (var x = 0; x < Game.map_grid.width; x++) {
@@ -47,7 +50,12 @@ levelTemplate['forest'] = function (rm) {
 	}
 }
 
-levelTemplate['grid'] = function(rm) {
+levelTemplate['forest']['forest'].genChance = .7;
+levelTemplate['forest']['forest'].isBossRoom = false;
+
+
+//is grid template
+levelTemplate['forest']['grid'] = function (rm) {
 	roomInital(rm);
 	console.log("grid")
 	for (var x = 0; x < Game.map_grid.width; x++) {
@@ -87,7 +95,11 @@ levelTemplate['grid'] = function(rm) {
 		}
 	}
 }
-	
+
+levelTemplate['forest']['grid'].genChance = .7;
+levelTemplate['forest']['grid'].isBossRoom = false;
+
+
 function roomInital(rm) {
 	//console.log(thisRoom.name);
 	// A 2D array to keep track of all occupied tiles
@@ -176,7 +188,18 @@ Room.prototype.buildRoom = function() {
 	var rm = this
 	Crafty.scene(rm.name, function() {
 		// Place a tree at every edge square on our grid of 16x16 tiles
-		levelTemplate[rm.type](rm);
+		var chance = -1;
+		var buildFunc;
+		for (rmType in levelTemplate[rm.type]) {
+			console.log(rmType);
+			console.log(levelTemplate[rm.type][rmType].genChance);
+			var genChance = levelTemplate[rm.type][rmType].genChance - Math.random();
+			if (genChance > chance) {
+				chance = genChance;
+				buildFunc = levelTemplate[rm.type][rmType];
+			}
+		}
+		buildFunc(rm);
 		delete this.occupied;
 	/*
 	// Generate up to five villages on the map in random locations
@@ -304,7 +327,7 @@ function initializeScene(roomGridX, roomGridY, maxNumOfRooms, levelType) {
 		if (x-1 >= 0 && roomGrid[x-1][y] === null && 
 				maxNumOfRooms > 0 && Math.random() > .5) {
 				
-			roomGrid[x-1][y] = new Room(roomNumber + 'room', 'forest');
+			roomGrid[x-1][y] = new Room(roomNumber + 'room', levelType);
 			rm.linkRooms(roomGrid[x-1][y].name, 'w', Game.map_grid.height/2);
 			roomNumber++;
 			maxNumOfRooms--;
@@ -312,7 +335,7 @@ function initializeScene(roomGridX, roomGridY, maxNumOfRooms, levelType) {
 		if (x+1 < roomGrid.length && roomGrid[x+1][y]  === null && 
 				maxNumOfRooms > 0 && Math.random() > .5) {
 				
-			roomGrid[x+1][y] = new Room(roomNumber + 'room', 'forest');
+			roomGrid[x+1][y] = new Room(roomNumber + 'room', levelType);
 			rm.linkRooms(roomGrid[x+1][y].name, 'e', Game.map_grid.height/2);
 			roomNumber++;
 			maxNumOfRooms--;
@@ -320,7 +343,7 @@ function initializeScene(roomGridX, roomGridY, maxNumOfRooms, levelType) {
 		if (y-1 >= 0 && roomGrid[x][y-1]  === null && 
 				maxNumOfRooms > 0 && Math.random() > .5) {
 				
-			roomGrid[x][y-1] = new Room(roomNumber + 'room', 'forest');
+			roomGrid[x][y-1] = new Room(roomNumber + 'room', levelType);
 			rm.linkRooms(roomGrid[x][y-1].name, 'n', Game.map_grid.width/2);
 			roomNumber++;
 			maxNumOfRooms--;
@@ -328,7 +351,7 @@ function initializeScene(roomGridX, roomGridY, maxNumOfRooms, levelType) {
 		if (y+1 < roomGrid[0].length && roomGrid[x][y+1]  === null && 
 				maxNumOfRooms > 0 && Math.random() > .5) {
 				
-			roomGrid[x][y+1] = new Room(roomNumber + 'room', 'forest');
+			roomGrid[x][y+1] = new Room(roomNumber + 'room', levelType);
 			rm.linkRooms(roomGrid[x][y+1].name, 's', Game.map_grid.width/2);
 			roomNumber++;
 			maxNumOfRooms--;
@@ -522,13 +545,14 @@ for (var x in window.localStorage) {
 	}
 }
 
-initializeScene(10,10,10);
+initializeScene(10,10,10, 'forest');
 //testRoomBuild('forest');
 Crafty.scene('mainroom');
 
 });
 
 });
+
 x_wall = function (room,x,y,size) {
 	for(var t=0; t<size; t++){
 		if(x+t<23 && !room.occupied[x+t][y]){
@@ -540,14 +564,14 @@ x_wall = function (room,x,y,size) {
 // ********* structures for rooms
 y_wall = function (room,x,y,size) {
 	for(var t=0; t<size; t++){
-		if(y+t<23){
+		if(y+t<23 && !room.occupied[x][y+t]){
 			Crafty.e('Bush').at(x,y+t);
 			room.occupied[x][y+t] = true
 		}
 	}
 };
 
-hut = function(x,y,size){
+hut = function(room,x,y,size){
 	var doorway = Math.random()
 	for(var t=0; t<size; t++){
 		if(x+t<23){
