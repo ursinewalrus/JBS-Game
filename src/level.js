@@ -305,7 +305,7 @@ function initializeScene(roomGridX, roomGridY, maxNumOfRooms, levelType) {
 		return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
 	
-	var roomNumber = 1;
+	var roomNumber = 0;
 	var roomGrid = new Array();
 	
 	for (var x = 0; x < roomGridX; x++) {
@@ -370,12 +370,7 @@ function initializeScene(roomGridX, roomGridY, maxNumOfRooms, levelType) {
 		}
 	}
 	
-	Crafty.e('PlayerCharacter').at(5,5);
-	max_hp = 3;
-	player_hp = 3;
-	speed = 2;
-	exp = 0;
-	allRooms = new Object();
+	resetParams();
 	
 	var mainroomX = getRandomInt(0, roomGridX-1);
 	var mainroomY = getRandomInt(0, roomGridY-1);
@@ -392,6 +387,26 @@ function initializeScene(roomGridX, roomGridY, maxNumOfRooms, levelType) {
 	for (var i in allRooms) {
 		allRooms[i].buildRoom();
 	}
+}
+
+function resetParams() {
+	var newpat = '(';
+	for (var x in allRooms) {
+		newpat = newpat + x + '|';
+	}
+	newpat = newpat + ')';
+	newpat = new RegExp(newpat);
+	for (var x in window.localStorage) {
+		if (newpat.test(x)) {
+			window.localStorage.removeItem(x);
+		}
+	}
+	Crafty.e('PlayerCharacter').at(5,5);
+	max_hp = 3;
+	player_hp = 3;
+	speed = 2;
+	exp = 0;
+	allRooms = new Object();
 }
 
 
