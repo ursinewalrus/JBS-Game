@@ -59,10 +59,17 @@ levelTemplate['grid'] = function(rm) {
 				Crafty.e('Tree').at(x, y);
 				rm.occupied[x][y] = true;
 			} 
-			if (Math.random() < 0.9 && !rm.occupied[x][y] && !buffer_zone) {
+			if (Math.random() < 0.01 && !rm.occupied[x][y] && !buffer_zone) {
 				// Place a bush entity at the current tile
-				Crafty.e('Bush').at(x, y);
-				rm.occupied[x][y] = true;
+				x_wall(rm,x,y,5)
+			} 
+			if (Math.random() < 0.01 && !rm.occupied[x][y] && !buffer_zone) {
+				// Place a bush entity at the current tile
+				y_wall(rm,x,y,3)
+			} 
+			if (Math.random() < 0.01 && !rm.occupied[x][y] && !buffer_zone) {
+				// Place a bush entity at the current tile
+				hut(rm,x,y,4)
 			} 
 			if(Math.random()<.03 && !rm.occupied[x][y] && !buffer_zone){
 				Crafty.e('NPC').at(x, y);
@@ -522,7 +529,59 @@ Crafty.scene('mainroom');
 });
 
 });
+x_wall = function (room,x,y,size) {
+	for(var t=0; t<size; t++){
+		if(x+t<23 && !room.occupied[x+t][y]){
+			Crafty.e('Bush').at(x+t,y);
+			room.occupied[x+t][y] = true
+		}
+	}
+};
+// ********* structures for rooms
+y_wall = function (room,x,y,size) {
+	for(var t=0; t<size; t++){
+		if(y+t<23){
+			Crafty.e('Bush').at(x,y+t);
+			room.occupied[x][y+t] = true
+		}
+	}
+};
 
+hut = function(x,y,size){
+	var doorway = Math.random()
+	for(var t=0; t<size; t++){
+		if(x+t<23){
+			if(t!=2){
+				Crafty.e('Bush').at(x+t,y);
+				room.occupied[x+t][y] = true
+			}
+		}
+	}
+	for(var t=0; t<size; t++){
+		if(y+t<23){
+			Crafty.e('Bush').at(x,y+t);
+			room.occupied[x][y+t] = true
+		}
+	}
+	x+=size;
+	y+=size;
+	
+	for(var t=0; t<=size; t++){
+		if(x+t<23){
+			Crafty.e('Bush').at(x-t,y);
+			room.occupied[x-t][y] = true
+			
+		}
+	}
+	for(var t=0; t<=size; t++){
+		if(y+t<23){
+			Crafty.e('Bush').at(x,y-t);
+			room.occupied[x][y-t] = true
+		}
+	}
+	
+
+};
 
 
 
