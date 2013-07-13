@@ -387,7 +387,7 @@ function initializeScene(roomGridX, roomGridY, maxNumOfRooms, levelType) {
 	
 	var mainroomX = getRandomInt(0, roomGridX-1);
 	var mainroomY = getRandomInt(0, roomGridY-1);
-	roomGrid[mainroomX][mainroomY] = new Room('mainroom', 'forest');
+	roomGrid[mainroomX][mainroomY] = new Room('mainroom', levelType);
 	roomPlace(roomGrid[mainroomX][mainroomY], mainroomX, mainroomY);
 
 	/*
