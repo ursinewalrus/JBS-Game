@@ -300,7 +300,9 @@ Room.prototype.exit = function() {
 	}
 	
 function initializeScene(roomGridX, roomGridY, maxNumOfRooms, levelType) {
-
+	
+	resetParams();
+	
 	function getRandomInt(min, max) {
 		return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
@@ -369,8 +371,6 @@ function initializeScene(roomGridX, roomGridY, maxNumOfRooms, levelType) {
 			roomPlace(roomGrid[x][y+1], x, y+1);
 		}
 	}
-	
-	resetParams();
 	
 	var mainroomX = getRandomInt(0, roomGridX-1);
 	var mainroomY = getRandomInt(0, roomGridY-1);
