@@ -364,7 +364,18 @@ function initializeScene(roomGridX, roomGridY, maxNumOfRooms) {
 }
 
 
- 
+
+function testRoomBuild(type) {
+	Crafty.e('PlayerCharacter').at(5,5);
+	max_hp = 3;
+	player_hp = 3;
+	speed = 2;
+	exp = 0;
+	allRooms = new Object();
+	var coolroom = new Room('mainroom', type);
+	coolroom.buildRoom();
+}
+
 // Victory scene
 // -------------
 // Tells the player when they've won and lets them start a new game
@@ -495,6 +506,7 @@ for (var x in window.localStorage) {
 }
 
 initializeScene(10,10,10);
+//testRoomBuild('forest');
 Crafty.scene('mainroom');
 
 });
