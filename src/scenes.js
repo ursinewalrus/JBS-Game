@@ -69,18 +69,18 @@ levelTemplate['forest']['grid'] = function (rm) {
 			} 
 			if (Math.random() < 0.01 && !rm.occupied[x][y] && !buffer_zone) {
 				// Place a bush entity at the current tile
-				x_wall(rm,x,y,5)
+				x_wall(rm,x,y,4,'bush')
 			} 
 			if (Math.random() < 0.01 && !rm.occupied[x][y] && !buffer_zone) {
 				// Place a bush entity at the current tile
-				y_wall(rm,x,y,3)
+				y_wall(rm,x,y,3,'bush')
 			} 
 			if (Math.random() < 0.01 && !rm.occupied[x][y] && !buffer_zone) {
 				// Place a bush entity at the current tile
-				hut(rm,x,y,4)
+				hut(rm,x,y,4,'bush')
 			} 
 			if(Math.random()<.03 && !rm.occupied[x][y] && !buffer_zone){
-				Crafty.e('NPC').at(x, y);
+				Crafty.e('Wolf').at(x, y);
 				rm.occupied[x][y] = true;
 			}
 			if(Math.random()<.01 && !rm.occupied[x][y] && !buffer_zone){
