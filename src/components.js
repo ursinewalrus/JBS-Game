@@ -31,6 +31,16 @@ init: function() {
 }
 });
 
+Crafty.c('Saveable', {
+init: function() {
+	this.requires('Actor')
+		.bind("SaveData", function (data, prepare) {
+			data.attr.x = this.x;
+			data.attr.y = this.y;
+		});
+}
+});
+
 
 //----------------------------------------------------------
 //--------------Moving Components---------------------------
@@ -171,10 +181,6 @@ init: function() {
 			HUD(this);
 	
 		})
-		.bind("SaveData", function (data, prepare) {
-			data.attr.x = this.x;
-			data.attr.y = this.y;
-		});
 },
 stopOnSolids: function() {
 	this.onHit('Block', this.stopMovement);
@@ -256,12 +262,8 @@ init: function() {
 	this.direction = 'n'
 	//this.hp = 2;
 	this.reverseDirection = 's'
-	this.requires('Actor, Collision, DontRemove, Solid')
-		.onHit('PlayerCharacter', this.hurtPlayer)
-		.bind("SaveData", function (data, prepare) {
-			data.attr.x = this.x;
-			data.attr.y = this.y;
-		});
+	this.requires('Collision, Saveable, Solid')
+		.onHit('PlayerCharacter', this.hurtPlayer);
 },
 ouch : function (damage_amount) {
 	this.hp-=damage_amount;
@@ -271,7 +273,7 @@ ouch : function (damage_amount) {
 Crafty.c('Wolf',{
 init : function () {
 	this.hp = 2;
-	this.requires('NPC,spr_wolfyfront')
+	this.requires('NPC, spr_wolfyfront')
 		.bind('EnterFrame' , function() {
 			if (Math.random() > .95) {
 				var newDirection = Math.random();
@@ -300,10 +302,6 @@ init : function () {
 				this.destroy();
 				exp+=10;
 			}
-		})
-		.bind("SaveData", function (data, prepare) {
-			data.attr.x = this.x;
-			data.attr.y = this.y;
 		});
 },
 hurtPlayer : function (data) {
@@ -316,7 +314,7 @@ hurtPlayer : function (data) {
 Crafty.c('Shooter',{
 init : function () {
 	this.hp = 5;
-	this.requires('NPC,spr_wolfyback')
+	this.requires('NPC, spr_wolfyback')
 		.bind('EnterFrame' , function() {
 			if (Math.random() > .8) {
 				var newDirection = Math.random();
@@ -349,10 +347,6 @@ init : function () {
 			if(Math.random()>.84){
 				Crafty.e('FoeArrow').at(this.at().x,this.at().y).direction = this.direction;
 			}
-		})
-		.bind("SaveData", function (data, prepare) {
-			data.attr.x = this.x;
-			data.attr.y = this.y;
 		});
 },
 hurtPlayer : function (data) {
@@ -365,7 +359,7 @@ hurtPlayer : function (data) {
 Crafty.c('FoeArrow',{
 	init: function() {
 		this.direction = ''
-		this.requires('Actor, Collision,spr_arrowN')
+		this.requires('Actor, Collision, spr_arrowN')
 		.onHit('PlayerCharacter',this.hurt)
 		.onHit('PlayerCharacter',this.shatter)
 		.onHit('Block',this.shatter)
@@ -455,11 +449,7 @@ hurt: function(data){
 // A Tree is just an Actor with a certain sprite
 Crafty.c('Tree', {
 init: function() {
-	this.requires('Actor, Solid, Block, DontRemove, spr_tree2')
-		.bind("SaveData", function (data, prepare) {
-			data.attr.x = this.x;
-			data.attr.y = this.y;
-	});
+	this.requires('Solid, Block, Saveable, spr_tree2');
 }
 });
 
@@ -467,10 +457,8 @@ Crafty.c('Door',{
 init:function(){
 	this.thisRoom;
 	this.linkedRoom;
-	this.requires('Actor, Solid, DontRemove, Block, spr_door')
+	this.requires('Solid, Saveable, Block, spr_door')
 	.bind("SaveData", function (data, prepare) {
-		data.attr.x = this.x;
-		data.attr.y = this.y;
 		data.attr.thisRoom = this.thisRoom;
 		data.attr.linkedRoom = this.linkedRoom;
 	});
@@ -486,17 +474,13 @@ setLinkedRoom:function(room) {
 // A Bush is just an Actor with a certain sprite
 Crafty.c('Bush', {
 init: function() {
-	this.requires('Actor, Solid, DontRemove, Block, spr_bush')
-		.bind("SaveData", function (data, prepare) {
-			data.attr.x = this.x;
-			data.attr.y = this.y;
-		});
+	this.requires('Solid, Saveable, Block, spr_bush');
 }
 });
 
 Crafty.c('Consumeable', {
 init: function () {
-this.requires('Actor,DontRemove,Block')
+this.requires('Saveable, Block')
 	.bind("SaveData",function(data,prepare){
 		data.attr.x = this.x;
 		data.attr.y = this.y;
@@ -506,7 +490,7 @@ this.requires('Actor,DontRemove,Block')
 
 Crafty.c('Full_Heal',{
 init: function () {
-	this.requires('Consumeable,spr_village')
+	this.requires('Consumeable, spr_village')
 	.bind("SaveData",function(data,prepare){
 		data.attr.x = this.x;
 		data.attr.y = this.y;
@@ -520,7 +504,7 @@ feast: function(player) {
 
 Crafty.c('Arrow_Spray',{
 init: function () {
-	this.requires('Consumeable,spr_tome')
+	this.requires('Consumeable, spr_tome')
 		.bind("SaveData",function(data,prepare){
 			data.attr.x = this.x;
 			data.attr.y = this.y;
@@ -534,7 +518,7 @@ feast: function(player) {
 
 Crafty.c('Dead_Guy',{
 init: function() {
-	this.requires('Actor, DontRemove, spr_deadguy')
+	this.requires('Saveable, spr_deadguy')
 		.bind("SaveData",function(data,prepare){
 			data.attr.x = this.x;
 			data.attr.y = this.y;
@@ -544,7 +528,7 @@ init: function() {
 
 Crafty.c('Grave',{
 init: function() {
-	this.requires('Actor, Solid, DontRemove, Block, spr_grave')
+	this.requires('Solid, Saveable, Block, spr_grave')
 		.bind("SaveData",function(data,prepare){
 			data.attr.x = this.x;
 			data.attr.y = this.y;
@@ -554,7 +538,7 @@ init: function() {
 
 Crafty.c('Broke_Sword',{
 init: function() {
-	this.requires('Actor, Solid, DontRemove, Block, spr_brokesword')
+	this.requires('Solid, Saveable, Block, spr_brokesword')
 		.bind("SaveData",function(data,prepare){
 			data.attr.x = this.x;
 			data.attr.y = this.y;

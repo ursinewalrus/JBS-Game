@@ -224,7 +224,7 @@ Room.prototype.buildRoom = function() {
 }
 
 Room.prototype.exit = function() {
-	var ents = Crafty('DontRemove');
+	var ents = Crafty('Saveable');
 	for (var i = 0; i < ents.length; i++) {
 		window.localStorage.setItem(this.name + i, serialize(Crafty(ents[i])));
 	};
