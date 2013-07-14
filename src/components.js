@@ -566,7 +566,7 @@ player_hp = max_hp;
 
 Crafty.c('Arrow_Spray',{
 init: function () {
-this.requires('Consumeable,spr_tree2')
+this.requires('Consumeable,spr_tome')
 .bind("SaveData",function(data,prepare){
 data.attr.x = this.x;
 data.attr.y = this.y;
@@ -577,7 +577,33 @@ this.destroy()
 arrow_spray = true;
 },
 });
-
+Crafty.c('Dead_Guy',{
+init: function() {
+this.requires('Actor, DontRemove, spr_deadguy')
+.bind("SaveData",function(data,prepare){
+data.attr.x = this.x;
+data.attr.y = this.y;
+});
+},
+});
+Crafty.c('Grave',{
+init: function() {
+this.requires('Actor, Solid, DontRemove, Block, spr_grave')
+.bind("SaveData",function(data,prepare){
+data.attr.x = this.x;
+data.attr.y = this.y;
+});
+},
+});
+Crafty.c('Broke_Sword',{
+init: function() {
+this.requires('Actor, Solid, DontRemove, Block, spr_brokesword')
+.bind("SaveData",function(data,prepare){
+data.attr.x = this.x;
+data.attr.y = this.y;
+});
+},
+});
 
 
 
