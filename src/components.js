@@ -31,6 +31,7 @@ init: function() {
 }
 });
 
+// Saveable is any entity that should be saved on room exit
 Crafty.c('Saveable', {
 init: function() {
 	this.requires('Actor')
@@ -189,14 +190,14 @@ stopOnSolids: function() {
 stopMovement: function () {
 	if (this._movement) {
 		this.x -= this._movement.x;
+		if (this.hit('Block') != false) {
+			this.x += this._movement.x;
+			this.y -= this._movement.y;
 			if (this.hit('Block') != false) {
-					this.x += this._movement.x;
-						this.y -= this._movement.y;
-							if (this.hit('Block') != false) {
-								this.x -= this._movement.x;
-									this.y -= this._movement.y;
-							}
+				this.x -= this._movement.x;
+				this.y -= this._movement.y;
 			}
+		}
 	} else {
 		this._speed = 0;
 	}
@@ -357,27 +358,25 @@ hurtPlayer : function (data) {
 });
 
 Crafty.c('FoeArrow',{
-	init: function() {
-		this.direction = ''
-		this.requires('Actor, Collision, spr_arrowN')
+init: function() {
+	this.direction = ''
+	this.requires('Actor, Collision, spr_arrowN')
 		.onHit('PlayerCharacter',this.hurt)
 		.onHit('PlayerCharacter',this.shatter)
 		.onHit('Block',this.shatter)
 		.bind('EnterFrame', function() {
 			this.move(this.direction, 6);
 		});
-		},
-
-		shatter : function(){
-			this.destroy();
-		},
-
-		hurt: function(data) {
-			var damage_amount = 1
-			damage = data[0].obj;
-			damage.ouch(damage_amount);
-			return data[0];
-			},	
+},
+shatter : function(){
+	this.destroy();
+},
+hurt: function(data) {
+	var damage_amount = 1
+	damage = data[0].obj;
+	damage.ouch(damage_amount);
+	return data[0];
+},	
 });
 
 Crafty.c('Arrow', {
@@ -401,26 +400,31 @@ hurt: function(data) {
 	return data[0];
 	},
 });
+
 Crafty.c('ArrowN',{
 	init: function () {
 		this.requires('Arrow,spr_arrow2N')
 }
 });
+
 Crafty.c('ArrowS',{
 	init: function () {
 		this.requires('Arrow,spr_arrow2S')
 }
 });
+
 Crafty.c('ArrowE',{
 	init: function () {
 		this.requires('Arrow,spr_arrow2E')
 }
 });
+
 Crafty.c('ArrowW',{
 	init: function () {
 		this.requires('Arrow,spr_arrow2W')
 }
 });
+
 Crafty.c('Sword',{
 init: function () {
 	this.duration = 8
@@ -498,7 +502,7 @@ init: function () {
 },
 feast: function(player) {
 	this.destroy()
-	player.player_hp = max_hp;
+	player_hp = max_hp;
 },
 });
 
