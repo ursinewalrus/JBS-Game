@@ -39,7 +39,7 @@ init: function() {
 // This is the player-controlled character
 Crafty.c('PlayerCharacter', {
 init: function() {
-	var arrow_spray = false;
+	this.arrow_spray = false;
 	this.arrowTimer = 0;
 	this.hurtTimer = 0;
 	this.direction = 'n';
@@ -98,7 +98,7 @@ init: function() {
 		
 			} 
 			// *** arrow spray spell, activates on pickup at the moment
-			if(this.isDown('G')&& arrow_spray == true && this.arrowTimer == 0){
+			if(this.isDown('G')&& this.arrow_spray == true && this.arrowTimer == 0){
 				saver = this.direction
 				this.direction = 'n'
 				Crafty.e('ArrowN').at(this.at().x,this.at().y).direction = this.direction;
@@ -246,7 +246,7 @@ enterRoom: function(data) {
 },
 feast : function (data){
 	foood = data[0].obj;
-	foood.feast();
+	foood.feast(this);
 	return data[0];
 },
 });
@@ -512,9 +512,9 @@ init: function () {
 		data.attr.y = this.y;
 	});
 },
-feast: function() {
+feast: function(player) {
 	this.destroy()
-	player_hp = max_hp;
+	player.player_hp = max_hp;
 },
 });
 
@@ -526,9 +526,9 @@ init: function () {
 			data.attr.y = this.y;
 		});
 },
-feast: function() {
+feast: function(player) {
 	this.destroy()
-	arrow_spray = true;
+	player.arrow_spray = true;
 },
 });
 
