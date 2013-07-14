@@ -55,8 +55,7 @@ init: function() {
 	this.hurtTimer = 0;
 	this.direction = 'n';
 	var arrow_damage = 2;
-	var animation_speed = .01;
-	this.enttype = 'PlayerCharacter';
+	var animation_speed = 12;
 	this.requires('Actor, Fourway, Collision, Persist, Keyboard, spr_player, SpriteAnimation')
 		.fourway(speed)
 		.onHit('Village', this.visitVillage)
@@ -64,12 +63,11 @@ init: function() {
 		.onHit('Wolf', this.hurt_wolf)
 		.onHit('FoeArrow',this.hurt_wolf)
 		.onHit('Consumeable',this.feast)
-		.stopOnSolids()
-		.stopOnNPC()
 		.animate('Pu',0,0,2)
 		.animate('Pr',0,1,2)
 		.animate('Pd',0,2,2)
 		.animate('Pl',0,3,2)
+		.stopOnSolids()
 		.bind('NewDirection', function(data){
 			if (data.x > 0) {
 				this.animate('Pr', animation_speed, -1);
@@ -184,16 +182,17 @@ init: function() {
 		})
 },
 stopOnSolids: function() {
-	this.onHit('Block', this.stopMovement);
+	this.onHit('Solid', this.stopMovement);
+	this.onHit('NPC', this.stopMovement);
 	return this;
 },
 stopMovement: function () {
 	if (this._movement) {
 		this.x -= this._movement.x;
-		if (this.hit('Block') != false) {
+		if (this.hit('Solid') || this.hit('NPC')) {
 			this.x += this._movement.x;
 			this.y -= this._movement.y;
-			if (this.hit('Block') != false) {
+			if (this.hit('Solid') || this.hit('NPC')) {
 				this.x -= this._movement.x;
 				this.y -= this._movement.y;
 			}
@@ -205,17 +204,6 @@ stopMovement: function () {
 ouch : function (damage_amount) {
 	this.hp-=damage_amount;
 },
-stopOnNPC: function () {
-	(this.onHit('NPC',this.stopNPC));
-		return this;
-},
-//Stops the movement
-stopNPC: function() {
-	this._speed = 0;
-	if (this._movement) {
-		this.x -= this._movement.x;
-		this.y -= this._movement.y;
-}},
 hurt_wolf:function() {
     if (this.hurtTimer == 0) {
         player_hp -= 1;
@@ -261,10 +249,19 @@ feast : function (data){
 Crafty.c('NPC', {
 init: function() {
 	this.direction = 'n'
-	//this.hp = 2;
-	this.reverseDirection = 's'
-	this.requires('Collision, Saveable, Solid')
-		.onHit('PlayerCharacter', this.hurtPlayer);
+	this.requires('Saveable, Collision')
+		.onHit('PlayerCharacter', this.hurtPlayer)
+		.stopOnSolids()
+},
+stopOnSolids: function() {
+	this.onHit('PlayerCharacter', this.stopMovenment);
+	this.onHit('Solid', this.stopMovement);
+	return this;
+},
+stopMovement: function () {
+	while( this.hit('PlayerCharacter') || this.hit('Solid') ) {
+		this.move(this.direction, -1);
+	}
 },
 ouch : function (damage_amount) {
 	this.hp-=damage_amount;
@@ -296,9 +293,12 @@ init : function () {
 				}
 			}
 			this.move(this.direction, 1);
-			if (this.hit('Solid')) {
-				this.move(this.reverseDirection, 1);
-			}
+			//if (this.hit('Solid')) {
+				//this.move(this.reverseDirection, 1);
+			//}
+			//if (this.hit('PlayerCharacter')) {
+				//this.move(this.reverseDirection, 1);
+			//}
 			if(this.hp<=0){
 				this.destroy();
 				exp+=10;
@@ -337,9 +337,9 @@ init : function () {
 				}
 			}
 			this.move(this.direction, 1);
-			if (this.hit('Solid')) {
-				this.move(this.reverseDirection, 1);
-			}
+			//if (this.hit('Solid')) {
+				//this.move(this.reverseDirection, 1);
+			//}
 
 			if(this.hp<=0){
 				this.destroy();
@@ -363,7 +363,7 @@ init: function() {
 	this.requires('Actor, Collision, spr_arrowN')
 		.onHit('PlayerCharacter',this.hurt)
 		.onHit('PlayerCharacter',this.shatter)
-		.onHit('Block',this.shatter)
+		.onHit('Solid',this.shatter)
 		.bind('EnterFrame', function() {
 			this.move(this.direction, 6);
 		});
@@ -453,7 +453,7 @@ hurt: function(data){
 // A Tree is just an Actor with a certain sprite
 Crafty.c('Tree', {
 init: function() {
-	this.requires('Solid, Block, Saveable, spr_tree2');
+	this.requires('Solid, Saveable, spr_tree2');
 }
 });
 
@@ -461,7 +461,7 @@ Crafty.c('Door',{
 init:function(){
 	this.thisRoom;
 	this.linkedRoom;
-	this.requires('Solid, Saveable, Block, spr_door')
+	this.requires('Solid, Saveable, spr_door')
 	.bind("SaveData", function (data, prepare) {
 		data.attr.thisRoom = this.thisRoom;
 		data.attr.linkedRoom = this.linkedRoom;
@@ -478,13 +478,13 @@ setLinkedRoom:function(room) {
 // A Bush is just an Actor with a certain sprite
 Crafty.c('Bush', {
 init: function() {
-	this.requires('Solid, Saveable, Block, spr_bush');
+	this.requires('Solid, Saveable, spr_bush');
 }
 });
 
 Crafty.c('Consumeable', {
 init: function () {
-this.requires('Saveable, Block')
+this.requires('Saveable')
 	.bind("SaveData",function(data,prepare){
 		data.attr.x = this.x;
 		data.attr.y = this.y;
@@ -532,7 +532,7 @@ init: function() {
 
 Crafty.c('Grave',{
 init: function() {
-	this.requires('Solid, Saveable, Block, spr_grave')
+	this.requires('Solid, Saveable, spr_grave')
 		.bind("SaveData",function(data,prepare){
 			data.attr.x = this.x;
 			data.attr.y = this.y;
@@ -542,7 +542,7 @@ init: function() {
 
 Crafty.c('Broke_Sword',{
 init: function() {
-	this.requires('Solid, Saveable, Block, spr_brokesword')
+	this.requires('Solid, Saveable, spr_brokesword')
 		.bind("SaveData",function(data,prepare){
 			data.attr.x = this.x;
 			data.attr.y = this.y;

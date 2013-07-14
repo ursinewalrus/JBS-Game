@@ -401,6 +401,7 @@ function resetParams() {
 			window.localStorage.removeItem(x);
 		}
 	}
+	player =
 	Crafty.e('PlayerCharacter').at(5,5);
 	max_hp = 3;
 	player_hp = 3;
