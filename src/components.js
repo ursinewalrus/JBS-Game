@@ -44,7 +44,7 @@ init: function() {
 
 Crafty.c('Consumeable', {
 init: function () {
-	this.requires('Saveable')
+	this.requires('Saveable, Solid')
 }
 });
 
