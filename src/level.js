@@ -409,8 +409,6 @@ function resetParams() {
 	allRooms = new Object();
 }
 
-
-
 function testRoomBuild(type) {
 	Crafty.e('PlayerCharacter').at(5,5);
 	max_hp = 3;
@@ -421,3 +419,4 @@ function testRoomBuild(type) {
 	var coolroom = new Room('mainroom', type);
 	coolroom.buildRoom();
 }
+
