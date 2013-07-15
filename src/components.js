@@ -61,7 +61,7 @@ init: function() {
 	this.direction = 'n';
 	var arrow_damage = 2;
 	var animation_speed = 12;
-	this.requires('Actor, Fourway, Collision, Persist, Keyboard, spr_player, SpriteAnimation')
+	this.requires('Actor, Fourway, Collision, Keyboard, spr_player, SpriteAnimation')
 		.fourway(speed)
 		.onHit('Village', this.visitVillage)
 		.onHit('Door', this.enterRoom)
@@ -185,6 +185,11 @@ init: function() {
 			HUD(this);
 	
 		})
+		.bind("SaveData", function (data, prepare) {
+			data.attr.x = this.x;
+			data.attr.y = this.y;
+			data.attr.arrow_spray = this.arrow_spray;
+		});
 },
 stopOnSolids: function() {
 	this.onHit('Solid', this.stopMovement);

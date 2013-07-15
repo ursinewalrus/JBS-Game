@@ -12,7 +12,7 @@ levelTemplate['forest'] = new Object();
 
 //is forest template
 levelTemplate['forest']['forest'] = function (rm) {
-	roomInital(rm);
+	roomSharedInital(rm);
 	for (var x = 0; x < Game.map_grid.width; x++) {
 		for (var y = 0; y < Game.map_grid.height; y++) {
 			if (Math.random() < 0.06 && !rm.occupied[x][y]) {
@@ -38,6 +38,7 @@ levelTemplate['forest']['forest'] = function (rm) {
 			}
 		}
 	}
+	roomSharedEnd(rm);
 }
 
 levelTemplate['forest']['forest'].genChance = .7;
@@ -46,7 +47,7 @@ levelTemplate['forest']['forest'].isBossRoom = false;
 
 //is grid template
 levelTemplate['forest']['grid'] = function (rm) {
-	roomInital(rm);
+	roomSharedInital(rm);
 	for (var x = 0; x < Game.map_grid.width; x++) {
 		for (var y = 0; y < Game.map_grid.height; y++) {
 			if (Math.random() < 0.01 && !rm.occupied[x][y]) {
@@ -76,6 +77,7 @@ levelTemplate['forest']['grid'] = function (rm) {
 				
 		}
 	}
+	roomSharedEnd(rm);
 }
 
 levelTemplate['forest']['grid'].genChance = .7;
@@ -83,7 +85,7 @@ levelTemplate['forest']['grid'].isBossRoom = false;
 
 //is rocky template
 levelTemplate['forest']['rock'] = function (rm) {
-	roomInital(rm);
+	roomSharedInital(rm);
 	for (var x = 0; x < Game.map_grid.width; x++) {
 		for (var y = 0; y < Game.map_grid.height; y++) {
 			x_spot(rm,12,8,'Grave')
@@ -102,13 +104,14 @@ levelTemplate['forest']['rock'] = function (rm) {
 			}
 		}
 	}
+	roomSharedEnd(rm);
 }
 
 levelTemplate['forest']['rock'].genChance = .7;
 levelTemplate['forest']['rock'].isBossRoom = false;
 
 
-function roomInital(rm) {
+function roomSharedInital(rm) {
 	// A 2D array to keep track of all occupied tiles
 	rm.occupied = new Array(Game.map_grid.width);
 	for (var i = 0; i < Game.map_grid.width; i++) {
@@ -161,6 +164,13 @@ function roomInital(rm) {
 				rm.occupied[x][y] = true;
 			}
 		}
+	}
+}
+
+function roomSharedEnd(rm) {
+	if ('PlayerCharacter' in window.localStorage) {
+		unserialize(window.localStorage.getItem('PlayerCharacter'));
+		window.localStorage.removeItem('PlayerCharacter');
 	}
 }
 
@@ -254,11 +264,12 @@ Room.prototype.exit = function() {
 	for (var i = 0; i < ents.length; i++) {
 		window.localStorage.setItem(this.name + i, serialize(Crafty(ents[i])));
 	};
+	window.localStorage.setItem('PlayerCharacter', serialize(Crafty(Crafty('PlayerCharacter')[0])));
 	var sceneName = this.name
 	Crafty.scene(sceneName, function() {
 		var patt = new RegExp(sceneName);
 		for (var i in window.localStorage) {
-			if (patt.test(i)) {
+			if (patt.test(i) || i == 'PlayerCharacter') {
 				unserialize(window.localStorage.getItem(i));
 				window.localStorage.removeItem(i);
 			}
@@ -402,17 +413,12 @@ function initializeScene(roomGridX, roomGridY, maxNumOfRooms, levelType) {
 	var mainroomY = getRandomInt(0, roomGridY-1);
 	roomGrid[mainroomX][mainroomY] = new Room('mainroom', levelType);
 	roomPlace(roomGrid[mainroomX][mainroomY], mainroomX, mainroomY);
-
-	/*
-	new Room('1room', 'mainroom', 'n', Game.map_grid.width/2);
-	new Room('2room', 'mainroom', 's', Game.map_grid.width/2);
-	new Room('3room', 'mainroom', 'e', Game.map_grid.height/2);
-	new Room('4room', 'mainroom', 'w', Game.map_grid.height/2);
-	new Room('5room', '4room', 'w', Game.map_grid.height/4);
-	*/
+	
 	for (var i in allRooms) {
 		allRooms[i].buildRoom();
 	}
+	Crafty.scene('mainroom');
+	Crafty.e('PlayerCharacter').at(5,5);
 }
 
 function resetParams() {
@@ -427,8 +433,6 @@ function resetParams() {
 			window.localStorage.removeItem(x);
 		}
 	}
-	player =
-	Crafty.e('PlayerCharacter').at(5,5);
 	max_hp = 3;
 	player_hp = 3;
 	speed = 2;

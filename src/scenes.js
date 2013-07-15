@@ -81,9 +81,6 @@ Crafty.scene('Loading',
 				// These components' names are prefixed with "spr_"
 				// to remind us that they simply cause the entity
 				// to be drawn with a certain sprite
-				Crafty.sprite(16,'assets/hero.png',{
-					spr_player : [0,2]
-				});
 				Crafty.sprite(16,'assets/misc1.gif',{
 					spr_deadguy : [0,0],
 					spr_tome : [0,1],
@@ -138,12 +135,14 @@ Crafty.scene('Loading',
 					spr_village: [0, 1],
 					//spr_player: [1, 1]
 				});
+				Crafty.sprite(16,'assets/hero.png',{
+					spr_player : [0,2]
+				});
 
 				// Now that our sprites are ready to draw, start the game
 				
 				initializeScene(10,10,10, 'forest');
 				//testRoomBuild('forest');
-				Crafty.scene('mainroom');
 			}
 		);
 	}
