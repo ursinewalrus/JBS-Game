@@ -512,7 +512,11 @@ init: function() {
 //----------------------------------------------------------
 //---------------- Misc. Components ------------------------
 //----------------------------------------------------------
-
+Crafty.c('Green_Tree',{
+init: function () {
+	this.requires('ForegroundObject,Solid,spr_tree4,tall')
+},
+});
 Crafty.c('Dead_Guy',{
 init: function() {
 	this.requires('ForegroundObject, spr_deadguy,short')

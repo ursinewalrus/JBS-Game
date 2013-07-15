@@ -118,6 +118,51 @@ levelTemplate['forest']['start'] = function (rm) {
 
 levelTemplate['forest']['start'].isBossRoom = false;
 
+levelTemplate['forest']['mob_room'] = function (rm){
+	roomSharedInital(rm);
+	var foe_count = 0
+		for (var x = 0; x < Game.map_grid.width; x++) {
+			for (var y = 0; y < Game.map_grid.height; y++) {
+				if(x>10 && x<14 && y>6 && y<10 && Math.random()>.75 && !rm.occupied[x][y]){
+					Crafty.e('Full_Heal').at(x,y)
+					rm.occupied[x][y] = true
+				}
+				if((x>8 && x<16)&&(y>4 && y<12) && Math.random()>.7&&!rm.occupied[x][y]){
+					Crafty.e('Dead_Guy').at(x,y)
+					rm.occupied[x][y] = true
+				}
+				if(x>4 && x<20 && y>2 && y<14 && Math.random()>.95&&!rm.occupied[x][y] && foe_count<5){
+					Crafty.e('Shooter').at(x,y);
+					rm.occupied[x][y] = true;
+					foe_count++
+				}
+			}
+		}
+		roomSharedEnd(rm)
+},
+levelTemplate['forest']['mob_room'].isBossRoom  = false;
+levelTemplate['forest']['mob_room'].genChance = .7;
+
+levelTemplate['forest']['overgrown'] = function(rm){
+	roomSharedInital(rm);
+	var foe_count = 0
+	for (var x = 0; x < Game.map_grid.width; x++) {
+		for (var y = 0; y < Game.map_grid.height; y++) {
+			if(Math.random()>.66 && !rm.occupied[x][y]){
+				Crafty.e('Green_Tree').at(x,y)
+				rm.occupied[x][y] = true
+			}
+			if(Math.random()>.88 && !rm.occupied[x][y]){
+				Crafty.e('Wolf').at(x,y)
+				rm.occupied[x][y]=true
+			}
+			
+		}
+	}
+	roomSharedEnd(rm)
+},
+levelTemplate['forest']['overgrown'].genChance = .7;
+levelTemplate['forest']['overgrown'].isBossRoom = false
 /*
 
 levelTemplate['forst']['mob_room']=function (rm){

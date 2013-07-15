@@ -94,7 +94,7 @@ Crafty.scene('Loading',
 				
 				Crafty.sprite(16,'assets/misc4.png',{
 					spr_tuft : [0,0],
-					spr_tree4 : [0,1]
+					spr_tree4 : [1,0]
 				});
 				Crafty.sprite(16,'assets/misc3.png',{
 					spr_water : [1,1]				
