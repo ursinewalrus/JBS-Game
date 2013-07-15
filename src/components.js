@@ -370,7 +370,7 @@ init: function() {
 	this.direction = ''
 	this.requires('Actor, Collision, spr_arrowN')
 		.onHit('PlayerCharacter',this.hurt)
-		.onHit('Solid',this.destroy)
+		.onHit('tall',this.destroy)
 		.bind('EnterFrame', function() {
 			this.move(this.direction, 2);
 		});
@@ -389,7 +389,7 @@ init: function() {
 	this.direction = ''
 	this.requires('Actor, Collision')
 		.onHit('NPC',this.hurt)
-		.onHit('Solid',this.destroy)
+		.onHit('tall',this.destroy)
 		.bind('EnterFrame', function() {
 			this.move(this.direction, 6);
 	});
@@ -454,7 +454,7 @@ hurt: function(data){
 
 Crafty.c('Full_Heal',{
 init: function () {
-	this.requires('Consumeable, spr_village')
+	this.requires('Consumeable, spr_village,short')
 },
 feast: function(player) {
 	this.destroy()
@@ -464,7 +464,7 @@ feast: function(player) {
 
 Crafty.c('Arrow_Spray',{
 init: function () {
-	this.requires('Consumeable, spr_tome')
+	this.requires('Consumeable, spr_tome,short')
 },
 feast: function(player) {
 	this.destroy()
@@ -479,7 +479,7 @@ feast: function(player) {
 // A Tree is just an Actor with a certain sprite
 Crafty.c('Tree', {
 init: function() {
-	this.requires('ForegroundObject, Solid, spr_tree2');
+	this.requires('ForegroundObject, Solid, spr_tree2,tall');
 }
 });
 
@@ -487,7 +487,7 @@ Crafty.c('Door',{
 init:function(){
 	this.thisRoom;
 	this.linkedRoom;
-	this.requires('ForegroundObject, Solid, spr_door')
+	this.requires('ForegroundObject, Solid, spr_door,tall')
 	.bind("SaveData", function (data, prepare) {
 		data.attr.thisRoom = this.thisRoom;
 		data.attr.linkedRoom = this.linkedRoom;
@@ -504,7 +504,7 @@ setLinkedRoom:function(room) {
 // A Bush is just an Actor with a certain sprite
 Crafty.c('Bush', {
 init: function() {
-	this.requires('ForegroundObject, Solid, spr_bush');
+	this.requires('ForegroundObject, Solid, spr_bush,tall');
 }
 });
 
@@ -514,29 +514,29 @@ init: function() {
 
 Crafty.c('Dead_Guy',{
 init: function() {
-	this.requires('ForegroundObject, spr_deadguy')
+	this.requires('ForegroundObject, spr_deadguy,short')
 },
 });
 
 Crafty.c('Rock_Tile',{
 init: function() {
-	this.requires('BackgroundObject, spr_rockfloor')
+	this.requires('BackgroundObject, spr_rockfloor,short')
 },
 });
 
 Crafty.c('Grave',{
 init: function() {
-	this.requires('ForegroundObject, Solid, spr_grave')
+	this.requires('ForegroundObject, Solid, spr_grave,tall')
 },
 });
 
 Crafty.c('Broke_Sword',{
 init: function() {
-	this.requires('ForegroundObject, Solid, spr_brokesword')
+	this.requires('ForegroundObject, Solid, spr_brokesword,tall')
 },
 });
 Crafty.c('Water',{
 init: function () {
-	this.requires('ForegroundObject, Solid, spr_water')	
+	this.requires('ForegroundObject, Solid, spr_water,short')	
 },
 });
