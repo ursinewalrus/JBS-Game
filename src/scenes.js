@@ -91,6 +91,14 @@ Crafty.scene('Loading',
 				Crafty.sprite(16,'assets/misc2.gif',{
 					spr_rockfloor : [0,0]
 				});
+				
+				Crafty.sprite(16,'assets/misc4.png',{
+					spr_tuft : [0,0],
+					spr_tree4 : [0,1]
+				});
+				Crafty.sprite(16,'assets/misc3.png',{
+					spr_water : [1,1]				
+				});
 
 				Crafty.sprite(16,'assets/wolfy.gif',{
 					spr_wolfyback : [0,0],

@@ -527,4 +527,8 @@ init: function() {
 	this.requires('Saveable, Solid, spr_brokesword')
 },
 });
-
+Crafty.c('Water',{
+init: function () {
+	this.requires('Solid,Saveable,spr_water')	
+},
+});

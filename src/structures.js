@@ -1,3 +1,15 @@
+pond = function(room,x,y){
+	x_spot(room,x,y,'Water')
+	Crafty.e('Water').at(x-1,y)
+	room.occupied[x-1][y] = true
+	Crafty.e('Water').at(x+1,y)
+	room.occupied[x+1][y] = true
+	Crafty.e('Water').at(x,y+1)
+	room.occupied[x][y+1] = true
+	Crafty.e('Water').at(x,y-1)
+	room.occupied[x][y-1] = true
+}
+
 x_spot = function(room,x,y,type){
 	if(type=='Bush'){skin='Bush'}
 	if(type=='Grave'){skin='Grave'}
