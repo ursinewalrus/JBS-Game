@@ -172,6 +172,7 @@ function roomSharedEnd(rm) {
 		unserialize(window.localStorage.getItem('PlayerCharacter'));
 		window.localStorage.removeItem('PlayerCharacter');
 	}
+	delete rm.occupied;
 }
 
 
@@ -229,7 +230,6 @@ Room.prototype.buildRoom = function() {
 			}
 		}
 		buildFunc(rm);
-		delete this.occupied;
 	/*
 	// Generate up to five villages on the map in random locations
 	var max_villages = 5;
@@ -265,9 +265,9 @@ Room.prototype.exit = function() {
 		window.localStorage.setItem(this.name + 'BackgroundObject' + i, serialize(Crafty(ents[i])));
 	};
 	
-	var ents = Crafty('SolidObject');
+	var ents = Crafty('ForegroundObject');
 	for (var i = 0; i < ents.length; i++) {
-		window.localStorage.setItem(this.name + 'SolidObject' + i, serialize(Crafty(ents[i])));
+		window.localStorage.setItem(this.name + 'ForegroundObject' + i, serialize(Crafty(ents[i])));
 	};
 	
 	var ents = Crafty('Saveable');
@@ -284,7 +284,7 @@ Room.prototype.exit = function() {
 				window.localStorage.removeItem(i);
 			}
 		}
-		var patt = new RegExp(sceneName + 'SolidObject');
+		var patt = new RegExp(sceneName + 'ForegroundObject');
 		for (var i in window.localStorage) {
 			if (patt.test(i)) {
 				unserialize(window.localStorage.getItem(i));

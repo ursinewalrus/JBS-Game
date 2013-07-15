@@ -42,9 +42,9 @@ init: function() {
 }
 });
 
-Crafty.c('SolidObject', {
+Crafty.c('ForegroundObject', {
 init: function() {
-	this.requires('Saveable, Solid')
+	this.requires('Saveable')
 }
 });
 
@@ -56,7 +56,7 @@ init: function() {
 
 Crafty.c('Consumeable', {
 init: function () {
-	this.requires('SolidObject');
+	this.requires('ForegroundObject, Solid');
 }
 });
 
@@ -479,7 +479,7 @@ feast: function(player) {
 // A Tree is just an Actor with a certain sprite
 Crafty.c('Tree', {
 init: function() {
-	this.requires('SolidObject, spr_tree2');
+	this.requires('ForegroundObject, Solid, spr_tree2');
 }
 });
 
@@ -487,7 +487,7 @@ Crafty.c('Door',{
 init:function(){
 	this.thisRoom;
 	this.linkedRoom;
-	this.requires('SolidObject, spr_door')
+	this.requires('ForegroundObject, Solid, spr_door')
 	.bind("SaveData", function (data, prepare) {
 		data.attr.thisRoom = this.thisRoom;
 		data.attr.linkedRoom = this.linkedRoom;
@@ -504,7 +504,7 @@ setLinkedRoom:function(room) {
 // A Bush is just an Actor with a certain sprite
 Crafty.c('Bush', {
 init: function() {
-	this.requires('SolidObject, spr_bush');
+	this.requires('ForegroundObject, Solid spr_bush');
 }
 });
 
@@ -514,7 +514,7 @@ init: function() {
 
 Crafty.c('Dead_Guy',{
 init: function() {
-	this.requires('BackgroundObject, spr_deadguy')
+	this.requires('ForegroundObject, spr_deadguy')
 },
 });
 
@@ -526,17 +526,17 @@ init: function() {
 
 Crafty.c('Grave',{
 init: function() {
-	this.requires('SolidObject, spr_grave')
+	this.requires('ForegroundObject, Solid, spr_grave')
 },
 });
 
 Crafty.c('Broke_Sword',{
 init: function() {
-	this.requires('SolidObject, spr_brokesword')
+	this.requires('ForegroundObject, Solid, spr_brokesword')
 },
 });
 Crafty.c('Water',{
 init: function () {
-	this.requires('SolidObject, spr_water')	
+	this.requires('ForegroundObject, Solid, spr_water')	
 },
 });
