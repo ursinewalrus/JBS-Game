@@ -73,7 +73,7 @@ Crafty.scene('Loading',
 		Crafty.load(['assets/16x16_forest_1.gif','assets/16x16_forest_2.gif',
 					'assets/Doors.gif','assets/arrows.gif','assets/arrows2.gif',
 					'assets/treesv2.gif','assets/wolfy.gif','assets/hero.png',
-					'assets/misc1.gif','assets/misc2.gif,assets/misc3.png,assets/misc4'], 
+					'assets/misc1.gif','assets/misc2.gif'], 
 			function(){
 				// Once the image is loaded...
 				// Define the individual sprites in the image
@@ -81,16 +81,6 @@ Crafty.scene('Loading',
 				// These components' names are prefixed with "spr_"
 				// to remind us that they simply cause the entity
 				// to be drawn with a certain sprite
-				Crafty.sprite(16,'assets/hero.png',{
-					spr_player : [0,2]
-				});
-				Crafty.sprite(16,'assets/misc4',{
-					spr_tuft : [0,0],
-					spr_tree4 : [0,1]
-				});
-				Crafty.sprite(16,'assets/misc3.png',{
-					spr_water : [1,1]				
-				});
 				Crafty.sprite(16,'assets/misc1.gif',{
 					spr_deadguy : [0,0],
 					spr_tome : [0,1],
@@ -100,6 +90,14 @@ Crafty.scene('Loading',
 				
 				Crafty.sprite(16,'assets/misc2.gif',{
 					spr_rockfloor : [0,0]
+				});
+				
+				Crafty.sprite(16,'assets/misc4.png',{
+					spr_tuft : [0,0],
+					spr_tree4 : [1,0]
+				});
+				Crafty.sprite(16,'assets/misc3.png',{
+					spr_water : [1,1]				
 				});
 
 				Crafty.sprite(16,'assets/wolfy.gif',{
@@ -145,12 +143,14 @@ Crafty.scene('Loading',
 					spr_village: [0, 1],
 					//spr_player: [1, 1]
 				});
+				Crafty.sprite(16,'assets/hero.png',{
+					spr_player : [0,2]
+				});
 
 				// Now that our sprites are ready to draw, start the game
 				
 				initializeScene(10,10,10, 'forest');
 				//testRoomBuild('forest');
-				Crafty.scene('mainroom');
 			}
 		);
 	}

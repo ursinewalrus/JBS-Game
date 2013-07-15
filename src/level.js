@@ -7,172 +7,6 @@
 //on scene exit
 
 var allRooms;
-var levelTemplate = new Object();
-levelTemplate['forest'] = new Object();
-
-//is forest template
-levelTemplate['forest']['forest'] = function (rm) {
-	roomInital(rm);
-	for (var x = 0; x < Game.map_grid.width; x++) {
-		for (var y = 0; y < Game.map_grid.height; y++) {
-			if (Math.random() < 0.06 && !rm.occupied[x][y]) {
-				// Place a bush entity at the current tile
-				Crafty.e('Bush').at(x, y);
-				rm.occupied[x][y] = true;
-				//x_spot(rm,x,y,'Bush')
-			} 
-			if (Math.random()<.03 && !rm.occupied[x][y]){
-				Crafty.e('Wolf').at(x, y);
-				rm.occupied[x][y] = true;
-			}
-			if (Math.random()<.01 && !rm.occupied[x][y]){
-				Crafty.e('Full_Heal').at(x,y);
-				rm.occupied[x][y]
-				//pond(rm,x,y)
-			}
-			if (Math.random()<.01 && !rm.occupied[x][y]){
-				Crafty.e('Arrow_Spray').at(x,y);
-				rm.occupied[x][y]
-			}
-			if (Math.random()<.01 && !rm.occupied[x][y]){
-				Crafty.e('Shooter').at(x, y);
-				rm.occupied[x][y] = true;
-			}
-		}
-	}
-}
-
-levelTemplate['forest']['forest'].genChance = .7;
-levelTemplate['forest']['forest'].isBossRoom = false;
-
-
-//is grid template
-levelTemplate['forest']['grid'] = function (rm) {
-	roomInital(rm);
-	for (var x = 0; x < Game.map_grid.width; x++) {
-		for (var y = 0; y < Game.map_grid.height; y++) {
-			if (Math.random() < 0.01 && !rm.occupied[x][y]) {
-				// Place a bush entity at the current tile
-				x_wall(rm,x,y,4,'Bush')
-			} 
-			if (Math.random() < 0.01 && !rm.occupied[x][y]) {
-				// Place a bush entity at the current tile
-				y_wall(rm,x,y,3,'Bush')
-			} 
-			if (Math.random() < 0.01 && !rm.occupied[x][y]) {
-				// Place a bush entity at the current tile
-				hut(rm,x,y,4,'Bush')
-			} 
-			if (Math.random()<.03 && !rm.occupied[x][y]){
-				Crafty.e('Wolf').at(x,y);
-				rm.occupied[x][y] = true;
-			}
-			if (Math.random()<.01 && !rm.occupied[x][y]){
-				Crafty.e('Full_Heal').at(x,y);
-				rm.occupied[x][y] = true;
-			}
-			if (Math.random()<.01 && !rm.occupied[x][y]){
-				Crafty.e('Arrow_Spray').at(x,y);
-				rm.occupied[x][y] = true;
-			}
-				
-		}
-	}
-}
-
-levelTemplate['forest']['grid'].genChance = .7;
-levelTemplate['forest']['grid'].isBossRoom = false;
-
-//is rocky template
-levelTemplate['forest']['rock'] = function (rm) {
-	roomInital(rm);
-	for (var x = 0; x < Game.map_grid.width; x++) {
-		for (var y = 0; y < Game.map_grid.height; y++) {
-			if(((x>0 && x<5)||(x>18 && x<23))&&((y>0 && y<5)||(y>10 && y<15))){
-				Crafty.e('Rock_Tile').at(x,y)
-				rm.occupied[x][y]=true;
-			}
-			if (Math.random() < 0.024 && !rm.occupied[x][y]) {
-				Crafty.e('Dead_Guy').at(x, y);
-				rm.occupied[x][y] = true;
-			} 
-		}
-	}
-	for (var x = 0; x < Game.map_grid.width; x++) {
-		for (var y = 0; y < Game.map_grid.height; y++) {
-			x_spot(rm,12,8,'Grave')
-			if (Math.random()<.015 && !rm.occupied[x][y]){
-				Crafty.e('Broke_Sword').at(x, y);
-				rm.occupied[x][y] = true;
-			}
-			if(Math.random()>.76 && !rm.occupied[x][y]){
-				Crafty.e('Wolf').at(x,y);
-				rm.occupied[x][y]=true;
-			}
-		}
-	}
-}
-
-levelTemplate['forest']['rock'].genChance = .7;
-levelTemplate['forest']['rock'].isBossRoom = false;
-
-
-function roomInital(rm) {
-	// A 2D array to keep track of all occupied tiles
-	rm.occupied = new Array(Game.map_grid.width);
-	for (var i = 0; i < Game.map_grid.width; i++) {
-		rm.occupied[i] = new Array(Game.map_grid.height);
-		for (var y = 0; y < Game.map_grid.height; y++) {
-			rm.occupied[i][y] = false;
-		}
-	}
- 
-	// Player character, placed at 5, 5 on our grid
-	// Player character, placed at 5, 5 on our grid
-	//this.player.setDirection();
-	if (rm.name == 'mainroom') {
-		rm.occupied[5][5] = true;
-	}
-	
-	//places Doors
-	for (var i = 0; i < rm.roomLinks.length; i++) {
-		var roomlnk = rm.roomLinks[i];
-		var newDoor = new Crafty.e('Door');
-		newDoor.setThisRoom(rm.name);
-		newDoor.setLinkedRoom(roomlnk.nextRoom);
-		if (roomlnk.direction == 'n') {
-			newDoor.at(roomlnk.locationOnWall, 0);
-			rm.occupied[roomlnk.locationOnWall][0] = true;
-		} else 
-		if (roomlnk.direction == 's') {
-			newDoor.at(roomlnk.locationOnWall, Game.map_grid.height - 1);
-			rm.occupied[roomlnk.locationOnWall][Game.map_grid.height - 1] = true;
-		} else 
-		if (roomlnk.direction == 'e') {
-			newDoor.at(Game.map_grid.width - 1, roomlnk.locationOnWall);
-			rm.occupied[Game.map_grid.width - 1][roomlnk.locationOnWall] = true;
-		} else 
-		if (roomlnk.direction == 'w') {
-			newDoor.at(0, roomlnk.locationOnWall);
-			rm.occupied[0][roomlnk.locationOnWall] = true;
-		}
-	}
-	for (var x = 0; x < Game.map_grid.width; x++) {
-		for (var y = 0; y < Game.map_grid.height; y++) {
-			var at_edge = ((x==0 || x == Game.map_grid.width-1) || (y==0 || y == Game.map_grid.height-1));
-			var buffer_zone = ((x==1 || x == Game.map_grid.width-2) || (y==1 || y == Game.map_grid.height-2));
-			if (at_edge && !rm.occupied[x][y]) {
-				// Place a tree entity at the current tile
-				Crafty.e('Tree').at(x, y);
-				rm.occupied[x][y] = true;
-			} 
-			if (buffer_zone && !rm.occupied[x][y]) {
-				rm.occupied[x][y] = true;
-			}
-		}
-	}
-}
-
 
 function RoomLink(nextRoom, direction, locationOnWall) {
 	this.nextRoom = nextRoom;
@@ -228,7 +62,6 @@ Room.prototype.buildRoom = function() {
 			}
 		}
 		buildFunc(rm);
-		delete this.occupied;
 	/*
 	// Generate up to five villages on the map in random locations
 	var max_villages = 5;
@@ -259,19 +92,47 @@ Room.prototype.buildRoom = function() {
 }
 
 Room.prototype.exit = function() {
+	var ents = Crafty('BackgroundObject');
+	for (var i = 0; i < ents.length; i++) {
+		window.localStorage.setItem(this.name + 'BackgroundObject' + i, serialize(Crafty(ents[i])));
+	};
+	
+	var ents = Crafty('ForegroundObject');
+	for (var i = 0; i < ents.length; i++) {
+		window.localStorage.setItem(this.name + 'ForegroundObject' + i, serialize(Crafty(ents[i])));
+		console.log(this.name)
+	};
+	
 	var ents = Crafty('Saveable');
 	for (var i = 0; i < ents.length; i++) {
-		window.localStorage.setItem(this.name + i, serialize(Crafty(ents[i])));
+		window.localStorage.setItem(this.name + 'Saveable' + i, serialize(Crafty(ents[i])));
 	};
+	window.localStorage.setItem('PlayerCharacter', serialize(Crafty(Crafty('PlayerCharacter')[0])));
 	var sceneName = this.name
 	Crafty.scene(sceneName, function() {
-		var patt = new RegExp(sceneName);
+		var patt = new RegExp(sceneName + 'BackgroundObject');
 		for (var i in window.localStorage) {
 			if (patt.test(i)) {
 				unserialize(window.localStorage.getItem(i));
 				window.localStorage.removeItem(i);
 			}
 		}
+		var patt = new RegExp(sceneName + 'ForegroundObject');
+		for (var i in window.localStorage) {
+			if (patt.test(i)) {
+				unserialize(window.localStorage.getItem(i));
+				window.localStorage.removeItem(i);
+			}
+		}
+		var patt = new RegExp(sceneName + 'Saveable');
+		for (var i in window.localStorage) {
+			if (patt.test(i)) {
+				unserialize(window.localStorage.getItem(i));
+				window.localStorage.removeItem(i);
+			}
+		}
+		unserialize(window.localStorage.getItem('PlayerCharacter'));
+		window.localStorage.removeItem('PlayerCharacter');
 	});
 };
 
@@ -411,17 +272,12 @@ function initializeScene(roomGridX, roomGridY, maxNumOfRooms, levelType) {
 	var mainroomY = getRandomInt(0, roomGridY-1);
 	roomGrid[mainroomX][mainroomY] = new Room('mainroom', levelType);
 	roomPlace(roomGrid[mainroomX][mainroomY], mainroomX, mainroomY);
-
-	/*
-	new Room('1room', 'mainroom', 'n', Game.map_grid.width/2);
-	new Room('2room', 'mainroom', 's', Game.map_grid.width/2);
-	new Room('3room', 'mainroom', 'e', Game.map_grid.height/2);
-	new Room('4room', 'mainroom', 'w', Game.map_grid.height/2);
-	new Room('5room', '4room', 'w', Game.map_grid.height/4);
-	*/
+	
 	for (var i in allRooms) {
 		allRooms[i].buildRoom();
 	}
+	Crafty.scene('mainroom');
+	Crafty.e('PlayerCharacter').at(5,5);
 }
 
 function resetParams() {
@@ -436,8 +292,6 @@ function resetParams() {
 			window.localStorage.removeItem(x);
 		}
 	}
-	player =
-	Crafty.e('PlayerCharacter').at(5,5);
 	max_hp = 3;
 	player_hp = 3;
 	speed = 2;

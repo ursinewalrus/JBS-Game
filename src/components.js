@@ -1,4 +1,8 @@
 
+//----------------------------------------------------------
+//--------------Basic Components----------------------------
+//----------------------------------------------------------
+
 // The Grid component allows an element to be located
 // on a grid of tiles
 Crafty.c('Grid', {
@@ -18,10 +22,6 @@ at: function(x, y) {
 	}
 }
 });
- 
-//----------------------------------------------------------
-//--------------Basic Components----------------------------
-//----------------------------------------------------------
 
 // An "Actor" is an entity that is drawn in 2D on canvas
 // via our logical coordinate grid
@@ -42,9 +42,26 @@ init: function() {
 }
 });
 
+Crafty.c('ForegroundObject', {
+init: function() {
+	this.requires('Saveable')
+}
+});
+
+Crafty.c('BackgroundObject', {
+init: function() {
+	this.requires('Saveable')
+}
+});
+
+Crafty.c('Consumeable', {
+init: function () {
+	this.requires('ForegroundObject, Solid');
+}
+});
 
 //----------------------------------------------------------
-//--------------Moving Components---------------------------
+//--------------Player Component----------------------------
 //----------------------------------------------------------
 
 // This is the player-controlled character
@@ -56,7 +73,7 @@ init: function() {
 	this.direction = 'n';
 	var arrow_damage = 2;
 	var animation_speed = 12;
-	this.requires('Actor, Fourway, Collision, Persist, Keyboard, spr_player, SpriteAnimation')
+	this.requires('Actor, Fourway, Collision, Keyboard, spr_player, SpriteAnimation')
 		.fourway(speed)
 		.onHit('Village', this.visitVillage)
 		.onHit('Door', this.enterRoom)
@@ -180,6 +197,11 @@ init: function() {
 			HUD(this);
 	
 		})
+		.bind("SaveData", function (data, prepare) {
+			data.attr.arrow_spray = this.arrow_spray;
+			data.attr.x = this.x;
+			data.attr.y = this.y;
+		});
 },
 stopOnSolids: function() {
 	this.onHit('Solid', this.stopMovement);
@@ -246,6 +268,10 @@ feast : function (data){
 },
 });
 
+//----------------------------------------------------------
+//-------------- NPC Components ----------------------------
+//----------------------------------------------------------
+
 Crafty.c('NPC', {
 init: function() {
 	this.direction = 'n'
@@ -268,12 +294,11 @@ ouch : function (damage_amount) {
 },
 });
 
-Crafty.c('Wolf',{
-init : function () {
-	this.hp = 2;
-	this.requires('NPC, spr_wolfyfront')
+Crafty.c('RandomMovement', {
+init: function() {
+	this.requires('NPC')
 		.bind('EnterFrame' , function() {
-			if (Math.random() > .95) {
+			if (Math.random() > .9) {
 				var newDirection = Math.random();
 				if (newDirection < .25) {
 					this.direction = 'n'
@@ -293,12 +318,15 @@ init : function () {
 				}
 			}
 			this.move(this.direction, 1);
-			//if (this.hit('Solid')) {
-				//this.move(this.reverseDirection, 1);
-			//}
-			//if (this.hit('PlayerCharacter')) {
-				//this.move(this.reverseDirection, 1);
-			//}
+		});
+}
+});
+
+Crafty.c('Wolf',{
+init : function () {
+	this.hp = 2;
+	this.requires('RandomMovement, spr_wolfyfront')
+		.bind('EnterFrame' , function() {
 			if(this.hp<=0){
 				this.destroy();
 				exp+=10;
@@ -315,37 +343,13 @@ hurtPlayer : function (data) {
 Crafty.c('Shooter',{
 init : function () {
 	this.hp = 5;
-	this.requires('NPC, spr_wolfyback')
+	this.requires('RandomMovement, spr_wolfyback')
 		.bind('EnterFrame' , function() {
-			if (Math.random() > .8) {
-				var newDirection = Math.random();
-				if (newDirection < .25) {
-					this.direction = 'n'
-					this.reverseDirection = 's'
-				}
-				else if (newDirection > .25 && newDirection < .5) {
-					this.direction = 's'
-					this.reverseDirection = 'n'
-				}
-				else if (newDirection >.5 && newDirection < .75) {
-					this.direction = 'e'
-					this.reverseDirection = 'w'
-				}
-				else if (newDirection > .76) {
-					this.direction = 'w'
-					this.reverseDirection = 'e'
-				}
-			}
-			this.move(this.direction, 1);
-			//if (this.hit('Solid')) {
-				//this.move(this.reverseDirection, 1);
-			//}
-
 			if(this.hp<=0){
 				this.destroy();
 				exp+=25;
 			}
-			if(Math.random()>.84){
+			if(Math.random()>.98){
 				Crafty.e('FoeArrow').at(this.at().x,this.at().y).direction = this.direction;
 			}
 		});
@@ -357,24 +361,25 @@ hurtPlayer : function (data) {
 },
 });
 
+//----------------------------------------------------------
+//-------------- Weapon Components -------------------------
+//----------------------------------------------------------
+
 Crafty.c('FoeArrow',{
 init: function() {
 	this.direction = ''
 	this.requires('Actor, Collision, spr_arrowN')
 		.onHit('PlayerCharacter',this.hurt)
-		.onHit('PlayerCharacter',this.shatter)
-		.onHit('Solid',this.shatter)
+		.onHit('tall',this.destroy)
 		.bind('EnterFrame', function() {
-			this.move(this.direction, 6);
+			this.move(this.direction, 2);
 		});
-},
-shatter : function(){
-	this.destroy();
 },
 hurt: function(data) {
 	var damage_amount = 1
 	damage = data[0].obj;
 	damage.ouch(damage_amount);
+	this.destroy();
 	return data[0];
 },	
 });
@@ -384,44 +389,41 @@ init: function() {
 	this.direction = ''
 	this.requires('Actor, Collision')
 		.onHit('NPC',this.hurt)
-		.onHit('NPC',this.shatter)
-		.onHit('Solid',this.shatter)
+		.onHit('tall',this.destroy)
 		.bind('EnterFrame', function() {
 			this.move(this.direction, 6);
 	});
-},
-shatter : function(){
-	this.destroy();
 },
 hurt: function(data) {
 	var damage_amount = 1
 	damage = data[0].obj;
 	damage.ouch(damage_amount);
+	this.destroy();
 	return data[0];
 	},
 });
 
 Crafty.c('ArrowN',{
 	init: function () {
-		this.requires('Arrow,spr_arrow2N')
+		this.requires('Arrow, spr_arrow2N')
 }
 });
 
 Crafty.c('ArrowS',{
 	init: function () {
-		this.requires('Arrow,spr_arrow2S')
+		this.requires('Arrow, spr_arrow2S')
 }
 });
 
 Crafty.c('ArrowE',{
 	init: function () {
-		this.requires('Arrow,spr_arrow2E')
+		this.requires('Arrow, spr_arrow2E')
 }
 });
 
 Crafty.c('ArrowW',{
 	init: function () {
-		this.requires('Arrow,spr_arrow2W')
+		this.requires('Arrow, spr_arrow2W')
 }
 });
 
@@ -429,7 +431,7 @@ Crafty.c('Sword',{
 init: function () {
 	this.duration = 8
 	this.direction = ''
-	this.requires('Actor,spr_arrowN,Collision')
+	this.requires('Actor, spr_arrowN, Collision')
 		.onHit('NPC',this.hurt)	
 		.bind('EnterFrame',function(){
 			this.duration--;
@@ -447,13 +449,37 @@ hurt: function(data){
 });
 
 //----------------------------------------------------------
-//--------------Non Moving Components-----------------------
+//---------------- Consumbable Components ------------------
+//----------------------------------------------------------
+
+Crafty.c('Full_Heal',{
+init: function () {
+	this.requires('Consumeable, spr_village,short')
+},
+feast: function(player) {
+	this.destroy()
+	player_hp = max_hp;
+},
+});
+
+Crafty.c('Arrow_Spray',{
+init: function () {
+	this.requires('Consumeable, spr_tome,short')
+},
+feast: function(player) {
+	this.destroy()
+	player.arrow_spray = true;
+},
+});
+
+//----------------------------------------------------------
+//---------------- Level Components ------------------------
 //----------------------------------------------------------
 
 // A Tree is just an Actor with a certain sprite
 Crafty.c('Tree', {
 init: function() {
-	this.requires('Solid, Saveable, spr_tree2');
+	this.requires('ForegroundObject, Solid, spr_tree2,tall');
 }
 });
 
@@ -461,7 +487,7 @@ Crafty.c('Door',{
 init:function(){
 	this.thisRoom;
 	this.linkedRoom;
-	this.requires('Solid, Saveable, spr_door')
+	this.requires('ForegroundObject, Solid, spr_door,tall')
 	.bind("SaveData", function (data, prepare) {
 		data.attr.thisRoom = this.thisRoom;
 		data.attr.linkedRoom = this.linkedRoom;
@@ -475,97 +501,45 @@ setLinkedRoom:function(room) {
 }
 });
 
-// A Bush is just an Actor with a certain sprite
+//----------------------------------------------------------
+//---------------- Misc. Components ------------------------
+//----------------------------------------------------------
+Crafty.c('Green_Tree',{
+	init: function (){
+		this.requires('ForegroundObject,Solid,spr_tree4,tall');
+}
+});
 Crafty.c('Bush', {
-init: function() {
-	this.requires('Solid, Saveable, spr_bush');
+	init: function() {
+		this.requires('ForegroundObject, Solid, spr_bush,tall');
 }
-});
-
-Crafty.c('Consumeable', {
-init: function () {
-this.requires('Saveable')
-	.bind("SaveData",function(data,prepare){
-		data.attr.x = this.x;
-		data.attr.y = this.y;
-	});
-}
-});
-
-Crafty.c('Full_Heal',{
-init: function () {
-	this.requires('Consumeable, spr_village')
-	.bind("SaveData",function(data,prepare){
-		data.attr.x = this.x;
-		data.attr.y = this.y;
-	});
-},
-feast: function(player) {
-	this.destroy()
-	player_hp = max_hp;
-},
-});
-
-Crafty.c('Arrow_Spray',{
-init: function () {
-	this.requires('Consumeable, spr_tome')
-		.bind("SaveData",function(data,prepare){
-			data.attr.x = this.x;
-			data.attr.y = this.y;
-		});
-},
-feast: function(player) {
-	this.destroy()
-	player.arrow_spray = true;
-},
 });
 
 Crafty.c('Dead_Guy',{
 init: function() {
-	this.requires('Saveable, spr_deadguy')
-		.bind("SaveData",function(data,prepare){
-			data.attr.x = this.x;
-			data.attr.y = this.y;
-		});
+	this.requires('ForegroundObject, spr_deadguy,short')
 },
 });
 
 Crafty.c('Rock_Tile',{
-	init: function() {
-		this.requires('Saveable, spr_rockfloor')
-			.bind("SaveData",function(data,prepare){
-				data.attr.x = this.x;
-				data.attr.y = this.y;
-			});
-	},
-	});
+init: function() {
+	this.requires('BackgroundObject, spr_rockfloor,short')
+},
+});
 
 Crafty.c('Grave',{
 init: function() {
-	this.requires('Solid, Saveable, spr_grave')
-		.bind("SaveData",function(data,prepare){
-			data.attr.x = this.x;
-			data.attr.y = this.y;
-		});
+	this.requires('ForegroundObject, Solid, spr_grave,tall')
 },
 });
 
 Crafty.c('Broke_Sword',{
 init: function() {
-	this.requires('Solid, Saveable, spr_brokesword')
-		.bind("SaveData",function(data,prepare){
-			data.attr.x = this.x;
-			data.attr.y = this.y;
-		});
+	this.requires('ForegroundObject, Solid, spr_brokesword,tall')
 },
 });
 Crafty.c('Water',{
 init: function () {
-	this.requires('Solid,Saveable,spr_water')
-	.bind("SaveData",function(data,prepare){
-		data.attr.x = this.x;
-		data.attr.y = this.y;
-	});
+	this.requires('ForegroundObject, Solid, spr_water,short')	
 },
 });
-
