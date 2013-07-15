@@ -43,22 +43,20 @@ pond = function(room,x,y){
 	room.occupied[x][y-1] = true
 }
 x_spot = function(room,x,y,type){
-	if(type=='Bush'){skin='Bush'}
-	if(type=='Grave'){skin='Grave'}
 	if(!room.occupied[x][y]){
-		Crafty.e(skin).at(x,y)
+		Crafty.e(type).at(x,y)
 		room.occupied[x][y] = true
 	}if(!room.occupied[x+1][y+1]){
-		Crafty.e(skin).at(x+1,y+1)
+		Crafty.e(type).at(x+1,y+1)
 		room.occupied[x+1][y+1] = true
 	}if(!room.occupied[x-1][y-1]){
-		Crafty.e(skin).at(x-1,y-1)
+		Crafty.e(type).at(x-1,y-1)
 		room.occupied[x-1][y-1] = true
 	}if(!room.occupied[x+1][y-1]){
-		Crafty.e(skin).at(x+1,y-1)
+		Crafty.e(type).at(x+1,y-1)
 		room.occupied[x+1][y-1] = true
 	}if(!room.occupied[x-1][y+1]){
-		Crafty.e(skin).at(x-1,y+1)
+		Crafty.e(type).at(x-1,y+1)
 		room.occupied[x-1][y+1] = true
 	}
 	
@@ -78,24 +76,18 @@ channel = function(room,x,y,size,type,ori){
 
 
 x_wall = function (room,x,y,size,type) {
-	var skin=''
-	if(type=='Bush'){skin = 'Bush'}
-	if(type=='Grave'){skin= 'Grave'}
 	for(var t=0; t<size; t++){
 		if(x+t<22 && y<15 && !room.occupied[x+t][y]){
-			Crafty.e(skin).at(x+t,y);
+			Crafty.e(type).at(x+t,y);
 			room.occupied[x+t][y] = true
 		}
 	}
 };
 // ********* structures for rooms
 y_wall = function (room,x,y,size,type) {
-	var skin = ''
-	if(type=='Bush'){skin = 'Bush'}
-	if(type=='Grave'){skin= 'Grave'}
 	for(var t=0; t<size; t++){
 		if(y+t<15 && x<22 && !room.occupied[x][y+t]){
-			Crafty.e(skin).at(x,y+t);
+			Crafty.e(type).at(x,y+t);
 			room.occupied[x][y+t] = true
 		}
 	}
