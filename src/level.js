@@ -260,20 +260,46 @@ Room.prototype.buildRoom = function() {
 }
 
 Room.prototype.exit = function() {
+	var ents = Crafty('BackgroundObject');
+	for (var i = 0; i < ents.length; i++) {
+		window.localStorage.setItem(this.name + 'BackgroundObject' + i, serialize(Crafty(ents[i])));
+	};
+	
+	var ents = Crafty('SolidObject');
+	for (var i = 0; i < ents.length; i++) {
+		window.localStorage.setItem(this.name + 'SolidObject' + i, serialize(Crafty(ents[i])));
+	};
+	
 	var ents = Crafty('Saveable');
 	for (var i = 0; i < ents.length; i++) {
-		window.localStorage.setItem(this.name + i, serialize(Crafty(ents[i])));
+		window.localStorage.setItem(this.name + 'Saveable' + i, serialize(Crafty(ents[i])));
 	};
 	window.localStorage.setItem('PlayerCharacter', serialize(Crafty(Crafty('PlayerCharacter')[0])));
 	var sceneName = this.name
 	Crafty.scene(sceneName, function() {
-		var patt = new RegExp(sceneName);
+		var patt = new RegExp(sceneName + 'BackgroundObject');
 		for (var i in window.localStorage) {
-			if (patt.test(i) || i == 'PlayerCharacter') {
+			if (patt.test(i)) {
 				unserialize(window.localStorage.getItem(i));
 				window.localStorage.removeItem(i);
 			}
 		}
+		var patt = new RegExp(sceneName + 'SolidObject');
+		for (var i in window.localStorage) {
+			if (patt.test(i)) {
+				unserialize(window.localStorage.getItem(i));
+				window.localStorage.removeItem(i);
+			}
+		}
+		var patt = new RegExp(sceneName + 'Saveable');
+		for (var i in window.localStorage) {
+			if (patt.test(i)) {
+				unserialize(window.localStorage.getItem(i));
+				window.localStorage.removeItem(i);
+			}
+		}
+		unserialize(window.localStorage.getItem('PlayerCharacter'));
+		window.localStorage.removeItem('PlayerCharacter');
 	});
 };
 
