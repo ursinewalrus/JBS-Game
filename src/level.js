@@ -13,6 +13,7 @@ levelTemplate['forest'] = new Object();
 //is forest template
 levelTemplate['forest']['forest'] = function (rm) {
 	roomSharedInital(rm);
+	river(rm,12,8,7,1)
 	for (var x = 0; x < Game.map_grid.width; x++) {
 		for (var y = 0; y < Game.map_grid.height; y++) {
 			if (Math.random() < 0.06 && !rm.occupied[x][y]) {
@@ -52,11 +53,11 @@ levelTemplate['forest']['grid'] = function (rm) {
 		for (var y = 0; y < Game.map_grid.height; y++) {
 			if (Math.random() < 0.01 && !rm.occupied[x][y]) {
 				// Place a bush entity at the current tile
-				x_wall(rm,x,y,4,'Bush')
+				x_wall(rm,x,y,4,'Grave')
 			} 
 			if (Math.random() < 0.01 && !rm.occupied[x][y]) {
 				// Place a bush entity at the current tile
-				y_wall(rm,x,y,3,'Bush')
+				y_wall(rm,x,y,3,'Grave')
 			} 
 			if (Math.random() < 0.01 && !rm.occupied[x][y]) {
 				// Place a bush entity at the current tile
@@ -109,6 +110,21 @@ levelTemplate['forest']['rock'] = function (rm) {
 
 levelTemplate['forest']['rock'].genChance = .7;
 levelTemplate['forest']['rock'].isBossRoom = false;
+//should be loaded in first, is not slotted in yet, just the starter room
+levelTemplate['forest']['start'] = function (rm) {
+	roomSharedInital(rm);
+	for (var x = 0; x < Game.map_grid.width; x++) {
+		for (var y = 0; y < Game.map_grid.height; y++) {
+			if (Math.random()<.013 && !rm.occupied[x][y]){
+				Crafty.e('Dead_Guy').at(x,y);
+				rm.occupied[x][y] = true;
+			}	
+		}
+	}
+	roomSharedEnd(rm);
+}
+
+levelTemplate['forest']['start'].isBossRoom = false;
 
 
 function roomSharedInital(rm) {
@@ -268,6 +284,7 @@ Room.prototype.exit = function() {
 	var ents = Crafty('ForegroundObject');
 	for (var i = 0; i < ents.length; i++) {
 		window.localStorage.setItem(this.name + 'ForegroundObject' + i, serialize(Crafty(ents[i])));
+		console.log(this.name)
 	};
 	
 	var ents = Crafty('Saveable');

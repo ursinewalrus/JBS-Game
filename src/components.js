@@ -504,7 +504,7 @@ setLinkedRoom:function(room) {
 // A Bush is just an Actor with a certain sprite
 Crafty.c('Bush', {
 init: function() {
-	this.requires('ForegroundObject, Solid spr_bush');
+	this.requires('ForegroundObject, Solid, spr_bush');
 }
 });
 
