@@ -501,6 +501,16 @@ init: function() {
 },
 });
 
+Crafty.c('Rock_Tile',{
+	init: function() {
+		this.requires('Saveable, spr_rockfloor')
+			.bind("SaveData",function(data,prepare){
+				data.attr.x = this.x;
+				data.attr.y = this.y;
+			});
+	},
+	});
+
 Crafty.c('Grave',{
 init: function() {
 	this.requires('Saveable, Solid, spr_grave')

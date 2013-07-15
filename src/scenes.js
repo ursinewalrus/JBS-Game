@@ -90,6 +90,10 @@ Crafty.scene('Loading',
 					spr_brokesword : [1,0],
 					spr_grave : [1,1]
 				});
+				
+				Crafty.sprite(16,'assets/misc2.gif',{
+					spr_rockfloor : [0,0]
+				});
 
 				Crafty.sprite(16,'assets/wolfy.gif',{
 					spr_wolfyback : [0,0],

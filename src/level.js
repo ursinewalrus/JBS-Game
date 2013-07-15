@@ -51,15 +51,15 @@ levelTemplate['forest']['grid'] = function (rm) {
 		for (var y = 0; y < Game.map_grid.height; y++) {
 			if (Math.random() < 0.01 && !rm.occupied[x][y]) {
 				// Place a bush entity at the current tile
-				x_wall(rm,x,y,4,'bush')
+				x_wall(rm,x,y,4,'Bush')
 			} 
 			if (Math.random() < 0.01 && !rm.occupied[x][y]) {
 				// Place a bush entity at the current tile
-				y_wall(rm,x,y,3,'bush')
+				y_wall(rm,x,y,3,'Bush')
 			} 
 			if (Math.random() < 0.01 && !rm.occupied[x][y]) {
 				// Place a bush entity at the current tile
-				hut(rm,x,y,4,'bush')
+				hut(rm,x,y,4,'Bush')
 			} 
 			if (Math.random()<.03 && !rm.occupied[x][y]){
 				Crafty.e('Wolf').at(x,y);
@@ -80,6 +80,32 @@ levelTemplate['forest']['grid'] = function (rm) {
 
 levelTemplate['forest']['grid'].genChance = .7;
 levelTemplate['forest']['grid'].isBossRoom = false;
+
+//is rocky template
+levelTemplate['forest']['rock'] = function (rm) {
+	roomInital(rm);
+	for (var x = 0; x < Game.map_grid.width; x++) {
+		for (var y = 0; y < Game.map_grid.height; y++) {
+			x_spot(rm,12,8,'Grave')
+			if(((x>0 && x<5)||(x>18 && x<23))&&((y>0 && y<5)||(y>10 && y<15))){
+				Crafty.e('Rock_Tile').at(x,y)
+				rm.occupied[x][y]=true;
+			}
+			if (Math.random() < 0.024 && !rm.occupied[x][y]) {
+				// Place a bush entity at the current tile
+				Crafty.e('Dead_Guy').at(x, y);
+				rm.occupied[x][y] = true;
+			} 
+			if (Math.random()<.015 && !rm.occupied[x][y]){
+				Crafty.e('Broke_Sword').at(x, y);
+				rm.occupied[x][y] = true;
+			}
+		}
+	}
+}
+
+levelTemplate['forest']['rock'].genChance = .7;
+levelTemplate['forest']['rock'].isBossRoom = false;
 
 
 function roomInital(rm) {
