@@ -149,7 +149,7 @@ Crafty.scene('Loading',
 
 				// Now that our sprites are ready to draw, start the game
 				
-				initializeScene(10,10,10, 'forest');
+				initializeScene(10, 10, 30, 10, 'forest');
 				//testRoomBuild('forest');
 			}
 		);

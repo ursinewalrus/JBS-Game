@@ -91,6 +91,7 @@ Room.prototype.buildRoom = function() {
 	});
 }
 
+/*
 Room.prototype.exit = function() {
 	var ents = Crafty('BackgroundObject');
 	for (var i = 0; i < ents.length; i++) {
@@ -100,12 +101,11 @@ Room.prototype.exit = function() {
 	var ents = Crafty('ForegroundObject');
 	for (var i = 0; i < ents.length; i++) {
 		window.localStorage.setItem(this.name + 'ForegroundObject' + i, serialize(Crafty(ents[i])));
-		console.log(this.name)
 	};
 	
-	var ents = Crafty('Saveable');
+	var ents = Crafty('NPC');
 	for (var i = 0; i < ents.length; i++) {
-		window.localStorage.setItem(this.name + 'Saveable' + i, serialize(Crafty(ents[i])));
+		window.localStorage.setItem(this.name + 'NPC' + i, serialize(Crafty(ents[i])));
 	};
 	window.localStorage.setItem('PlayerCharacter', serialize(Crafty(Crafty('PlayerCharacter')[0])));
 	var sceneName = this.name
@@ -124,7 +124,7 @@ Room.prototype.exit = function() {
 				window.localStorage.removeItem(i);
 			}
 		}
-		var patt = new RegExp(sceneName + 'Saveable');
+		var patt = new RegExp(sceneName + 'NPC');
 		for (var i in window.localStorage) {
 			if (patt.test(i)) {
 				unserialize(window.localStorage.getItem(i));
@@ -135,6 +135,48 @@ Room.prototype.exit = function() {
 		window.localStorage.removeItem('PlayerCharacter');
 	});
 };
+*/
+
+Room.prototype.exit = function() {
+	this.saveData = new Object();
+	
+	this.saveData.background = new Array();
+	var ents = Crafty('BackgroundObject');
+	for (var i = 0; i < ents.length; i++) {
+		this.saveData.background[i] = serialize(Crafty(ents[i]));
+	};
+	
+	this.saveData.foreground = new Array();
+	var ents = Crafty('ForegroundObject');
+	for (var i = 0; i < ents.length; i++) {
+		this.saveData.foreground[i] = serialize(Crafty(ents[i]));
+	};
+	
+	this.saveData.npc = new Array();
+	var ents = Crafty('NPC');
+	for (var i = 0; i < ents.length; i++) {
+		this.saveData.npc[i] = serialize(Crafty(ents[i]));
+	};
+	var ents = Crafty('PlayerCharacter');
+	Game.playerSave = serialize(Crafty(Crafty('PlayerCharacter')[0]));
+	
+	
+	var rm = this
+	Crafty.scene(rm.name, function() {
+		for (var i = 0; i < rm.saveData.background.length; i++) {
+			unserialize(rm.saveData.background[i]);
+		}
+		for (var i = 0; i < rm.saveData.foreground.length; i++) {
+			unserialize(rm.saveData.foreground[i]);
+		}
+		for (var i = 0; i < rm.saveData.npc.length; i++) {
+			unserialize(rm.saveData.npc[i]);
+		}
+		unserialize(Game.playerSave)
+		delete rm.saveData;
+		delete Game.playerSave;
+	});
+}
 
 	/*
 	 * Processes a retrieved object.
@@ -195,7 +237,7 @@ Room.prototype.exit = function() {
 		}
 	}
 	
-function initializeScene(roomGridX, roomGridY, maxNumOfRooms, levelType) {
+function initializeScene(roomGridX, roomGridY, maxNumOfRooms, minNumOfRooms, levelType) {
 	
 	resetParams();
 	
@@ -220,6 +262,7 @@ function initializeScene(roomGridX, roomGridY, maxNumOfRooms, levelType) {
 			roomGrid[x-1][y] = new Room(roomNumber + 'room', levelType);
 			rm.linkRooms(roomGrid[x-1][y].name, 'w', Game.map_grid.height/2);
 			roomNumber++;
+			minNumOfRooms--;
 			maxNumOfRooms--;
 		}
 		if (x+1 < roomGrid.length && roomGrid[x+1][y]  === null && 
@@ -228,6 +271,7 @@ function initializeScene(roomGridX, roomGridY, maxNumOfRooms, levelType) {
 			roomGrid[x+1][y] = new Room(roomNumber + 'room', levelType);
 			rm.linkRooms(roomGrid[x+1][y].name, 'e', Game.map_grid.height/2);
 			roomNumber++;
+			minNumOfRooms--;
 			maxNumOfRooms--;
 		}
 		if (y-1 >= 0 && roomGrid[x][y-1]  === null && 
@@ -236,6 +280,7 @@ function initializeScene(roomGridX, roomGridY, maxNumOfRooms, levelType) {
 			roomGrid[x][y-1] = new Room(roomNumber + 'room', levelType);
 			rm.linkRooms(roomGrid[x][y-1].name, 'n', Game.map_grid.width/2);
 			roomNumber++;
+			minNumOfRooms--;
 			maxNumOfRooms--;
 		}
 		if (y+1 < roomGrid[0].length && roomGrid[x][y+1]  === null && 
@@ -244,6 +289,7 @@ function initializeScene(roomGridX, roomGridY, maxNumOfRooms, levelType) {
 			roomGrid[x][y+1] = new Room(roomNumber + 'room', levelType);
 			rm.linkRooms(roomGrid[x][y+1].name, 's', Game.map_grid.width/2);
 			roomNumber++;
+			minNumOfRooms--;
 			maxNumOfRooms--;
 		}
 		if (x-1 >= 0 && maxNumOfRooms > 0 && 
@@ -271,7 +317,10 @@ function initializeScene(roomGridX, roomGridY, maxNumOfRooms, levelType) {
 	var mainroomX = getRandomInt(0, roomGridX-1);
 	var mainroomY = getRandomInt(0, roomGridY-1);
 	roomGrid[mainroomX][mainroomY] = new Room('mainroom', levelType);
-	roomPlace(roomGrid[mainroomX][mainroomY], mainroomX, mainroomY);
+
+	while (minNumOfRooms > 0) {
+		roomPlace(roomGrid[mainroomX][mainroomY], mainroomX, mainroomY);
+	}
 	
 	for (var i in allRooms) {
 		allRooms[i].buildRoom();

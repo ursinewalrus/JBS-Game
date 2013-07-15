@@ -118,6 +118,8 @@ levelTemplate['forest']['start'] = function (rm) {
 
 levelTemplate['forest']['start'].isBossRoom = false;
 
+/*
+
 levelTemplate['forst']['mob_room']=function (rm){
 	roomSharedInital(rm)
 		for (var x = 0; x < Game.map_grid.width; x++) {
@@ -130,6 +132,7 @@ levelTemplate['forst']['mob_room']=function (rm){
 		}
 }
 //***** shared stuff
+*/
 
 function roomSharedInital(rm) {
 	// A 2D array to keep track of all occupied tiles
@@ -188,9 +191,9 @@ function roomSharedInital(rm) {
 }
 
 function roomSharedEnd(rm) {
-	if ('PlayerCharacter' in window.localStorage) {
-		unserialize(window.localStorage.getItem('PlayerCharacter'));
-		window.localStorage.removeItem('PlayerCharacter');
+	if (Game.playerSave) {
+		unserialize(Game.playerSave);
+		delete Game.playerSave;
 	}
 	delete rm.occupied;
 }
