@@ -20,12 +20,12 @@ HUD = function (/*px,py,facing*/player) {
 			Crafty.e('Arrow').at(player.at().x,player.at().y).direction = player.direction;
 		//}
 	});
-	if(arrow_spray == false){var item2 = Crafty.e("2D,DOM,spr_door,Mouse")}
-	else{var item2 = Crafty.e("2D,DOM,spr_tree2,Mouse");}
+	if(!player.arrow_spray){var item2 = Crafty.e("2D,DOM,spr_door,Mouse")}
+	else{var item2 = Crafty.e("2D,DOM,spr_tome,Mouse");}
 	//var item2 = Crafty.e("2D,DOM,spr_door,Mouse")
 	item2.attr({w:16,h:16,x:20,y:214,alpha:1.0})
 	item2.bind("Click",function(e){
-		if(arrow_spray == true){
+		if(player.arrow_spray){
 			if(player.arrowTimer == 0){
 				saver = player.direction
 				player.direction = 'n'
@@ -86,6 +86,7 @@ resetHUD = function() {
     }
    
 }
+
 // *************************** STATS ***************************************
 
 exp = 0;
