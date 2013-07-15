@@ -330,17 +330,6 @@ function initializeScene(roomGridX, roomGridY, maxNumOfRooms, minNumOfRooms, lev
 }
 
 function resetParams() {
-	var newpat = '(';
-	for (var x in allRooms) {
-		newpat = newpat + x + '|';
-	}
-	newpat = newpat + ')';
-	newpat = new RegExp(newpat);
-	for (var x in window.localStorage) {
-		if (newpat.test(x)) {
-			window.localStorage.removeItem(x);
-		}
-	}
 	max_hp = 3;
 	player_hp = 3;
 	speed = 2;

@@ -201,6 +201,7 @@ init: function() {
 			data.attr.arrow_spray = this.arrow_spray;
 			data.attr.x = this.x;
 			data.attr.y = this.y;
+			data.attr.direction = this.direction;
 		});
 },
 stopOnSolids: function() {
@@ -487,7 +488,7 @@ Crafty.c('Door',{
 init:function(){
 	this.thisRoom;
 	this.linkedRoom;
-	this.requires('ForegroundObject, Solid, spr_door,tall')
+	this.requires('ForegroundObject, Solid, tall')
 	.bind("SaveData", function (data, prepare) {
 		data.attr.thisRoom = this.thisRoom;
 		data.attr.linkedRoom = this.linkedRoom;
