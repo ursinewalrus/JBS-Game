@@ -115,22 +115,22 @@ init: function() {
 				this.direction = 'e'
 			} if (this.isDown('SPACE') && this.arrowTimer == 0 ) {
 				if(this.direction=='n'){
-					var arrow = Crafty.e('ArrowN').at(this.at().x,this.at().y)
+					var arrow = Crafty.e('Arrow, spr_arrow2N').at(this.at().x,this.at().y)
 					arrow.direction = 'n';
 					arrow.player = this;
 					this.arrowTimer = 30
 				}if(this.direction=='s'){
-					var arrow = Crafty.e('ArrowS').at(this.at().x,this.at().y)
+					var arrow = Crafty.e('Arrow, spr_arrow2S').at(this.at().x,this.at().y)
 					arrow.direction = 's';
 					arrow.player = this;
 					this.arrowTimer = 30
 				}if(this.direction=='e'){
-					var arrow = Crafty.e('ArrowE').at(this.at().x,this.at().y)
+					var arrow = Crafty.e('Arrow, spr_arrow2E').at(this.at().x,this.at().y)
 					arrow.direction = 'e';
 					arrow.player = this;
 					this.arrowTimer = 30
 				}if(this.direction=='w'){
-					var arrow = Crafty.e('ArrowW').at(this.at().x,this.at().y)
+					var arrow = Crafty.e('Arrow, spr_arrow2W').at(this.at().x,this.at().y)
 					arrow.direction = 'w';
 					arrow.player = this;
 					this.arrowTimer = 30
@@ -366,11 +366,25 @@ init : function () {
 	this.hp = 1;
 	this.damage = 1;
 	this.exp = 25;
+	this.arrowtimer = 30;
 	this.requires('RandomMovement, spr_wolfyback')
 		.bind('EnterFrame' , function() {
-			if(Math.random()>.84){
-				Crafty.e('FoeArrow').at(this.at().x,this.at().y).direction = this.direction;
+			if(this.arrowtimer <= 0){
+				if (this.direction == 'n') {
+					Crafty.e('FoeArrow, spr_arrowN').at(this.at().x,this.at().y).direction = 'n';
+				} else 
+				if (this.direction == 's') {
+					Crafty.e('FoeArrow, spr_arrowS').at(this.at().x,this.at().y).direction = 's';
+				} else 
+				if (this.direction == 'e') {
+					Crafty.e('FoeArrow, spr_arrowE').at(this.at().x,this.at().y).direction = 'e';
+				} else 
+				if (this.direction == 'w') {
+					Crafty.e('FoeArrow, spr_arrowW').at(this.at().x,this.at().y).direction = 'w';
+				} 
+				this.arrowtimer = 30;
 			}
+			this.arrowtimer--;
 		});
 },
 });
@@ -382,9 +396,9 @@ init : function () {
 Crafty.c('FoeArrow',{
 init: function() {
 	this.direction = ''
-	this.requires('Actor, Collision, spr_arrowN')
-		.onHit('PlayerCharacter',this.hurt)
-		.onHit('tall',this.destroy)
+	this.requires('Actor, Collision')
+		.onHit('PlayerCharacter', this.hurt)
+		.onHit('tall', this.destroy)
 		.bind('EnterFrame', function() {
 			this.move(this.direction, 2);
 		});
@@ -415,30 +429,6 @@ hurt: function(data) {
 	this.destroy();
 	return data[0];
 	},
-});
-
-Crafty.c('ArrowN',{
-	init: function () {
-		this.requires('Arrow, spr_arrow2N')
-}
-});
-
-Crafty.c('ArrowS',{
-	init: function () {
-		this.requires('Arrow, spr_arrow2S')
-}
-});
-
-Crafty.c('ArrowE',{
-	init: function () {
-		this.requires('Arrow, spr_arrow2E')
-}
-});
-
-Crafty.c('ArrowW',{
-	init: function () {
-		this.requires('Arrow, spr_arrow2W')
-}
 });
 
 Crafty.c('Sword',{

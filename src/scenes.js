@@ -116,8 +116,8 @@ Crafty.scene('Loading',
 				
 				Crafty.sprite(16,'assets/arrows.gif', {
 					spr_arrowN : [0,0],
-					spr_arrowS : [1,0],
-					spr_arrowE : [0,1],
+					spr_arrowS : [0,1],
+					spr_arrowE : [1,0],
 					spr_arrowW : [1,1]
 				});
 				
