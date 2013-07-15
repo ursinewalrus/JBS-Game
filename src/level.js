@@ -62,80 +62,8 @@ Room.prototype.buildRoom = function() {
 			}
 		}
 		buildFunc(rm);
-	/*
-	// Generate up to five villages on the map in random locations
-	var max_villages = 5;
-	for (var x = 0; x < Game.map_grid.width; x++) {
-		for (var y = 0; y < Game.map_grid.height; y++) {
-			if (Math.random() < 0.02) {
-				if (Crafty('Village').length < max_villages && !this.occupied[x][y]) {
-				Crafty.e('Village').at(x, y);
-				}
-			}
-		}
-	}
- 
-	// Show the victory screen once all villages are visisted
-	this.show_victory = this.bind('VillageVisited', function() {
-	if (!Crafty('Village').length) {
-		Crafty(Crafty('PlayerCharacter')[0]).destroy();
-		Crafty.scene('Victory');
-	}
-	});
-	}, function() {
-	// Remove our event binding from above so that we don't
-	// end up having multiple redundant event watchers after
-	// multiple restarts of the game
-	this.unbind('VillageVisited', this.show_victory);
-	*/
 	});
 }
-
-/*
-Room.prototype.exit = function() {
-	var ents = Crafty('BackgroundObject');
-	for (var i = 0; i < ents.length; i++) {
-		window.localStorage.setItem(this.name + 'BackgroundObject' + i, serialize(Crafty(ents[i])));
-	};
-	
-	var ents = Crafty('ForegroundObject');
-	for (var i = 0; i < ents.length; i++) {
-		window.localStorage.setItem(this.name + 'ForegroundObject' + i, serialize(Crafty(ents[i])));
-	};
-	
-	var ents = Crafty('NPC');
-	for (var i = 0; i < ents.length; i++) {
-		window.localStorage.setItem(this.name + 'NPC' + i, serialize(Crafty(ents[i])));
-	};
-	window.localStorage.setItem('PlayerCharacter', serialize(Crafty(Crafty('PlayerCharacter')[0])));
-	var sceneName = this.name
-	Crafty.scene(sceneName, function() {
-		var patt = new RegExp(sceneName + 'BackgroundObject');
-		for (var i in window.localStorage) {
-			if (patt.test(i)) {
-				unserialize(window.localStorage.getItem(i));
-				window.localStorage.removeItem(i);
-			}
-		}
-		var patt = new RegExp(sceneName + 'ForegroundObject');
-		for (var i in window.localStorage) {
-			if (patt.test(i)) {
-				unserialize(window.localStorage.getItem(i));
-				window.localStorage.removeItem(i);
-			}
-		}
-		var patt = new RegExp(sceneName + 'NPC');
-		for (var i in window.localStorage) {
-			if (patt.test(i)) {
-				unserialize(window.localStorage.getItem(i));
-				window.localStorage.removeItem(i);
-			}
-		}
-		unserialize(window.localStorage.getItem('PlayerCharacter'));
-		window.localStorage.removeItem('PlayerCharacter');
-	});
-};
-*/
 
 Room.prototype.exit = function() {
 	this.saveData = new Object();

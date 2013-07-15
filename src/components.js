@@ -71,14 +71,20 @@ init: function() {
 	this.arrowTimer = 0;
 	this.hurtTimer = 0;
 	this.direction = 'n';
-	var arrow_damage = 2;
-	var animation_speed = 12;
+	this.exp = 0;
+	this.next_level = 100;
+	this.max_hp = 3;
+	this.player_hp = 3;
+	this.beard_power = 1;
+	this.speed = 2; 
+	this.level = 1; 
+	this.arrow_damage = 2;
+	this.sword_damage = 4;
+	this.animation_speed = 12;
 	this.requires('Actor, Fourway, Collision, Keyboard, spr_player, SpriteAnimation')
 		.fourway(speed)
 		.onHit('Village', this.visitVillage)
 		.onHit('Door', this.enterRoom)
-		.onHit('Wolf', this.hurt_wolf)
-		.onHit('FoeArrow',this.hurt_wolf)
 		.onHit('Consumeable',this.feast)
 		.animate('Pu',0,0,2)
 		.animate('Pr',0,1,2)
@@ -87,13 +93,13 @@ init: function() {
 		.stopOnSolids()
 		.bind('NewDirection', function(data){
 			if (data.x > 0) {
-				this.animate('Pr', animation_speed, -1);
+				this.animate('Pr', this.animation_speed, -1);
 			} else if (data.x < 0) {
-				this.animate('Pl', animation_speed, -1);
+				this.animate('Pl', this.animation_speed, -1);
 			} else if (data.y > 0) {
-				this.animate('Pd', animation_speed, -1);
+				this.animate('Pd', this.animation_speed, -1);
 			} else if (data.y < 0) {
-				this.animate('Pu', animation_speed, -1);
+				this.animate('Pu', this.animation_speed, -1);
 			} else {
 				this.stop();
 			}
@@ -109,33 +115,43 @@ init: function() {
 				this.direction = 'e'
 			} if (this.isDown('SPACE') && this.arrowTimer == 0 ) {
 				if(this.direction=='n'){
-					Crafty.e('ArrowN').at(this.at().x,this.at().y).direction = this.direction;
+					var arrow = Crafty.e('ArrowN').at(this.at().x,this.at().y)
+					arrow.direction = 'n';
+					arrow.player = this;
 					this.arrowTimer = 30
 				}if(this.direction=='s'){
-					Crafty.e('ArrowS').at(this.at().x,this.at().y).direction = this.direction;
+					var arrow = Crafty.e('ArrowS').at(this.at().x,this.at().y)
+					arrow.direction = 's';
+					arrow.player = this;
 					this.arrowTimer = 30
 				}if(this.direction=='e'){
-					Crafty.e('ArrowE').at(this.at().x,this.at().y).direction = this.direction;
+					var arrow = Crafty.e('ArrowE').at(this.at().x,this.at().y)
+					arrow.direction = 'e';
+					arrow.player = this;
 					this.arrowTimer = 30
 				}if(this.direction=='w'){
-					Crafty.e('ArrowW').at(this.at().x,this.at().y).direction = this.direction;
+					var arrow = Crafty.e('ArrowW').at(this.at().x,this.at().y)
+					arrow.direction = 'w';
+					arrow.player = this;
 					this.arrowTimer = 30
 				}
 		
 			} 
 			// *** arrow spray spell, activates on pickup at the moment
 			if(this.isDown('G')&& this.arrow_spray == true && this.arrowTimer == 0){
-				saver = this.direction
-				this.direction = 'n'
-				Crafty.e('ArrowN').at(this.at().x,this.at().y).direction = this.direction;
-				this.direction = 's'
-				Crafty.e('ArrowS').at(this.at().x,this.at().y).direction = this.direction;	
-				this.direction = 'e'
-				Crafty.e('ArrowE').at(this.at().x,this.at().y).direction = this.direction;
-				this.direction = 'w'
-				Crafty.e('ArrowW').at(this.at().x,this.at().y).direction = this.direction;	
+				var arrow = Crafty.e('ArrowN').at(this.at().x,this.at().y)
+				arrow.direction = 'n';
+				arrow.player = this;
+				var arrow = Crafty.e('ArrowS').at(this.at().x,this.at().y)
+				arrow.direction = 's';
+				arrow.player = this;
+				var arrow = Crafty.e('ArrowE').at(this.at().x,this.at().y)
+				arrow.direction = 'e';
+				arrow.player = this;
+				var arrow = Crafty.e('ArrowW').at(this.at().x,this.at().y)
+				arrow.direction = 'w';
+				arrow.player = this;
 				this.arrowTimer = 30;
-				this.direction = saver 
 			}
 			if(this.isDown('H')&& this.arrowTimer==0){
 				if(this.direction == 'n'){
@@ -155,7 +171,6 @@ init: function() {
 					this.arrowTimer=40
 				}
 			}
-
 			if (this.arrowTimer > 0) {
 				this.arrowTimer = this.arrowTimer - 1;
 			}
@@ -163,53 +178,68 @@ init: function() {
 				this.hurtTimer -= 1;
 			}
 			//level up skeleton stuff
-			if(exp>=next_level){
+			if(this.exp >= this.next_level){
 				//var level_up_array = new Array ()
 				var ding = Crafty.e('2D, DOM, Color, Text')
 				ding.attr({x:50,y:100,w:200,alpha:1.0})
 				//ding.text('Press J to boost HP, K to boost speed and L to boost the D')
 				if(this.isDown('J')&& exp>=next_level){
-					level++;
-					max_hp=+max_hp*1.2
-					player_hp+=max_hp/2
-					var rollOver = exp-next_level
-					exp=rollOver
-					next_level=next_level*1.33
+					this.level++;
+					this.max_hp =+ this.max_hp*1.2
+					this.player_hp += this.max_hp/2
+					var rollOver = this.exp - this.next_level
+					this.exp = rollOver
+					this.next_level = this.next_level*1.33
 					ding.destroy()
 				}else if(this.isDown('K') && exp>=next_level){
-					level++;
-					speed+=50
+					this.level++;
+					this.speed+=50
 					var rollOver = exp-next_level
-					exp=rollOver
-					next_level=next_level*1.33
+					this.exp = rollOver
+					this.next_level = this.next_level*1.33
 					ding.destroy()
 				}
 		
 			}
-			if (player_hp <= 0) {
+			
+			resetHUD();
+			if (this.player_hp <= 0) {
 				this.destroy();
 				Crafty.scene("YouLose");
 			}
-    
-    
-			resetHUD();
 			//HUD(this.at().x,this.at().y,this.direction);
 			HUD(this);
 	
 		})
 		.bind("SaveData", function (data, prepare) {
-			data.attr.arrow_spray = this.arrow_spray;
 			data.attr.x = this.x;
 			data.attr.y = this.y;
 			data.attr.direction = this.direction;
+			data.attr.arrow_spray = this.arrow_spray;
+			data.attr.arrowTimer = this.arrowTimer;
+			data.attr.hurtTimer = this.hurtTimer;
+			data.attr.exp = this.exp;
+			data.attr.next_level = this.next_level;
+			data.attr.max_hp = this.max_hp;
+			data.attr.player_hp = this.player_hp;
+			data.attr.beard_power = this.beard_power;
+			data.attr.speed = this.speed; 
+			data.attr.level = this.level; 
+			data.attr.arrow_damage = this.arrow_damage;
+			data.attr.sword_damage = this.sword_damage;
+			data.attr.animation_speed = this.animation_speed;
 		});
 },
 stopOnSolids: function() {
-	this.onHit('Solid', this.stopMovement);
-	this.onHit('NPC', this.stopMovement);
+	this.onHit('Solid', this.stopMovementAndDamage);
+	this.onHit('NPC', this.stopMovementAndDamage);
 	return this;
 },
-stopMovement: function () {
+stopMovementAndDamage: function (data) {
+	if (this.hit('NPC')) {
+		var nppc = data[0].obj;
+		this.ouch(nppc.damage);
+	}
 	if (this._movement) {
 		this.x -= this._movement.x;
 		if (this.hit('Solid') || this.hit('NPC')) {
@@ -224,20 +254,11 @@ stopMovement: function () {
 		this._speed = 0;
 	}
 },
-ouch : function (damage_amount) {
-	this.hp-=damage_amount;
-},
-hurt_wolf:function() {
+ouch: function(damage) {
     if (this.hurtTimer == 0) {
-        player_hp -= 1;
+        this.player_hp -= damage;
     }
     this.hurtTimer = 20;
-},
-hurt_shooter:function(){
-	if(this.hurtTimer==0){
-		player_hp-=2
-	}
-	this.hurtTimer = 20;
 },
 enterRoom: function(data) {
 	dooor = data[0].obj;
@@ -263,7 +284,7 @@ enterRoom: function(data) {
 	Crafty.scene(dooor.linkedRoom);
 },
 feast : function (data){
-	foood = data[0].obj;
+	var foood = data[0].obj;
 	foood.feast(this);
 	return data[0];
 },
@@ -275,23 +296,24 @@ feast : function (data){
 
 Crafty.c('NPC', {
 init: function() {
-	this.direction = 'n'
+	this.direction = 'n';
+	this.damage;
+	this.hp;
+	this.exp;
 	this.requires('Saveable, Collision')
-		.onHit('PlayerCharacter', this.hurtPlayer)
-		.stopOnSolids()
+		.onHit('PlayerCharacter', this.hurtPlayer);
 },
-stopOnSolids: function() {
-	this.onHit('PlayerCharacter', this.stopMovenment);
-	this.onHit('Solid', this.stopMovement);
-	return this;
+hurtPlayer : function (data) {
+	var plaayer = data[0].obj;
+	plaayer.ouch(this.damage);
+	this.move(this.direction, -1);
 },
-stopMovement: function () {
-	while( this.hit('PlayerCharacter') || this.hit('Solid') ) {
-		this.move(this.direction, -1);
+ouch : function (player, damage_amount) {
+	this.hp -= damage_amount;
+	if(this.hp <= 0){
+		player.exp += exp;
+		this.destroy();
 	}
-},
-ouch : function (damage_amount) {
-	this.hp-=damage_amount;
 },
 });
 
@@ -303,62 +325,53 @@ init: function() {
 				var newDirection = Math.random();
 				if (newDirection < .25) {
 					this.direction = 'n'
-					this.reverseDirection = 's'
 				}
 				else if (newDirection > .25 && newDirection < .5) {
 					this.direction = 's'
-					this.reverseDirection = 'n'
 				}
 				else if (newDirection >.5 && newDirection < .75) {
 					this.direction = 'e'
-					this.reverseDirection = 'w'
 				}
 				else if (newDirection > .76) {
 					this.direction = 'w'
-					this.reverseDirection = 'e'
 				}
 			}
 			this.move(this.direction, 1);
-		});
-}
+		})
+		.stopOnSolids();
+},
+stopOnSolids: function() {
+	this.onHit('Solid', this.stopMovement);
+	this.onHit('NPC', this.stopMovement);
+	return this;
+},
+stopMovement: function (data) {
+	while( this.hit('PlayerCharacter') || this.hit('Solid') ) {
+		this.move(this.direction, -1);
+	}
+},
 });
 
 Crafty.c('Wolf',{
 init : function () {
-	this.hp = 2;
-	this.requires('RandomMovement, spr_wolfyfront')
-		.bind('EnterFrame' , function() {
-			if(this.hp<=0){
-				this.destroy();
-				exp+=10;
-			}
-		});
-},
-hurtPlayer : function (data) {
-	plaayer = data[0].obj;
-	plaayer.hurt_wolf();
-	this.move(this.reverseDirection, 1);
+	this.hp = 3;
+	this.damage = 1;
+	this.exp = 10;
+	this.requires('RandomMovement, spr_wolfyfront');
 },
 });
 
 Crafty.c('Shooter',{
 init : function () {
-	this.hp = 5;
+	this.hp = 1;
+	this.damage = 1;
+	this.exp = 25;
 	this.requires('RandomMovement, spr_wolfyback')
 		.bind('EnterFrame' , function() {
-			if(this.hp<=0){
-				this.destroy();
-				exp+=25;
-			}
 			if(Math.random()>.84){
 				Crafty.e('FoeArrow').at(this.at().x,this.at().y).direction = this.direction;
 			}
 		});
-},
-hurtPlayer : function (data) {
-	plaayer = data[0].obj;
-	plaayer.hurt_shooter();
-	this.move(this.reverseDirection, 1);
 },
 });
 
@@ -378,7 +391,7 @@ init: function() {
 },
 hurt: function(data) {
 	var damage_amount = 1
-	damage = data[0].obj;
+	var damage = data[0].obj;
 	damage.ouch(damage_amount);
 	this.destroy();
 	return data[0];
@@ -388,6 +401,7 @@ hurt: function(data) {
 Crafty.c('Arrow', {
 init: function() {
 	this.direction = ''
+	this.player;
 	this.requires('Actor, Collision')
 		.onHit('NPC',this.hurt)
 		.onHit('tall',this.destroy)
@@ -396,9 +410,8 @@ init: function() {
 	});
 },
 hurt: function(data) {
-	var damage_amount = 1
-	damage = data[0].obj;
-	damage.ouch(damage_amount);
+	var damage = data[0].obj;
+	damage.ouch(this.player, this.player.arrow_damage);
 	this.destroy();
 	return data[0];
 	},
@@ -442,9 +455,8 @@ init: function () {
 		});
 },
 hurt: function(data){
-	var damage_amount = 2
-	damage = data[0].obj;
-	damage.ouch(damage_amount);
+	var damage = data[0].obj;
+	damage.ouch(this.player, this.player.sword_damage);
 	return data[0];
 },
 });
@@ -458,8 +470,8 @@ init: function () {
 	this.requires('Consumeable, spr_village,short')
 },
 feast: function(player) {
-	this.destroy()
-	player_hp = max_hp;
+	this.destroy();
+	player.player_hp = player.max_hp;
 },
 });
 

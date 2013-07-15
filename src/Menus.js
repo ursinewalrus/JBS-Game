@@ -5,7 +5,7 @@ HUD = function (/*px,py,facing*/player) {
 	
 	var hp = Crafty.e("2D, DOM,Color")
 	hp.color('rgb(255,0,0)')
-	hp.attr({w:player_hp*33, h:25,x:0,y:240,alpha:1.0})
+	hp.attr({w:player.player_hp*33, h:25,x:0,y:240,alpha:1.0})
 	
 	var hp_text = Crafty.e('2D, DOM, Color, Text')
 	hp_text.attr({x:60,y:230,alpha:1.0})
@@ -27,7 +27,7 @@ HUD = function (/*px,py,facing*/player) {
 	item2.bind("Click",function(e){
 		if(player.arrow_spray){
 			if(player.arrowTimer == 0){
-				saver = player.direction
+				var saver = player.direction
 				player.direction = 'n'
 				Crafty.e('Arrow').at(player.at().x,player.at().y).direction = player.direction;
 				player.direction = 'e'
@@ -66,11 +66,11 @@ HUD = function (/*px,py,facing*/player) {
 
 	var exp_bar = Crafty.e('2D,DOM,Color')
 	exp_bar.color('rgb(0,0,255)')
-	exp_bar.attr({w:(exp/next_level)*100,h:10,x:0,y:230,alpha:1.0})
+	exp_bar.attr({w:(player.exp/player.next_level)*100,h:10,x:0,y:230,alpha:1.0})
 	
 	var level_display = Crafty.e('2D,DOM,Color,Text')
 	level_display.attr({x:5,y:10,alpha:1.0})
-	level_display.text(level)
+	level_display.text(player.level)
 	
 	
 	HUD_Array.push(hp,hp_text,item1,item2,item3,exp_bar,level_display);
@@ -86,21 +86,4 @@ resetHUD = function() {
     }
    
 }
-
-// *************************** STATS ***************************************
-
-exp = 0;
-
-next_level = 100;
-
-player_name = "Face_Guy";
-max_hp = 3;
-
-player_hp = 3;
-
-beard_power = 1;
-
-speed = 2; 
-
-level = 1; 
 

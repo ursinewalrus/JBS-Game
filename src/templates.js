@@ -191,7 +191,7 @@ levelTemplate['forest']['crags'].genChance = .7
 levelTemplate['forest']['crags'].isBossRoom = false;
 //---------------------------------------------------------
 levelTemplate['forest']['graveyard'] = function(rm){
-	roomSharedInital(rm,'Tree')	
+	roomSharedInital(rm,'Tree');
 	for (var x = 0; x < Game.map_grid.width; x++) {
 		for (var y = 0; y < Game.map_grid.height; y++) {
 			if(x>0 && x<23 && y>0 && y<15 && Math.random()>.77){
@@ -212,6 +212,7 @@ levelTemplate['forest']['graveyard'] = function(rm){
 			}
 		}
 	}
+	roomSharedEnd(rm);
 }
 levelTemplate['forest']['graveyard'].genChance = .7
 levelTemplate['forest']['graveyard'].isBossRoom = false;
