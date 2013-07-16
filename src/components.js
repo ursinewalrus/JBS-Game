@@ -479,13 +479,6 @@ feast: function(player) {
 //---------------- Level Components ------------------------
 //----------------------------------------------------------
 
-// A Tree is just an Actor with a certain sprite
-Crafty.c('Tree', {
-init: function() {
-	this.requires('ForegroundObject, Solid, spr_tree2,tall');
-}
-});
-
 Crafty.c('Door',{
 init:function(){
 	this.thisRoom;
@@ -504,24 +497,48 @@ setLinkedRoom:function(room) {
 }
 });
 
-// A Bush is just an Actor with a certain sprite
-Crafty.c('Bush', {
-init: function() {
-	this.requires('ForegroundObject, Solid, spr_bush,tall');
-}
-});
-
 //----------------------------------------------------------
 //---------------- Misc. Components ------------------------
 //----------------------------------------------------------
+//Crafty.e('SolidObj','spr_tree4').at(x,y)
+//Crafty.c(SolidObj,{
+//init: function () {
+//this.requires('ForegroundObject,Solid)
+Crafty.c('SolidObj',{
+	init: function () {
+		this.requires('ForegroundObject,Solid,tall');
+}
+});
+Crafty.c('TileObj',{
+	init: function () {
+		this.requires('BackgroundObject,short')
+}
+});
+Crafty.c('Dead_Guy',{
+	init: function() {
+		this.requires('ForegroundObject, spr_deadguy,short')//stuff like this and water might be made into broader 
+	},														//catagories later if we add more similar types
+});
+Crafty.c('Water',{
+	init: function () {
+		this.requires('ForegroundObject, Solid, spr_water,short')	
+},
+});
+//old crafty.c's, here just in case/for reference
+/*
+Crafty.c('Tree', {
+	init: function() {
+		this.requires('ForegroundObject, Solid, spr_tree2,tall');
+}
+});
+Crafty.c('Bush', {
+	init: function() {
+		this.requires('ForegroundObject, Solid, spr_bush,tall');
+}
+});
 Crafty.c('Green_Tree',{
 init: function () {
 	this.requires('ForegroundObject,Solid,spr_tree4,tall')
-},
-});
-Crafty.c('Dead_Guy',{
-init: function() {
-	this.requires('ForegroundObject, spr_deadguy,short')
 },
 });
 
@@ -541,9 +558,4 @@ Crafty.c('Broke_Sword',{
 init: function() {
 	this.requires('ForegroundObject, Solid, spr_brokesword,tall')
 },
-});
-Crafty.c('Water',{
-init: function () {
-	this.requires('ForegroundObject, Solid, spr_water,short')	
-},
-});
+});*/
