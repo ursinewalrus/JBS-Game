@@ -139,16 +139,16 @@ init: function() {
 			} 
 			// *** arrow spray spell, activates on pickup at the moment
 			if(this.isDown('G')&& this.arrow_spray == true && this.arrowTimer == 0){
-				var arrow = Crafty.e('ArrowN').at(this.at().x,this.at().y)
+				var arrow = Crafty.e('Arrow, spr_arrow2N').at(this.at().x,this.at().y)
 				arrow.direction = 'n';
 				arrow.player = this;
-				var arrow = Crafty.e('ArrowS').at(this.at().x,this.at().y)
+				var arrow = Crafty.e('Arrow, spr_arrow2S').at(this.at().x,this.at().y)
 				arrow.direction = 's';
 				arrow.player = this;
-				var arrow = Crafty.e('ArrowE').at(this.at().x,this.at().y)
+				var arrow = Crafty.e('Arrow, spr_arrow2E').at(this.at().x,this.at().y)
 				arrow.direction = 'e';
 				arrow.player = this;
-				var arrow = Crafty.e('ArrowW').at(this.at().x,this.at().y)
+				var arrow = Crafty.e('Arrow, spr_arrow2W').at(this.at().x,this.at().y)
 				arrow.direction = 'w';
 				arrow.player = this;
 				this.arrowTimer = 30;
@@ -361,6 +361,26 @@ init : function () {
 },
 });
 
+Crafty.c('Tower',{
+	init : function () {
+		this.hp = 5;
+		this.damage = 2;
+		this.exp = 30;
+		this.arrowtimer = 60;
+		this.requires('NPC,spr_door')
+			.bind('EnterFrame' , function() {
+				if(this.arrowtimer <= 0){
+						Crafty.e('FoeArrow, spr_arrowN').at(this.at().x,this.at().y).direction = 'n';
+						Crafty.e('FoeArrow, spr_arrowS').at(this.at().x,this.at().y).direction = 's';
+						Crafty.e('FoeArrow, spr_arrowE').at(this.at().x,this.at().y).direction = 'e';
+						Crafty.e('FoeArrow, spr_arrowW').at(this.at().x,this.at().y).direction = 'w';
+					this.arrowtimer = 60;
+				}
+				this.arrowtimer--;
+			});
+	},
+	});
+
 Crafty.c('Shooter',{
 init : function () {
 	this.hp = 1;
@@ -417,13 +437,13 @@ init: function() {
 	this.direction = ''
 	this.player;
 	this.requires('Actor, Collision')
-		.onHit('NPC',this.hurt)
+		.onHit('NPC',this.hurtArrow)
 		.onHit('tall',this.destroy)
 		.bind('EnterFrame', function() {
 			this.move(this.direction, 6);
 	});
 },
-hurt: function(data) {
+hurtArrow: function(data) {
 	var damage = data[0].obj;
 	damage.ouch(this.player, this.player.arrow_damage);
 	this.destroy();
@@ -436,7 +456,7 @@ init: function () {
 	this.duration = 8
 	this.direction = ''
 	this.requires('Actor, spr_arrowN, Collision')
-		.onHit('NPC',this.hurt)	
+		.onHit('NPC',this.hurtSword)	
 		.bind('EnterFrame',function(){
 			this.duration--;
 			if(this.duration==0){
@@ -444,7 +464,7 @@ init: function () {
 			}
 		});
 },
-hurt: function(data){
+hurtSword: function(data){
 	var damage = data[0].obj;
 	damage.ouch(this.player, this.player.sword_damage);
 	return data[0];

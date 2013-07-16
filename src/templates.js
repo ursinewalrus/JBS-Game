@@ -95,6 +95,10 @@ levelTemplate['forest']['rock'] = function (rm) {
 				Crafty.e('SolidObj','spr_brokesword').at(x, y);
 				rm.occupied[x][y] = true;
 			}
+			if(Math.random()<.01 && !rm.occupied[x][y]){
+				Crafty.e('Tower').at(x,y);
+				rm.occupied[x][y]=true
+			}
 		}
 	}
 	roomSharedEnd(rm);
