@@ -361,6 +361,26 @@ init : function () {
 },
 });
 
+Crafty.c('Tower',{
+	init : function () {
+		this.hp = 5;
+		this.damage = 2;
+		this.exp = 30;
+		this.arrowtimer = 60;
+		this.requires('NPC,spr_door')
+			.bind('EnterFrame' , function() {
+				if(this.arrowtimer <= 0){
+						Crafty.e('FoeArrow, spr_arrowN').at(this.at().x,this.at().y).direction = 'n';
+						Crafty.e('FoeArrow, spr_arrowS').at(this.at().x,this.at().y).direction = 's';
+						Crafty.e('FoeArrow, spr_arrowE').at(this.at().x,this.at().y).direction = 'e';
+						Crafty.e('FoeArrow, spr_arrowW').at(this.at().x,this.at().y).direction = 'w';
+					this.arrowtimer = 60;
+				}
+				this.arrowtimer--;
+			});
+	},
+	});
+
 Crafty.c('Shooter',{
 init : function () {
 	this.hp = 1;
@@ -417,13 +437,13 @@ init: function() {
 	this.direction = ''
 	this.player;
 	this.requires('Actor, Collision')
-		.onHit('NPC',this.hurt)
+		.onHit('NPC',this.hurtArrow)
 		.onHit('tall',this.destroy)
 		.bind('EnterFrame', function() {
 			this.move(this.direction, 6);
 	});
 },
-hurt: function(data) {
+hurtArrow: function(data) {
 	var damage = data[0].obj;
 	damage.ouch(this.player, this.player.arrow_damage);
 	this.destroy();
@@ -436,7 +456,7 @@ init: function () {
 	this.duration = 8
 	this.direction = ''
 	this.requires('Actor, spr_arrowN, Collision')
-		.onHit('NPC',this.hurt)	
+		.onHit('NPC',this.hurtSword)	
 		.bind('EnterFrame',function(){
 			this.duration--;
 			if(this.duration==0){
@@ -444,7 +464,7 @@ init: function () {
 			}
 		});
 },
-hurt: function(data){
+hurtSword: function(data){
 	var damage = data[0].obj;
 	damage.ouch(this.player, this.player.sword_damage);
 	return data[0];
@@ -479,13 +499,6 @@ feast: function(player) {
 //---------------- Level Components ------------------------
 //----------------------------------------------------------
 
-// A Tree is just an Actor with a certain sprite
-Crafty.c('Tree', {
-init: function() {
-	this.requires('ForegroundObject, Solid, spr_tree2,tall');
-}
-});
-
 Crafty.c('Door',{
 init:function(){
 	this.thisRoom;
@@ -504,24 +517,48 @@ setLinkedRoom:function(room) {
 }
 });
 
-// A Bush is just an Actor with a certain sprite
-Crafty.c('Bush', {
-init: function() {
-	this.requires('ForegroundObject, Solid, spr_bush,tall');
-}
-});
-
 //----------------------------------------------------------
 //---------------- Misc. Components ------------------------
 //----------------------------------------------------------
+//Crafty.e('SolidObj','spr_tree4').at(x,y)
+//Crafty.c(SolidObj,{
+//init: function () {
+//this.requires('ForegroundObject,Solid)
+Crafty.c('SolidObj',{
+	init: function () {
+		this.requires('ForegroundObject,Solid,tall');
+}
+});
+Crafty.c('TileObj',{
+	init: function () {
+		this.requires('BackgroundObject,short')
+}
+});
+Crafty.c('Dead_Guy',{
+	init: function() {
+		this.requires('ForegroundObject, spr_deadguy,short')//stuff like this and water might be made into broader 
+	},														//catagories later if we add more similar types
+});
+Crafty.c('Water',{
+	init: function () {
+		this.requires('ForegroundObject, Solid, spr_water,short')	
+},
+});
+//old crafty.c's, here just in case/for reference
+/*
+Crafty.c('Tree', {
+	init: function() {
+		this.requires('ForegroundObject, Solid, spr_tree2,tall');
+}
+});
+Crafty.c('Bush', {
+	init: function() {
+		this.requires('ForegroundObject, Solid, spr_bush,tall');
+}
+});
 Crafty.c('Green_Tree',{
 init: function () {
 	this.requires('ForegroundObject,Solid,spr_tree4,tall')
-},
-});
-Crafty.c('Dead_Guy',{
-init: function() {
-	this.requires('ForegroundObject, spr_deadguy,short')
 },
 });
 
@@ -541,9 +578,4 @@ Crafty.c('Broke_Sword',{
 init: function() {
 	this.requires('ForegroundObject, Solid, spr_brokesword,tall')
 },
-});
-Crafty.c('Water',{
-init: function () {
-	this.requires('ForegroundObject, Solid, spr_water,short')	
-},
-});
+});*/
