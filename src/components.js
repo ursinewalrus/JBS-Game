@@ -203,12 +203,13 @@ init: function() {
 			}
 			
 			resetHUD();
+			HUD(this);
 			if (this.player_hp <= 0 || this.player_hp == NaN) {
 				this.destroy();
+				
 				Crafty.scene("YouLose");
 			}
 			//HUD(this.at().x,this.at().y,this.direction);
-			HUD(this);
 	
 		})
 		.bind("SaveData", function (data, prepare) {
