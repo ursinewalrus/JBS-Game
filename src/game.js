@@ -27,7 +27,7 @@ return this.map_grid.height * this.map_grid.tile.height;
 // Initialize and start our game
 start: function() {
 // Start crafty and set a background color so that we can see it's working
-Crafty.init(Game.width(), Game.height());
+Crafty.init(Game.width(), 288);
 Crafty.background('rgb(87, 109, 20)');
  
 // Simply start the "Loading" scene to get things going

@@ -5,14 +5,14 @@ HUD = function (/*px,py,facing*/player) {
 	
 	var hp = Crafty.e("2D, DOM,Color")
 	hp.color('rgb(255,0,0)')
-	hp.attr({w:player.player_hp*33, h:25,x:0,y:240,alpha:1.0})
+	hp.attr({w:player.player_hp*33, h:25,x:0,y:270,alpha:1.0})
 	
 	var hp_text = Crafty.e('2D, DOM, Color, Text')
-	hp_text.attr({x:60,y:230,alpha:1.0})
+	hp_text.attr({x:60,y:260,alpha:1.0})
 	hp_text.text('HP')
 	
 	var item1 = Crafty.e("2D,DOM,spr_door,Mouse")
-	.attr({w:16,h:16,x:0,y:214,alpha:1.0})
+	.attr({w:16,h:16,x:120,y:270,alpha:1.0})
 	item1.bind("Click",function(e){
 		console.log(player.direction)
 		console.log(player.at().x+" "+player.at().y)
@@ -23,7 +23,7 @@ HUD = function (/*px,py,facing*/player) {
 	if(!player.arrow_spray){var item2 = Crafty.e("2D,DOM,spr_door,Mouse")}
 	else{var item2 = Crafty.e("2D,DOM,spr_tome,Mouse");}
 	//var item2 = Crafty.e("2D,DOM,spr_door,Mouse")
-	item2.attr({w:16,h:16,x:20,y:214,alpha:1.0})
+	item2.attr({w:16,h:16,x:140,y:270,alpha:1.0})
 	item2.bind("Click",function(e){
 		if(player.arrow_spray){
 			if(player.arrowTimer == 0){
@@ -43,7 +43,7 @@ HUD = function (/*px,py,facing*/player) {
 	});
 	
 	var item3 = Crafty.e("2D,DOM,spr_door,Mouse")
-	.attr({w:16,h:16,x:40,y:214,alpha:1.0})
+	.attr({w:16,h:16,x:160,y:270,alpha:1.0})
 	item3.bind("Click",function(e){
 		if(player.arrowTimer==0)
 			if(player.direction == 'n'){
