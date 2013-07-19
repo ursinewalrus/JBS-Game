@@ -139,16 +139,16 @@ init: function() {
 			} 
 			// *** arrow spray spell, activates on pickup at the moment
 			if(this.isDown('G')&& this.arrow_spray == true && this.arrowTimer == 0){
-				var arrow = Crafty.e('ArrowN').at(this.at().x,this.at().y)
+				var arrow = Crafty.e('Arrow, spr_arrow2N').at(this.at().x,this.at().y)
 				arrow.direction = 'n';
 				arrow.player = this;
-				var arrow = Crafty.e('ArrowS').at(this.at().x,this.at().y)
+				var arrow = Crafty.e('Arrow, spr_arrow2S').at(this.at().x,this.at().y)
 				arrow.direction = 's';
 				arrow.player = this;
-				var arrow = Crafty.e('ArrowE').at(this.at().x,this.at().y)
+				var arrow = Crafty.e('Arrow, spr_arrow2E').at(this.at().x,this.at().y)
 				arrow.direction = 'e';
 				arrow.player = this;
-				var arrow = Crafty.e('ArrowW').at(this.at().x,this.at().y)
+				var arrow = Crafty.e('Arrow, spr_arrow2W').at(this.at().x,this.at().y)
 				arrow.direction = 'w';
 				arrow.player = this;
 				this.arrowTimer = 30;
@@ -342,7 +342,7 @@ init: function() {
 },
 stopOnSolids: function() {
 	this.onHit('Solid', this.stopMovement);
-	this.onHit('NPC', this.stopMovement);
+	this.onHit('PlayerCharacter', this.stopMovement);
 	return this;
 },
 stopMovement: function (data) {
