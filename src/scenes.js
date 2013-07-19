@@ -34,8 +34,8 @@ Crafty.scene('YouLose',
 	function() {
 		// Display some text showing the loss
 		var a = Crafty.e('2D, DOM, Text,Keyboard')
-		.attr({ x: 0, y: 0 })
-		.text('kk fix this')
+		.attr({ x: 0, y: Game.height()/2 -24, w:Game.width() })
+		.text("You're so bad! You lose! Press Enter to start again!")
         .css($text_css);
 		// Watch for the player to press a key, then restart the game
 		// when a key is pressed
@@ -59,7 +59,7 @@ Crafty.scene('YouLose',
 Crafty.scene('Start', 
     function(){
         var a = Crafty.e('2D,DOM,Text,Keyboard')
-        .text('Press Enter to start game!')
+        .text('Press Enter to start game! Move with WSAD, Use magic with G, and shoot in the corresponding direction with IJKL, kill the boss to win!')
         .attr({ x:0, y:Game.height()/2 -24, w:Game.width()})
         .css($text_css);
         this.start = function() {
