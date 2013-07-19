@@ -113,30 +113,30 @@ init: function() {
 				this.direction = 'w'
 			} else if (this.isDown('D')) {
 				this.direction = 'e'
-			} if (this.isDown('SPACE') && this.arrowTimer == 0 ) {
-				if(this.direction=='n'){
-					var arrow = Crafty.e('Arrow, spr_arrow2N').at(this.at().x,this.at().y)
-					arrow.direction = 'n';
-					arrow.player = this;
-					this.arrowTimer = 30
-				}if(this.direction=='s'){
-					var arrow = Crafty.e('Arrow, spr_arrow2S').at(this.at().x,this.at().y)
-					arrow.direction = 's';
-					arrow.player = this;
-					this.arrowTimer = 30
-				}if(this.direction=='e'){
-					var arrow = Crafty.e('Arrow, spr_arrow2E').at(this.at().x,this.at().y)
-					arrow.direction = 'e';
-					arrow.player = this;
-					this.arrowTimer = 30
-				}if(this.direction=='w'){
-					var arrow = Crafty.e('Arrow, spr_arrow2W').at(this.at().x,this.at().y)
-					arrow.direction = 'w';
-					arrow.player = this;
-					this.arrowTimer = 30
-				}
-		
-			} 
+			} if (this.isDown('I') && this.arrowTimer == 0 ) {
+				var arrow = Crafty.e('Arrow, spr_arrow2N').at(this.at().x,this.at().y)
+				arrow.direction = 'n';
+				arrow.player = this;
+				this.arrowTimer = 30;
+			}
+			if (this.isDown('K') && this.arrowTimer == 0 ) {
+				var arrow = Crafty.e('Arrow, spr_arrow2S').at(this.at().x,this.at().y)
+				arrow.direction = 's';
+				arrow.player = this;
+				this.arrowTimer = 30;
+			}
+			if (this.isDown('J') && this.arrowTimer == 0 ) {
+				var arrow = Crafty.e('Arrow, spr_arrow2W').at(this.at().x,this.at().y)
+				arrow.direction = 'w';
+				arrow.player = this;
+				this.arrowTimer = 30;
+			}
+			if (this.isDown('L') && this.arrowTimer == 0 ) {
+				var arrow = Crafty.e('Arrow, spr_arrow2E').at(this.at().x,this.at().y)
+				arrow.direction = 'e';
+				arrow.player = this;
+				this.arrowTimer = 30;
+			}
 			// *** arrow spray spell, activates on pickup at the moment
 			if(this.isDown('G')&& this.arrow_spray == true && this.arrowTimer == 0){
 				var arrow = Crafty.e('Arrow, spr_arrow2N').at(this.at().x,this.at().y)
@@ -153,7 +153,7 @@ init: function() {
 				arrow.player = this;
 				this.arrowTimer = 30;
 			}
-			if(this.isDown('H')&& this.arrowTimer==0){
+			if(this.isDown('E')&& this.arrowTimer==0){
 				if(this.direction == 'n'){
 					Crafty.e('Sword').at(this.at().x,this.at().y-1)
 					this.arrowTimer=40
@@ -203,7 +203,7 @@ init: function() {
 			}
 			
 			resetHUD();
-			if (this.player_hp <= 0) {
+			if (this.player_hp <= 0 || this.player_hp == NaN) {
 				this.destroy();
 				Crafty.scene("YouLose");
 			}
@@ -229,6 +229,7 @@ init: function() {
 			data.attr.sword_damage = this.sword_damage;
 			data.attr.animation_speed = this.animation_speed;
 		});
+		Game.player = this;
 },
 stopOnSolids: function() {
 	this.onHit('Solid', this.stopMovementAndDamage);
@@ -466,7 +467,7 @@ init: function () {
 },
 hurtSword: function(data){
 	var damage = data[0].obj;
-	damage.ouch(this.player, this.player.sword_damage);
+	damage.ouch(Game.player, Game.player.sword_damage);
 	return data[0];
 },
 });
