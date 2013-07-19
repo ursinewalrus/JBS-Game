@@ -69,6 +69,7 @@ Crafty.c('PlayerCharacter', {
 init: function() {
 	this.arrow_spray = false;
 	this.arrowTimer = 0;
+	this.swordTimer = 0
 	this.hurtTimer = 0;
 	this.direction = 'n';
 	this.exp = 0;
@@ -136,6 +137,7 @@ init: function() {
 				arrow.direction = 'e';
 				arrow.player = this;
 				this.arrowTimer = 30;
+				this.swordTimer = 30;
 			}
 			// *** arrow spray spell, activates on pickup at the moment
 			if(this.isDown('G')&& this.arrow_spray == true && this.arrowTimer == 0){
@@ -153,27 +155,30 @@ init: function() {
 				arrow.player = this;
 				this.arrowTimer = 30;
 			}
-			if(this.isDown('E')&& this.arrowTimer==0){
+			if(this.isDown('SPACE')&& this.swordTimer==0){
 				if(this.direction == 'n'){
 					Crafty.e('Sword').at(this.at().x,this.at().y-1)
-					this.arrowTimer=40
+					this.swordTimer=30;
 				}
 				if(this.direction == 's'){
 					Crafty.e('Sword').at(this.at().x,this.at().y+1)
-					this.arrowTimer=40
+					this.swordTimer=30;
 				}
 				if(this.direction == 'e'){
 					Crafty.e('Sword').at(this.at().x+1,this.at().y)
-					this.arrowTimer=40
+					this.swordTimer=30;
 				}
 				if(this.direction == 'w'){
 					Crafty.e('Sword').at(this.at().x-1,this.at().y)
-					this.arrowTimer=40
+					this.swordTimer=30;
 				}
 			}
 			if (this.arrowTimer > 0) {
 				this.arrowTimer = this.arrowTimer - 1;
 			}
+			if (this.swordTimer > 0) {
+                this.swordTimer = this.swordTimer - 1;
+            }
 			if (this.hurtTimer > 0) {
 				this.hurtTimer -= 1;
 			}
@@ -218,6 +223,7 @@ init: function() {
 			data.attr.direction = this.direction;
 			data.attr.arrow_spray = this.arrow_spray;
 			data.attr.arrowTimer = this.arrowTimer;
+			data.attr.swordTimer = this.swordTimer;
 			data.attr.hurtTimer = this.hurtTimer;
 			data.attr.exp = this.exp;
 			data.attr.next_level = this.next_level;

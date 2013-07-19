@@ -152,7 +152,7 @@ levelTemplate['forest']['overgrown'] = function(rm){
 	var foe_count = 0
 	for (var x = 0; x < Game.map_grid.width; x++) {
 		for (var y = 0; y < Game.map_grid.height; y++) {
-			if(Math.random()>.75 && !rm.occupied[x][y]){
+			if(Math.random()>.83 && !rm.occupied[x][y]){
 				Crafty.e('SolidObj','spr_tree4').at(x,y)
 				rm.occupied[x][y] = true
 			}
