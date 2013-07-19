@@ -33,14 +33,16 @@ Crafty.scene('Victory',
 Crafty.scene('YouLose', 
 	function() {
 		// Display some text showing the loss
-		Crafty.e('2D, DOM, Text')
+		var a = Crafty.e('2D, DOM, Text,Keyboard')
 		.attr({ x: 0, y: 0 })
-		.text('kk fix this');
- 
+		.text('kk fix this')
+        .css($text_css);
 		// Watch for the player to press a key, then restart the game
 		// when a key is pressed
 		this.restart_game = function() {
-			Crafty.scene('Loading');
+            if(a.isDown("ENTER")) {
+                Crafty.scene('Start');
+            }
 		};
 
 		this.bind('KeyDown', this.restart_game);
@@ -52,6 +54,24 @@ Crafty.scene('YouLose',
 	}
 );
 
+//start screen
+
+Crafty.scene('Start', 
+    function(){
+        var a = Crafty.e('2D,DOM,Text,Keyboard')
+        .text('Press Enter to start game!')
+        .attr({ x:0, y:Game.height()/2 -24, w:Game.width()})
+        .css($text_css);
+        this.start = function() {
+            if (a.isDown("ENTER")) {
+            Crafty.scene('Loading');
+            }
+        }
+        this.bind('KeyDown', this.start);
+    }, 
+    function () {
+        this.unbind('KeyDown', this.start);
+    });
 
 
 
@@ -66,6 +86,7 @@ Crafty.scene('Loading',
 		.text('Loading...')
 		.attr({ x: 0, y: Game.height()/2 - 24, w: Game.width() })
 		.css($text_css);
+
 
 		//Builds Level
  

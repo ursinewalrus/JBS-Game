@@ -32,7 +32,7 @@ Crafty.background('rgb(87, 109, 20)');
  
 // Simply start the "Loading" scene to get things going
 
-Crafty.scene('Loading');
+Crafty.scene('Start');
 }
 }
  
