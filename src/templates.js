@@ -148,11 +148,11 @@ levelTemplate['forest']['mob_room'].isBossRoom  = false;
 levelTemplate['forest']['mob_room'].genChance = .7;
 //-----------------------------------------------------------
 levelTemplate['forest']['overgrown'] = function(rm){
-	roomSharedInital(rm,'spr_tree2');
+	roomSharedInital(rm,'spr_tree4');
 	var foe_count = 0
 	for (var x = 0; x < Game.map_grid.width; x++) {
 		for (var y = 0; y < Game.map_grid.height; y++) {
-			if(Math.random()>.66 && !rm.occupied[x][y]){
+			if(Math.random()>.75 && !rm.occupied[x][y]){
 				Crafty.e('SolidObj','spr_tree4').at(x,y)
 				rm.occupied[x][y] = true
 			}
