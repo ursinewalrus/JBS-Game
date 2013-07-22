@@ -35,7 +35,6 @@ levelTemplate['forest']['forest'] = function (rm) {
 }
 
 levelTemplate['forest']['forest'].genChance = .7;
-levelTemplate['forest']['forest'].isBossRoom = false;
 
 //------------------------------------------------------------
 //is grid template
@@ -74,7 +73,7 @@ levelTemplate['forest']['grid'] = function (rm) {
 }
 
 levelTemplate['forest']['grid'].genChance = .7;
-levelTemplate['forest']['grid'].isBossRoom = false;
+
 //------------------------------------------------------------
 //is rocky template
 levelTemplate['forest']['rock'] = function (rm) {
@@ -104,10 +103,10 @@ levelTemplate['forest']['rock'] = function (rm) {
 	roomSharedEnd(rm);
 }
 levelTemplate['forest']['rock'].genChance = .7;
-levelTemplate['forest']['rock'].isBossRoom = false;
+
 //------------------------------------------------------------
 //should be loaded in first, is not slotted in yet, just the starter room
-levelTemplate['forest']['start'] = function (rm) {
+levelTemplate['forest']['mainroom'] = function (rm) {
 	roomSharedInital(rm,'spr_tree2');
 	for (var x = 0; x < Game.map_grid.width; x++) {
 		for (var y = 0; y < Game.map_grid.height; y++) {
@@ -120,7 +119,6 @@ levelTemplate['forest']['start'] = function (rm) {
 	roomSharedEnd(rm);
 }
 
-levelTemplate['forest']['start'].isBossRoom = false;
 //--------------------------------------------------------
 levelTemplate['forest']['mob_room'] = function (rm){
 	roomSharedInital(rm,'spr_tree2');
@@ -144,8 +142,8 @@ levelTemplate['forest']['mob_room'] = function (rm){
 		}
 		roomSharedEnd(rm)
 },
-levelTemplate['forest']['mob_room'].isBossRoom  = false;
 levelTemplate['forest']['mob_room'].genChance = .7;
+
 //-----------------------------------------------------------
 levelTemplate['forest']['overgrown'] = function(rm){
 	roomSharedInital(rm,'spr_tree4');
@@ -166,7 +164,7 @@ levelTemplate['forest']['overgrown'] = function(rm){
 	roomSharedEnd(rm)
 },
 levelTemplate['forest']['overgrown'].genChance = .7;
-levelTemplate['forest']['overgrown'].isBossRoom = false
+
 //------------------------------------------------------------
 levelTemplate['forest']['crags'] = function(rm){//new enemy type in it? MOLESTICON????
 	roomSharedInital(rm,'spr_tree2');
@@ -192,7 +190,7 @@ levelTemplate['forest']['crags'] = function(rm){//new enemy type in it? MOLESTIC
 	roomSharedEnd(rm)
 }
 levelTemplate['forest']['crags'].genChance = .7
-levelTemplate['forest']['crags'].isBossRoom = false;
+
 //---------------------------------------------------------
 levelTemplate['forest']['graveyard'] = function(rm){
 	roomSharedInital(rm,'spr_grave');
@@ -219,10 +217,9 @@ levelTemplate['forest']['graveyard'] = function(rm){
 	roomSharedEnd(rm);
 }
 levelTemplate['forest']['graveyard'].genChance = .7
-levelTemplate['forest']['graveyard'].isBossRoom = false;
 
 //---------------------------------------------
-levelTemplate['forest']['boss_room'] = function(rm){
+levelTemplate['forest']['bossroom'] = function(rm){
 	roomSharedInital(rm,'spr_brokesword');
 	x_water(rm,5,4,14)
 	x_water(rm,5,10,14)
@@ -249,7 +246,6 @@ levelTemplate['forest']['boss_room'] = function(rm){
 	}
 	roomSharedEnd(rm);
 }
-levelTemplate['forest']['boss_room'].genChance = 1
 /*
 
 levelTemplate['forst']['mob_room']=function (rm){

@@ -52,16 +52,23 @@ Room.prototype.buildRoom = function() {
 	var rm = this
 	Crafty.scene(rm.name, function() {
 		// Place a tree at every edge square on our grid of 16x16 tiles
-		var chance = -1;
-		var buildFunc;
-		for (rmType in levelTemplate[rm.type]) {
-			var genChance = levelTemplate[rm.type][rmType].genChance - Math.random();
-			if (genChance > chance) {
-				chance = genChance;
-				buildFunc = levelTemplate[rm.type][rmType];
+		if (rm.name == 'bossroom') {
+			levelTemplate[rm.type]['bossroom'](rm);
+		} else 
+		if (rm.name == 'mainroom') {
+			levelTemplate[rm.type]['mainroom'](rm);
+		} else {
+			var chance = -1;
+			var buildFunc;
+			for (rmType in levelTemplate[rm.type]) {
+				var genChance = levelTemplate[rm.type][rmType].genChance - Math.random();
+				if (genChance > chance) {
+					chance = genChance;
+					buildFunc = levelTemplate[rm.type][rmType];
+				}
 			}
+			buildFunc(rm);
 		}
-		buildFunc(rm);
 	});
 }
 
@@ -245,9 +252,47 @@ function initializeScene(roomGridX, roomGridY, maxNumOfRooms, minNumOfRooms, lev
 	var mainroomX = getRandomInt(0, roomGridX-1);
 	var mainroomY = getRandomInt(0, roomGridY-1);
 	roomGrid[mainroomX][mainroomY] = new Room('mainroom', levelType);
-
+	
+	//accounting for boss room
+	maxNumOfRooms--;
+	minNumOfRooms--;
+	
 	while (minNumOfRooms > 0) {
 		roomPlace(roomGrid[mainroomX][mainroomY], mainroomX, mainroomY);
+	}
+	
+	//adding boss room
+	for (var x = 0; x < roomGrid.length; x++) {
+		var shouldBreak = false;
+		for (var y = 0; y < roomGrid[x].length; y++) {
+			if ((x - 1) >= 0 && roomGrid[x][y] == null && roomGrid[x-1][y] != null) {
+				roomGrid[x][y] = new Room('bossroom', levelType);
+				roomGrid[x][y].linkRooms(roomGrid[x-1][y].name, 'w', Game.map_grid.height/2);
+				shouldBreak = true;
+				break;
+			} else 
+			if ((x + 1) < roomGrid.length && roomGrid[x][y] == null && roomGrid[x+1][y] != null) {
+				roomGrid[x][y] = new Room('bossroom', levelType);
+				roomGrid[x][y].linkRooms(roomGrid[x+1][y].name, 'e', Game.map_grid.height/2);
+				shouldBreak = true;
+				break;
+			} else 
+			if ((y - 1) >= 0 && roomGrid[x][y] == null && roomGrid[x][y-1] != null) {
+				roomGrid[x][y] = new Room('bossroom', levelType);
+				roomGrid[x][y].linkRooms(roomGrid[x][y-1].name, 'n', Game.map_grid.width/2);
+				shouldBreak = true;
+				break;
+			} else 
+			if ((y + 1) < roomGrid[x].length && roomGrid[x][y] == null && roomGrid[x][y+1] != null) {
+				roomGrid[x][y] = new Room('bossroom', levelType);
+				roomGrid[x][y].linkRooms(roomGrid[x][y+1].name, 's', Game.map_grid.width/2);
+				shouldBreak = true;
+				break;
+			}
+		}
+		if (shouldBreak) {
+			break;
+		}
 	}
 	
 	for (var i in allRooms) {

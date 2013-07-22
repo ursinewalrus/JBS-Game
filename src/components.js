@@ -320,6 +320,9 @@ ouch : function (player, damage_amount) {
 	this.hp -= damage_amount;
 	if(this.hp <= 0){
 		player.exp += exp;
+		if (this.__c['Boss']) {
+			Crafty.scene('Victory');
+		}
 		this.destroy();
 	}
 },
@@ -419,7 +422,7 @@ init : function () {
 //************BOSS*****************************
 Crafty.c('Boss',{
 	init:function() {
-		this.hp = 40;
+		this.hp = 1;
 		this.damage = 3;
 		this.exp = 150;
 		this.attackCycle = 0
@@ -537,7 +540,7 @@ Crafty.c('Boss',{
 				
 			}
 		});
-}	
+},	
 });
 
 //----------------------------------------------------------
