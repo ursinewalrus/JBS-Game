@@ -6,14 +6,16 @@
 Crafty.scene('Victory', 
 	function() {
 		// Display some text in celebration of the victory
-		Crafty.e('2D, DOM, Text')
-		.attr({ x: 0, y: 0 })
-		.text('Victory!');
- 
+		var a = Crafty.e('2D, DOM, Text,Keyboard')
+		.attr({ x: 0, y: Game.height()/2 - 24, w: Game.width() })
+		.text('Victory! Press Enter to start again!')
+		.css($text_css);
 		// Watch for the player to press a key, then restart the game
 		// when a key is pressed
 		this.restart_game = function() {
-			Crafty.scene('Loading');
+			if (a.isDown("ENTER")) {
+				Crafty.scene('Start');
+            }
 		}
 		this.bind('KeyDown', this.restart_game );
 	}, function() {
@@ -175,7 +177,7 @@ Crafty.scene('Loading',
 
 				// Now that our sprites are ready to draw, start the game
 				
-				initializeScene(10, 10, 5, 5, 'forest');
+				initializeScene(10, 10, 10, 30, 'forest');
 				//testRoomBuild('forest');
 			}
 		);

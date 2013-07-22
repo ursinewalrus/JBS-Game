@@ -422,7 +422,7 @@ init : function () {
 //************BOSS*****************************
 Crafty.c('Boss',{
 	init:function() {
-		this.hp = 1;
+		this.hp = 40;
 		this.damage = 3;
 		this.exp = 150;
 		this.attackCycle = 0
