@@ -68,6 +68,7 @@ init: function () {
 Crafty.c('PlayerCharacter', {
 init: function() {
 	this.arrow_spray = false;
+	this.level_up_window = null;
 	this.arrowTimer = 0;
 	this.swordTimer = 0
 	this.hurtTimer = 0;
@@ -185,24 +186,29 @@ init: function() {
 			//level up skeleton stuff
 			if(this.exp >= this.next_level){
 				//var level_up_array = new Array ()
-				var ding = Crafty.e('2D, DOM, Color, Text')
-				ding.attr({x:50,y:100,w:200,alpha:1.0})
-				//ding.text('Press J to boost HP, K to boost speed and L to boost the D')
-				if(this.isDown('J')&& exp>=next_level){
+				if (this.level_up_window == null) {
+					this.level_up_window = Crafty.e('2D, DOM, Color, Text');
+					this.level_up_window.attr({x:50,y:100,w:200,alpha:1.0});
+					this.level_up_window.text('Press T to boost HP, Y to boost speed');
+				}
+				if(this.isDown('T')&& this.exp>=this.next_level){
 					this.level++;
-					this.max_hp =+ this.max_hp*1.2
-					this.player_hp += this.max_hp/2
-					var rollOver = this.exp - this.next_level
-					this.exp = rollOver
-					this.next_level = this.next_level*1.33
-					ding.destroy()
-				}else if(this.isDown('K') && exp>=next_level){
+					this.max_hp =+ this.max_hp*1.2;
+					this.player_hp += this.max_hp/2;
+					var rollOver = this.exp - this.next_level;
+					this.exp = rollOver;
+					this.next_level = this.next_level*1.33;
+					this.level_up_window.destroy();
+					this.level_up_window = null;
+				}else if(this.isDown('Y') && this.exp>=this.next_level){
 					this.level++;
-					this.speed+=50
-					var rollOver = exp-next_level
-					this.exp = rollOver
-					this.next_level = this.next_level*1.33
-					ding.destroy()
+					this.speed+=1;
+					this.fourway(this.speed);
+					var rollOver = this.exp - this.next_level;
+					this.exp = rollOver;
+					this.next_level = this.next_level*1.33;
+					this.level_up_window.destroy();
+					this.level_up_window = null;
 				}
 		
 			}
@@ -319,7 +325,7 @@ hurtPlayer : function (data) {
 ouch : function (player, damage_amount) {
 	this.hp -= damage_amount;
 	if(this.hp <= 0){
-		player.exp += exp;
+		player.exp += this.exp;
 		if (this.__c['Boss']) {
 			Crafty.scene('Victory');
 		}
