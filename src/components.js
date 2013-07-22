@@ -416,6 +416,129 @@ init : function () {
 		});
 },
 });
+//************BOSS*****************************
+Crafty.c('Boss',{
+	init:function() {
+		this.hp = 40;
+		this.damage = 3;
+		this.exp = 150;
+		this.attackCycle = 0
+		this.x_counter = 0
+		this.y_counter = 0
+		this.pewpewpew = true
+		this.laser = false
+		this.vomit = false 
+		this.arrowTimer = 20
+		this.requires('NPC,spr_molsty')
+		.attr({w:32,l:32})
+		.collision()
+		.bind('EnterFrame',function(){//x-5 x+5 y-1 y+2
+			
+			//****** pewpew attack pattern
+			
+			if(this.arrowTimer<=0 && this.pewpewpew){
+				Crafty.e('FoeArrow, spr_arrowN').at(this.at().x,this.at().y).direction = 'n';
+				Crafty.e('FoeArrow, spr_arrowS').at(this.at().x,this.at().y).direction = 's';
+				Crafty.e('FoeArrow, spr_arrowE').at(this.at().x,this.at().y).direction = 'e';
+				Crafty.e('FoeArrow, spr_arrowW').at(this.at().x,this.at().y).direction = 'w';
+				
+				Crafty.e('FoeArrow, spr_arrowN').at(this.at().x+1,this.at().y).direction = 'n';
+				Crafty.e('FoeArrow, spr_arrowS').at(this.at().x+1,this.at().y).direction = 's';
+				Crafty.e('FoeArrow, spr_arrowE').at(this.at().x+1,this.at().y).direction = 'e';
+				Crafty.e('FoeArrow, spr_arrowW').at(this.at().x+1,this.at().y).direction = 'w';
+				
+				Crafty.e('FoeArrow, spr_arrowN').at(this.at().x,this.at().y+1).direction = 'n';
+				Crafty.e('FoeArrow, spr_arrowS').at(this.at().x,this.at().y+1).direction = 's';
+				Crafty.e('FoeArrow, spr_arrowE').at(this.at().x,this.at().y+1).direction = 'e';
+				Crafty.e('FoeArrow, spr_arrowW').at(this.at().x,this.at().y+1).direction = 'w';
+				
+				Crafty.e('FoeArrow, spr_arrowN').at(this.at().x+1,this.at().y+1).direction = 'n';
+				Crafty.e('FoeArrow, spr_arrowS').at(this.at().x+1,this.at().y+1).direction = 's';
+				Crafty.e('FoeArrow, spr_arrowE').at(this.at().x+1,this.at().y+1).direction = 'e';
+				Crafty.e('FoeArrow, spr_arrowW').at(this.at().x+1,this.at().y+1).direction = 'w';
+				
+				this.arrowTimer = 63
+				this.attackCycle++;
+					var go = Math.random()
+					if(go<.25 && this.y_counter<32){
+						this.move('n',8)
+						this.y_counter+=8
+					}
+					else if(go>.25 && go<.5 && this.y_counter>-32){
+						this.move('s',8)
+						this.y_counter-=8
+					}
+					else if(go>.5 && go<.75 && this.x_counter<160){
+						this.move('e',8)
+						this.x_counter+=8
+					}
+					else if(this.x_counter>-160){
+						this.move('w',8)
+						this.x_counter-=8
+					}
+				console.log(this.attackCycle)
+			}
+// ********************************************************************************
+//************************************LASER ***************************
+			this.arrowTimer--;
+			if(this.attackCycle>15){
+				this.pewpewpew=false
+				this.laser=true	
+			}
+			if(this.attackCycle>600){
+				this.laser=false
+				this.vomit=true
+			}
+			if(this.laser==true){
+				this.attackCycle++;
+				console.log(this.laser)
+				if(Math.random()>.77){
+					var laserdir = Math.random()
+					if(laserdir<.25){
+						Crafty.e('FoeArrow, spr_arrowN').at(this.at().x,this.at().y).direction = 'n';
+						Crafty.e('FoeArrow, spr_arrowN').at(this.at().x+1,this.at().y).direction = 'n';
+						Crafty.e('FoeArrow, spr_arrowN').at(this.at().x,this.at().y+1).direction = 'n';
+						Crafty.e('FoeArrow, spr_arrowN').at(this.at().x+1,this.at().y+1).direction = 'n';
+						this.attackCycle++
+					}
+					else if(laserdir>.25 && laserdir<.5){
+						Crafty.e('FoeArrow, spr_arrowS').at(this.at().x,this.at().y).direction = 's';
+						Crafty.e('FoeArrow, spr_arrowS').at(this.at().x+1,this.at().y).direction = 's';
+						Crafty.e('FoeArrow, spr_arrowS').at(this.at().x,this.at().y+1).direction = 's';
+						Crafty.e('FoeArrow, spr_arrowS').at(this.at().x+1,this.at().y+1).direction = 's';
+						this.attackCycle++
+					}
+					else if(laserdir<.75&&laserdir>.5){
+						Crafty.e('FoeArrow, spr_arrowE').at(this.at().x,this.at().y).direction = 'e';
+						Crafty.e('FoeArrow, spr_arrowE').at(this.at().x+1,this.at().y).direction = 'e';
+						Crafty.e('FoeArrow, spr_arrowE').at(this.at().x,this.at().y+1).direction = 'e';
+						Crafty.e('FoeArrow, spr_arrowE').at(this.at().x+1,this.at().y+1).direction = 'e';
+						this.attackCycle++
+					}
+					else{
+						Crafty.e('FoeArrow, spr_arrowW').at(this.at().x,this.at().y).direction = 'w';
+						Crafty.e('FoeArrow, spr_arrowW').at(this.at().x+1,this.at().y).direction = 'w';
+						Crafty.e('FoeArrow, spr_arrowW').at(this.at().x,this.at().y+1).direction = 'w';
+						Crafty.e('FoeArrow, spr_arrowW').at(this.at().x+1,this.at().y+1).direction = 'w';
+						this.attackCycle++
+					}
+				}
+			}
+			if(this.vomit==true){
+				for(var i=0;i<10;i++){
+					var yer = Math.floor(Math.random()*(14-2+1))+2;
+					var xer= Math.floor(Math.random()*(22-2+1))+2;
+					Crafty.e('Shooter').at(xer,yer)
+				}
+				this.attackCycle=0;
+				this.vomit=false
+				this.pewpewpew=true
+				this.arrowTimer = 0;
+				
+			}
+		});
+}	
+});
 
 //----------------------------------------------------------
 //-------------- Weapon Components -------------------------

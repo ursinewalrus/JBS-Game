@@ -74,6 +74,19 @@ channel = function(room,x,y,size,type,ori){
 	}
 }
 
+x_water = function(room,x,y,size){
+	for(var t=0;t<size;t++ && !room.occupied[x+t][y])	{
+		Crafty.e('Water').at(x+t,y)
+		room.occupied[x+t][y]=true
+	}
+}
+
+y_water = function(room,x,y,size){
+	for(var t=0;t<size;t++ && !room.occupied[x][y+t])	{
+		Crafty.e('Water').at(x,y+t)
+		room.occupied[x][y+t]=true
+	}
+}
 
 x_wall = function (room,x,y,size,type) {
 	for(var t=0; t<size; t++){

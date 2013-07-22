@@ -220,6 +220,36 @@ levelTemplate['forest']['graveyard'] = function(rm){
 }
 levelTemplate['forest']['graveyard'].genChance = .7
 levelTemplate['forest']['graveyard'].isBossRoom = false;
+
+//---------------------------------------------
+levelTemplate['forest']['boss_room'] = function(rm){
+	roomSharedInital(rm,'spr_brokesword');
+	x_water(rm,5,4,14)
+	x_water(rm,5,10,14)
+	y_water(rm,5,4,7)
+	y_water(rm,18,4,7)
+	Crafty.e('Full_Heal').at(1,1)
+	Crafty.e('Full_Heal').at(1,14)
+	Crafty.e('Full_Heal').at(22,1)
+	Crafty.e('Full_Heal').at(22,14)
+	for (var x = 0; x < Game.map_grid.width; x++) {
+		for (var y = 0; y < Game.map_grid.height; y++) {
+			if(Math.random()>.85 && x>8 && !rm.occupied[x][y]&&(x<5 || x>18 || y<4 || y>11)){
+				Crafty.e('SolidObj','spr_grave').at(x,y)
+				rm.occupied[x][y] = true
+			}
+			if(x==11 && y==6){
+				Crafty.e('Boss').at(x,y)
+				rm.occupied[x][y] = true
+				rm.occupied[x][y+1] = true
+				rm.occupied[x+1][y] = true
+				rm.occupied[x+1][y+1] = true
+			}
+		}
+	}
+	roomSharedEnd(rm);
+}
+levelTemplate['forest']['boss_room'].genChance = 1
 /*
 
 levelTemplate['forst']['mob_room']=function (rm){

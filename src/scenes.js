@@ -94,7 +94,7 @@ Crafty.scene('Loading',
 		Crafty.load(['assets/16x16_forest_1.gif','assets/16x16_forest_2.gif',
 					'assets/Doors.gif','assets/arrows.gif','assets/arrows2.gif',
 					'assets/treesv2.gif','assets/wolfy.gif','assets/hero.png',
-					'assets/misc1.gif','assets/misc2.gif'], 
+					'assets/misc1.gif','assets/misc2.gif','assets/stolen2.png'], 
 			function(){
 				// Once the image is loaded...
 				// Define the individual sprites in the image
@@ -102,6 +102,11 @@ Crafty.scene('Loading',
 				// These components' names are prefixed with "spr_"
 				// to remind us that they simply cause the entity
 				// to be drawn with a certain sprite
+			
+				Crafty.sprite(32,'assets/stolen2.png',{
+				spr_molsty : [0,0]
+				});
+				
 				Crafty.sprite(16,'assets/misc1.gif',{
 					spr_deadguy : [0,0],
 					spr_tome : [0,1],
